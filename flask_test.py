@@ -1,4 +1,8 @@
+# -*- encoding:utf-8 -*-
 from flask import Flask
+import annotator
+from annotator import bpannotator
+
 app = Flask(__name__)
 app.config.from_object('config')
 
@@ -7,5 +11,7 @@ def hello_world():
     return 'Hello World!'
 
 if __name__ == '__main__':
+
+    app.register_blueprint(bpannotator,url_prefix='/annotator')
 
     app.run(port=app.config['PORT'],debug=True)
