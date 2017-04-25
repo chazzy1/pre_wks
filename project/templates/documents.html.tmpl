@@ -18,7 +18,7 @@
 {% block mainContent %}
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Documents Sets</h1>
-            <form action="{{ url_for('annotator.documents')}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
+            <form action="{{ url_for('project.documents',projectid='asdf')}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search">
               </div>
