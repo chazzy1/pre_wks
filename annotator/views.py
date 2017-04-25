@@ -27,10 +27,11 @@ class baseDocument(db.Document):
 
 #uploadForm = model_form(DocumentUploadForm)
 
-@bpannotator.route('/documents', methods=['GET', 'POST'])
-def documents():
+@bpannotator.route('/<projectid>/documents', methods=['GET', 'POST'])
+def documents(projectid='default'):
+    print("111111111111111111111")
     #form = RegistrationForm.objects.get_or_404(id='test')
-
+    print projectid
     form = DocumentUploadForm((request.form))
 
     #basedoc =  baseDocument.objects.get_or_404(title="asdf")

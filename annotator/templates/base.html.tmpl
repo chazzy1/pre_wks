@@ -40,7 +40,7 @@
               <a href="{{ url_for('annotator.typesystem') }}">Dictionaries</a>
             </li>
             <li {% if active_menu == 'documents' %} class="active" {% endif %}>
-              <a href="{{ url_for('annotator.documents') }}">Documents</a>
+              <a href="{{ url_for('annotator.documents',projectid=projectid) }}">Documents</a>
             </li>
             <li {% if active_menu == 'humanAnnotation' %} class="active" {% endif %}>
               <a href="{{ url_for('annotator.typesystem') }}">Human Annotation</a>

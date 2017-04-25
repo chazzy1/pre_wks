@@ -8,7 +8,7 @@ bpannotator = Blueprint('annotator', __name__, template_folder='templates', stat
 
 @bpannotator.route('/typesystem')
 def typesystem():
-    return render_template('base.html.tmpl', my_string="asdf")
+    return render_template('base.html.tmpl', projectid="asdf")
 
 
 
