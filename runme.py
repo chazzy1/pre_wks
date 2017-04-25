@@ -5,6 +5,8 @@ from annotator import bpannotator
 from resources import bpresources
 app = Flask(__name__)
 app.config.from_object('config')
+from flask_mongoengine import MongoEngine
+db = MongoEngine(app)
 
 @app.route('/')
 def hello_world():

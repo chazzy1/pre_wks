@@ -2,6 +2,7 @@
 from flask import Blueprint
 from flask import render_template
 
+
 bpannotator = Blueprint('annotator', __name__, template_folder='templates', static_folder='static')
 
 
