@@ -1,6 +1,6 @@
 # -*- encoding:utf-8 -*-
 from flask import render_template,request
-from annotator import bpannotator
+from project import bpproject
 from wtforms import (
     Form,
     TextField,
@@ -27,9 +27,8 @@ class baseDocument(db.Document):
 
 #uploadForm = model_form(DocumentUploadForm)
 
-@bpannotator.route('/<projectid>/documents', methods=['GET', 'POST'])
-def documents(projectid='default'):
-    print("111111111111111111111")
+@bpproject.route('/documents', methods=['GET', 'POST'])
+def documents(projectid):
     #form = RegistrationForm.objects.get_or_404(id='test')
     print projectid
     form = DocumentUploadForm((request.form))

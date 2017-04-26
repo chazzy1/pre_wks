@@ -34,16 +34,16 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li {% if active_menu == 'typeSystem' %} class="active" {% endif %}>
-              <a href="{{ url_for('annotator.typesystem') }}">Type System</a>
+              <a href="{{ url_for('project.typesystem',projectid='asdf') }}">Type System</a>
             </li>
             <li {% if active_menu == 'dictionaries' %} class="active" {% endif %}>
-              <a href="{{ url_for('annotator.typesystem') }}">Dictionaries</a>
+              <a href="{{ url_for('project.typesystem',projectid='asdf') }}">Dictionaries</a>
             </li>
             <li {% if active_menu == 'documents' %} class="active" {% endif %}>
-              <a href="{{ url_for('annotator.documents',projectid=projectid) }}">Documents</a>
+              <a href="{{ url_for('project.documents',projectid='asdf') }}">Documents</a>
             </li>
             <li {% if active_menu == 'humanAnnotation' %} class="active" {% endif %}>
-              <a href="{{ url_for('annotator.typesystem') }}">Human Annotation</a>
+              <a href="{{ url_for('project.typesystem',projectid='asdf') }}">Human Annotation</a>
             </li>
             <li>
               <a href="#">chazzy1@gmail.com</a></li>
