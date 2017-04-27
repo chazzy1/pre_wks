@@ -17,7 +17,7 @@ def hello_world():
 
 if __name__ == '__main__':
 
-    app.register_blueprint(bpproject, url_prefix='/p/<projectid>')
+    app.register_blueprint(bpproject, url_prefix='/p')
     #app.register_blueprint(bpannotator,url_prefix='/project')
     app.register_blueprint(bpresources, url_prefix='/resources')
 
