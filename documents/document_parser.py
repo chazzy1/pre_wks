@@ -1,5 +1,8 @@
 # -*- encoding:utf-8 -*-
-import re
+import sys
+import traceback
+import uuid
+import datetime
 
 
 class MyException(Exception):
@@ -7,8 +10,26 @@ class MyException(Exception):
 
 
 class DocumentParser:
+
+
     def __init__(self, filepath):
         self.uploaded_file = filepath
+
+    @classmethod
+    def get_base_document(cls, document_index=0, modified_date=0):
+        document_id = uuid.uuid1()
+        document_id = str(document_id) + "-{0}".format(document_index)
+        document = {"id": document_id
+            , "name": None
+            , "text": None
+            , "status": "READY"
+            , "modifiedDate": modified_date}
+        return document
+
+    @classmethod
+    def get_epoch_time(cls):
+        epoch = datetime.datetime.utcfromtimestamp(0)
+        return int((datetime.datetime.today() - epoch).total_seconds() * 1000.0)
 
     def csv_parser(self):
         print self.uploaded_file
@@ -20,69 +41,59 @@ class DocumentParser:
 
         ("(?:[^"]|"")*"|[^,]*)*(,("(?:[^"]|"")*"|[^,]*))
         """
-        pattern = re.compile(r'^(("(?:[^"]|"")*"|[^,]*)(,("(?:[^"]|"")*"|[^,]*))*)$', re.MULTILINE)
 
         """
         for match in pattern.finditer(data):
             print match.groups()[0]
         """
 
-        documents = []
-
         offset = 0
-        name = []
-        text = []
-        buffer = []
+        str_buffer = []
         is_name = True
         is_in_quote = False
-
-
-        documentIndex = 0
-
-        document = {"id": "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1"
-            , "name": None
-            , "text": None
-            , "status": "READY"
-            , "modifiedDate": 1492574970774}
-
-        documents.append(document)
-
+        documents = []
+        document_index = 1
+        modified_date = self.get_epoch_time()
+        tmp_document = self.get_base_document(document_index=document_index, modified_date=modified_date)
 
         """에라 모르겠다...정규식은 실패임"""
         try:
             length = len(data)
-            for char in data:
 
 
+            iter_data = iter(data)
+
+            for char in iter_data:
 
                 if is_name:
                     if char == ",":
-                        documents[documentIndex]["name"] = ''.join(buffer)
-                        buffer = []
+                        tmp_document["name"] = ''.join(str_buffer)
+                        str_buffer = []
                         is_name = False
-                        print documents[documentIndex]["name"]
+
                     else:
-                        buffer.append(char)
+                        str_buffer.append(char)
 
                 else:
                     if is_in_quote:
                         if char == '"':
                             if offset + 1 < length and data[offset + 1] == '"':
-                                buffer.append(char)
-                                buffer.append(data[offset + 1])
-                                char.next()
+                                str_buffer.append(char)
+                                # str_buffer.append(data[offset + 1])
+                                iter_data.next()
 
                             else:
-                                print buffer
-                                documents[documentIndex]["text"] = ''.join(buffer)
-                                buffer = []
+                                tmp_document["text"] = ''.join(str_buffer)
+                                str_buffer = []
                                 is_name = True
-                                print documents[documentIndex]["text"]
-                                documents.append(document)
-                                documentIndex+=1
+                                is_in_quote = False
+                                documents.append(tmp_document)
+                                document_index += 1
+                                tmp_document = self.get_base_document(document_index=document_index,
+                                                                      modified_date=modified_date)
 
                         else:
-                            buffer.append(char)
+                            str_buffer.append(char)
 
                     else:
                         if char == '"':
@@ -94,12 +105,11 @@ class DocumentParser:
                                 raise MyException("wrong document format")
 
                 offset += 1
-
-
-
-
+            print documents
 
         except MyException as e:
-            print(e.args[0])
+            print e
+            traceback.print_tb(sys.exc_traceback)
         except Exception as e:
-            print (e.args[0])
+            print e
+            traceback.print_tb(sys.exc_traceback)
