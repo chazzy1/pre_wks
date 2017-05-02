@@ -1,0 +1,15 @@
+[ {
+  "id" : "id-all",
+  "name" : "All",
+  "documents" : [ "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1", "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-2" ],
+  "count" : 2,
+  "type" : "ALL",
+  "modifiedDate" : 0
+}, {
+  "id" : "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9",
+  "name" : "documents-reduced.csv",
+  "documents" : [ "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1", "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-2" ],
+  "count" : 2,
+  "type" : "SOURCE",
+  "modifiedDate" : 1492574970774
+} ]

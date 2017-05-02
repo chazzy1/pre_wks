@@ -3,10 +3,16 @@ from flask import Flask
 import project
 from project import bpproject
 from resources import bpresources
+import sys
+import traceback
+
 app = Flask(__name__)
 app.config.from_object('config')
 from flask_mongoengine import MongoEngine
 db = MongoEngine(app)
+
+
+
 
 @app.route('/')
 def hello_world():
