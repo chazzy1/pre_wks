@@ -1,6 +1,4 @@
 # -*- encoding:utf-8 -*-
-import sys
-import traceback
 import uuid
 import datetime
 from util import *
@@ -18,7 +16,6 @@ class DocumentParser:
     token_breaker_2 = "'s", "\'s"
 
     sentence_breaker = '.',
-
 
     @classmethod
     def get_base_document(cls, document_index=0, modified_date=0):
@@ -43,7 +40,7 @@ class DocumentParser:
                         "documentSet": [],
                         "preannotation": [],
                         "sentences": [],
-                        "mentions" : [],
+                        "mentions": [],
                         "relations": [],
                         "corefs": [],
                         "typeResolved": True,
@@ -53,10 +50,10 @@ class DocumentParser:
     @classmethod
     def get_base_sentence(cls):
         sentence = {"id": None,
-                        "begin": 0,
-                        "end": 150,
-                        "text": None,
-                        "tokens": []}
+                    "begin": 0,
+                    "end": 150,
+                    "text": None,
+                    "tokens": []}
         return sentence
 
     @classmethod
@@ -72,10 +69,6 @@ class DocumentParser:
     def get_epoch_time(cls):
         epoch = datetime.datetime.utcfromtimestamp(0)
         return int((datetime.datetime.today() - epoch).total_seconds() * 1000.0)
-
-
-
-
 
     def csv_parser(self):
         print self.uploaded_file
@@ -95,7 +88,7 @@ class DocumentParser:
         documents = self.document_parser(data)
         self.ground_truth_parser(documents)
 
-    def document_parser(self,data):
+    def document_parser(self, data):
 
         offset = 0
         str_buffer = []
@@ -155,7 +148,7 @@ class DocumentParser:
                                 raise MyException("wrong document format")
 
                 offset += 1
-            #print documents
+            # print documents
 
         except MyException as e:
             log_exception(e)
@@ -234,7 +227,7 @@ class DocumentParser:
                 if offset > 227:
                     pass
                 if char == ' ' or char == '\t':
-                    self.token_parser(sentence=sentence, sentence_id=sentence_id, begin=begin,token_buffer=str_buffer)
+                    self.token_parser(sentence=sentence, sentence_id=sentence_id, begin=begin, token_buffer=str_buffer)
                     str_buffer = []
                     is_begin_set = False
                 elif char in self.token_breaker:
@@ -281,7 +274,3 @@ class DocumentParser:
             token["end"] = end
             token["text"] = text
             sentence["tokens"].append(token)
-
-
-
-
