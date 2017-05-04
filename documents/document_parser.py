@@ -2,6 +2,8 @@
 import uuid
 import datetime
 from util import *
+from werkzeug.utils import secure_filename
+import os
 
 
 class MyException(Exception):
@@ -9,18 +11,26 @@ class MyException(Exception):
 
 
 class DocumentParser:
-    def __init__(self, filepath):
-        self.uploaded_file = filepath
+    def __init__(self, filename, filepath, project_id):
+        self.uploaded_file = os.path.join(filepath, filename)
+        self.global_file_name = filename
+        self.global_project_id = project_id
 
     token_breaker = '-', ',', '.'
     token_breaker_2 = "'s", "\'s"
 
     sentence_breaker = '.',
 
-    @classmethod
-    def get_base_document(cls, document_index=0, modified_date=0):
-        document_id = uuid.uuid1()
-        document_id = str(document_id) + "-{0}".format(document_index)
+    global_document_id = None
+    global_modified_date = None
+    global_file_name = None
+    global_project_id = None
+
+    def get_base_document(self, document_index=0, modified_date=0):
+        if self.global_document_id is None:
+            self.global_document_id = str(uuid.uuid1())
+
+        document_id = str(self.global_document_id) + "-{0}".format(document_index)
         document = {"id": document_id,
                     "name": None,
                     "text": None,
@@ -66,6 +76,16 @@ class DocumentParser:
         return token
 
     @classmethod
+    def get_base_set(cls):
+        token = {"id": None,
+                 "name": None,
+                 "documents": [],
+                 "count": None,
+                 "type": False,
+                 "modifiedDate": 0}
+        return token
+
+    @classmethod
     def get_epoch_time(cls):
         epoch = datetime.datetime.utcfromtimestamp(0)
         return int((datetime.datetime.today() - epoch).total_seconds() * 1000.0)
@@ -86,7 +106,9 @@ class DocumentParser:
             print match.groups()[0]
         """
         documents = self.document_parser(data)
-        self.ground_truth_parser(documents)
+        self.create_documents(documents)
+        self.create_ground_truth(documents)
+        self.create_sets(documents)
 
     def document_parser(self, data):
 
@@ -97,8 +119,11 @@ class DocumentParser:
         documents = []
 
         document_index = 1
-        modified_date = self.get_epoch_time()
-        tmp_document = self.get_base_document(document_index=document_index, modified_date=modified_date)
+
+        if self.global_modified_date is None:
+            self.global_modified_date = self.get_epoch_time()
+
+        tmp_document = self.get_base_document(document_index=document_index, modified_date=self.global_modified_date)
 
         """에라 모르겠다...정규식은 실패임"""
         try:
@@ -133,7 +158,7 @@ class DocumentParser:
                                 documents.append(tmp_document)
                                 document_index += 1
                                 tmp_document = self.get_base_document(document_index=document_index,
-                                                                      modified_date=modified_date)
+                                                                      modified_date=self.global_modified_date)
 
                         else:
                             str_buffer.append(char)
@@ -157,12 +182,18 @@ class DocumentParser:
 
         return documents
 
-    def ground_truth_parser(self, documents):
+    def create_documents(self, documents):
+        documents_collection.insert_one({"project_id": self.global_project_id,
+                                         "documents": documents})
+        pass
+
+    def create_ground_truth(self, documents):
         str_buffer = []
         is_begin_set = False
         for document in documents:
             ground_truth = self.get_base_ground_truth(document)
             text = ground_truth["text"]
+
             offset = 0
             begin = 0
             length = len(text)
@@ -196,6 +227,10 @@ class DocumentParser:
                 log_exception(e)
 
             print ground_truth
+
+            ground_truth_collection.insert_one({"project_id": self.global_project_id,
+                                                "global_document_id": self.global_document_id,
+                                                "ground_truth": ground_truth})
 
     def sentence_parser(self, ground_truth, begin, sentence_buffer):
         text = ''.join(sentence_buffer).rstrip()
@@ -274,3 +309,38 @@ class DocumentParser:
             token["end"] = end
             token["text"] = text
             sentence["tokens"].append(token)
+
+    def create_sets(self, documents):
+        sets = []
+        document_set = self.get_base_set()
+        document_set["id"] = "id-all"
+        document_set["name"] = "All"
+        for document in documents:
+            document_set["documents"].append(document["id"])
+        document_set["count"] = len(documents)
+        document_set["type"] = "ALL"
+        document_set["modifiedDate"] = 0
+        sets.append(document_set)
+
+        # 이부분 하드코딩임. 몇개가 들어가야할지 아직 불확실함
+        # 파일 여러번 넣으면 계속 추가되는거 같음.
+        document_set = self.get_base_set()
+        document_set["id"] = str(self.global_document_id)
+        document_set["name"] = self.global_file_name
+        for document in documents:
+            document_set["documents"].append(document["id"])
+        document_set["count"] = len(documents)
+        document_set["type"] = "SOURCE"
+        document_set["modifiedDate"] = self.global_modified_date
+        sets.append(document_set)
+        print sets
+
+        sets_collection.insert_one({"project_id": self.global_project_id,
+                                    "sets": sets})
+
+
+
+
+
+
+

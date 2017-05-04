@@ -10,3 +10,4 @@ PORT=18000
 MONGODB_SETTINGS = {'DB': "prewks", 'host': 'localhost'}
 SECRET_KEY = "keeperOfTheSevenKeys"
 UPLOAD_DIR = os.path.join(_base_dir, 'upload_dir')
+DOWNLOAD_DIR = os.path.join(_base_dir, 'download_dir')

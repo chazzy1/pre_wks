@@ -17,7 +17,8 @@
 
 {% block mainContent %}
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Documents Sets</h1>
+          <h1 class="page-header">Document Sets</h1>
+          <div class="row placeholders">
             <form action="{{ url_for('project.documents',projectid='asdf')}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search">
@@ -31,7 +32,45 @@
 
 
             </form>
+            <form action="{{ url_for('project.documents_export',projectid='asdf')}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
+              <button type="submit" class="btn btn-default">Export</button>
+            </form>
+          </div>
 
 
+
+          <h2 class="sub-header">Section title</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Total Docs</th>
+                  <th>Last Modified</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for set in document_sets %}
+                <tr>
+                  <td>{{set.name}}</td>
+                  <td>{{set.count}}</td>
+                  <td>{{set.modifiedDate}}</td>
+                  <td>Delete</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+        <div>
+            <div>fdaadfa</div>
+            {% for set in document_sets %}
+
+            <div>{{set.name}}</div>
+
+            {% endfor %}
         </div>
 {% endblock %}
