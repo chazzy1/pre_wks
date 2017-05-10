@@ -1,0 +1,61 @@
+{% extends "annotator_base.html.tmpl" %}
+
+{% block page_settings %}
+{% set active_menu = 'annotation'%}
+{% endblock %}
+
+
+{% block sidebar %}
+        <div class="col-md-2 sidebar">
+
+        </div>
+{% endblock %}
+
+{% block mainContent %}
+
+<script>
+
+
+</script>
+
+        <div class="col-md-10 col-md-offset-1 main">
+          <div class="row placeholders">
+
+            <h2 class="sub-header">task1</h2>
+            <div class="row">
+              <span>2222222222222222222222...</span>
+              <span>Document Name</span>
+              <span>Status</span>
+              <span>Last Modified</span>
+              <span><button type="submit" class="btn btn-default pull-right">Submit All</button></span>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <tbody>
+                  {% for list_item in annotation_list %}
+                  <a href="">
+                    <tr>
+                      <td>
+                        <h2>{{list_item.name}}</h2>
+                        <div>{{list_item.text}}</div>
+                        <h4>Last Modified: {{list_item.modifiedDate}}</h4>
+                      </td>
+                    </tr>
+                  </a>
+
+                  {% endfor %}
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+
+
+
+        </div>
+
+
+
+{% endblock %}

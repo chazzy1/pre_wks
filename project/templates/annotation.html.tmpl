@@ -1,0 +1,74 @@
+{% extends "base.html.tmpl" %}
+
+{% block page_settings %}
+{% set active_menu = 'annotation'%}
+{% endblock %}
+
+
+{% block sidebar %}
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li ><a href="#">Documents Sets</a></li>
+            <li ><a href="#">Annotation Sets</a></li>
+            <li><a href="#">Documents</a></li>
+          </ul>
+        </div>
+{% endblock %}
+
+
+
+{% block mainContent %}
+<script>
+  function openAnnotator(){
+    var win = window.open(Flask.url_for("annotator.list"), '_blank');
+    win.focus();
+
+
+  };
+
+</script>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">Human Annotation</h1>
+          <div class="row placeholders">
+
+            <h2 class="sub-header">task1</h2>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Annotation Set Name</th>
+                    <th>Annotator Name</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>set1</td>
+                    <td>chazzy1</td>
+                    <td class="danger">IN PROGRESS</td>
+                    <td>
+                      <button id="btnAnnotate" type="submit" class="btn btn-primary" onclick="javascript:openAnnotator();">Annotate</button>
+
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+{% endblock %}
+

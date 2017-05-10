@@ -6,11 +6,10 @@ from flask import render_template
 bpproject = Blueprint('project', __name__, template_folder='templates', static_folder='static')
 
 
-@bpproject.route('/typesystem')
-def typesystem(projectid=None):
-    return render_template('base.html.tmpl', projectid="asdf")
+
 
 
 
 
 from . import views
+from annotation import views

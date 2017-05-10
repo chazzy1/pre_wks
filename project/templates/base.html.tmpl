@@ -15,7 +15,7 @@
 
     <!-- Custom styles for this template -->
     <link href="static/css/dashboard.css" rel="stylesheet">
-
+    {{ JSGlue.include() }}
   </head>
   {% block page_settings %}{% endblock %}
   <body>
@@ -34,7 +34,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li {% if active_menu == 'typeSystem' %} class="active" {% endif %}>
-              <a href="{{ url_for('project.typesystem') }}">Type System1</a>
+              <a href="{{ url_for('project.typesystem') }}">Type System</a>
             </li>
             <li {% if active_menu == 'dictionaries' %} class="active" {% endif %}>
               <a href="{{ url_for('project.typesystem') }}">Dictionaries</a>
@@ -43,7 +43,7 @@
               <a href="{{ url_for('project.documents') }}">Documents</a>
             </li>
             <li {% if active_menu == 'humanAnnotation' %} class="active" {% endif %}>
-              <a href="{{ url_for('project.typesystem') }}">Human Annotation</a>
+              <a href="{{ url_for('project.annotation') }}">Human Annotation</a>
             </li>
             <li>
               <a href="#">chazzy1@gmail.com</a></li>

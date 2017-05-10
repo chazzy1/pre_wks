@@ -21,6 +21,68 @@ from documents import document_parser
 from util import *
 from documents.document_exporter import export_document_sets
 
+from typesystem import typesystem_parser
+
+
+
+
+
+
+
+@bpproject.route('/annotation', methods=['GET', 'POST'])
+def annotation(projectid=None):
+
+    if request.method == 'POST':
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        filepath = app.config['UPLOAD_DIR']
+        file.save(os.path.join(app.config['UPLOAD_DIR'], filename))
+        parser = typesystem_parser.TypesystemParser(filename=filename, filepath=filepath, project_id=projectid)
+        parser.wks_json_parser()
+
+    return render_template('annotation.html.tmpl', projectid="asdf", active_menu="humanAnnotation")
+
+
+
+
+
+@bpproject.route('/typesystem', methods=['GET', 'POST'])
+def typesystem(projectid=None):
+
+    if request.method == 'POST':
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        filepath = app.config['UPLOAD_DIR']
+        file.save(os.path.join(app.config['UPLOAD_DIR'], filename))
+        parser = typesystem_parser.TypesystemParser(filename=filename, filepath=filepath, project_id=projectid)
+        parser.wks_json_parser()
+
+    return render_template('typesystem.html.tmpl', projectid="asdf", active_menu="typeSystem")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class DocumentUploadForm(Form):
     title = TextField('title', [validators.Length(min=2, max=255)])
@@ -29,7 +91,6 @@ class DocumentUploadForm(Form):
 
 class DocumentSets(db.Document):
     title = db.StringField(required=False, max_length=255, min_length=2)
-
 
 # uploadForm = model_form(DocumentUploadForm)
 
