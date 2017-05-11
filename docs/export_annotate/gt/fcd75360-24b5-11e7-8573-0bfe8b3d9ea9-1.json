@@ -1,0 +1,438 @@
+{
+  "id" : "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1",
+  "name" : "Technology - brighthand.com",
+  "version" : 3,
+  "text" : "Thanks to an apparent slip-up, Microsoft has given the world a look at its upcoming online synchronization service for Windows Mobile called My Phone. \r\rThe web site for this service is live now, but not fully functional. Still, there's enough to give a complete overview of what it will offer.",
+  "docLength" : 0,
+  "language" : "EN",
+  "status" : "SUBMITTED",
+  "modifiedDate" : 1494477279924,
+  "documentSet" : [ ],
+  "preannotation" : [ ],
+  "sentences" : [ {
+    "id" : "s0",
+    "begin" : 0,
+    "end" : 150,
+    "text" : "Thanks to an apparent slip-up, Microsoft has given the world a look at its upcoming online synchronization service for Windows Mobile called My Phone.",
+    "tokens" : [ {
+      "id" : "s0-t0",
+      "begin" : 0,
+      "end" : 6,
+      "text" : "Thanks",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t1",
+      "begin" : 7,
+      "end" : 9,
+      "text" : "to",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t2",
+      "begin" : 10,
+      "end" : 12,
+      "text" : "an",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t3",
+      "begin" : 13,
+      "end" : 21,
+      "text" : "apparent",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t4",
+      "begin" : 22,
+      "end" : 26,
+      "text" : "slip",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t5",
+      "begin" : 26,
+      "end" : 27,
+      "text" : "-",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t6",
+      "begin" : 27,
+      "end" : 29,
+      "text" : "up",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t7",
+      "begin" : 29,
+      "end" : 30,
+      "text" : ",",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t8",
+      "begin" : 31,
+      "end" : 40,
+      "text" : "Microsoft",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t9",
+      "begin" : 41,
+      "end" : 44,
+      "text" : "has",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t10",
+      "begin" : 45,
+      "end" : 50,
+      "text" : "given",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t11",
+      "begin" : 51,
+      "end" : 54,
+      "text" : "the",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t12",
+      "begin" : 55,
+      "end" : 60,
+      "text" : "world",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t13",
+      "begin" : 61,
+      "end" : 62,
+      "text" : "a",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t14",
+      "begin" : 63,
+      "end" : 67,
+      "text" : "look",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t15",
+      "begin" : 68,
+      "end" : 70,
+      "text" : "at",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t16",
+      "begin" : 71,
+      "end" : 74,
+      "text" : "its",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t17",
+      "begin" : 75,
+      "end" : 83,
+      "text" : "upcoming",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t18",
+      "begin" : 84,
+      "end" : 90,
+      "text" : "online",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t19",
+      "begin" : 91,
+      "end" : 106,
+      "text" : "synchronization",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t20",
+      "begin" : 107,
+      "end" : 114,
+      "text" : "service",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t21",
+      "begin" : 115,
+      "end" : 118,
+      "text" : "for",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t22",
+      "begin" : 119,
+      "end" : 126,
+      "text" : "Windows",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t23",
+      "begin" : 127,
+      "end" : 133,
+      "text" : "Mobile",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t24",
+      "begin" : 134,
+      "end" : 140,
+      "text" : "called",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t25",
+      "begin" : 141,
+      "end" : 143,
+      "text" : "My",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t26",
+      "begin" : 144,
+      "end" : 149,
+      "text" : "Phone",
+      "whiteSpace" : false
+    }, {
+      "id" : "s0-t27",
+      "begin" : 149,
+      "end" : 150,
+      "text" : ".",
+      "whiteSpace" : false
+    } ]
+  }, {
+    "id" : "s1",
+    "begin" : 153,
+    "end" : 221,
+    "text" : "The web site for this service is live now, but not fully functional.",
+    "tokens" : [ {
+      "id" : "s1-t0",
+      "begin" : 153,
+      "end" : 156,
+      "text" : "The",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t1",
+      "begin" : 157,
+      "end" : 160,
+      "text" : "web",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t2",
+      "begin" : 161,
+      "end" : 165,
+      "text" : "site",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t3",
+      "begin" : 166,
+      "end" : 169,
+      "text" : "for",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t4",
+      "begin" : 170,
+      "end" : 174,
+      "text" : "this",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t5",
+      "begin" : 175,
+      "end" : 182,
+      "text" : "service",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t6",
+      "begin" : 183,
+      "end" : 185,
+      "text" : "is",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t7",
+      "begin" : 186,
+      "end" : 190,
+      "text" : "live",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t8",
+      "begin" : 191,
+      "end" : 194,
+      "text" : "now",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t9",
+      "begin" : 194,
+      "end" : 195,
+      "text" : ",",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t10",
+      "begin" : 196,
+      "end" : 199,
+      "text" : "but",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t11",
+      "begin" : 200,
+      "end" : 203,
+      "text" : "not",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t12",
+      "begin" : 204,
+      "end" : 209,
+      "text" : "fully",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t13",
+      "begin" : 210,
+      "end" : 220,
+      "text" : "functional",
+      "whiteSpace" : false
+    }, {
+      "id" : "s1-t14",
+      "begin" : 220,
+      "end" : 221,
+      "text" : ".",
+      "whiteSpace" : false
+    } ]
+  }, {
+    "id" : "s2",
+    "begin" : 222,
+    "end" : 294,
+    "text" : "Still, there's enough to give a complete overview of what it will offer.",
+    "tokens" : [ {
+      "id" : "s2-t0",
+      "begin" : 222,
+      "end" : 227,
+      "text" : "Still",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t1",
+      "begin" : 227,
+      "end" : 228,
+      "text" : ",",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t2",
+      "begin" : 229,
+      "end" : 234,
+      "text" : "there",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t3",
+      "begin" : 234,
+      "end" : 236,
+      "text" : "'s",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t4",
+      "begin" : 237,
+      "end" : 243,
+      "text" : "enough",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t5",
+      "begin" : 244,
+      "end" : 246,
+      "text" : "to",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t6",
+      "begin" : 247,
+      "end" : 251,
+      "text" : "give",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t7",
+      "begin" : 252,
+      "end" : 253,
+      "text" : "a",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t8",
+      "begin" : 254,
+      "end" : 262,
+      "text" : "complete",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t9",
+      "begin" : 263,
+      "end" : 271,
+      "text" : "overview",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t10",
+      "begin" : 272,
+      "end" : 274,
+      "text" : "of",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t11",
+      "begin" : 275,
+      "end" : 279,
+      "text" : "what",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t12",
+      "begin" : 280,
+      "end" : 282,
+      "text" : "it",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t13",
+      "begin" : 283,
+      "end" : 287,
+      "text" : "will",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t14",
+      "begin" : 288,
+      "end" : 293,
+      "text" : "offer",
+      "whiteSpace" : false
+    }, {
+      "id" : "s2-t15",
+      "begin" : 293,
+      "end" : 294,
+      "text" : ".",
+      "whiteSpace" : false
+    } ]
+  } ],
+  "mentions" : [ {
+    "id" : "s0-m1",
+    "properties" : {
+      "SIRE_MENTION_ROLE" : "ANIMAL",
+      "SIRE_ENTITY_SUBTYPE" : "NONE",
+      "SIRE_MENTION_TYPE" : "NONE",
+      "SIRE_MENTION_CLASS" : "SPC"
+    },
+    "type" : "ANIMAL",
+    "begin" : 31,
+    "end" : 43,
+    "inCoref" : false
+  }, {
+    "id" : "s0-m2",
+    "properties" : {
+      "SIRE_MENTION_ROLE" : "AWARD",
+      "SIRE_ENTITY_SUBTYPE" : "NONE",
+      "SIRE_MENTION_TYPE" : "NONE",
+      "SIRE_MENTION_CLASS" : "SPC"
+    },
+    "type" : "AWARD",
+    "begin" : 119,
+    "end" : 126,
+    "inCoref" : false
+  }, {
+    "id" : "s1-m2",
+    "properties" : {
+      "SIRE_MENTION_ROLE" : "AWARD",
+      "SIRE_ENTITY_SUBTYPE" : "NONE",
+      "SIRE_MENTION_TYPE" : "NONE",
+      "SIRE_MENTION_CLASS" : "SPC"
+    },
+    "type" : "AWARD",
+    "begin" : 204,
+    "end" : 209,
+    "inCoref" : false
+  }, {
+    "id" : "s1-m1",
+    "properties" : {
+      "SIRE_MENTION_ROLE" : "EVENT_CUSTODY",
+      "SIRE_ENTITY_SUBTYPE" : "NONE",
+      "SIRE_MENTION_TYPE" : "NONE",
+      "SIRE_MENTION_CLASS" : "SPC"
+    },
+    "type" : "EVENT_CUSTODY",
+    "begin" : 210,
+    "end" : 220,
+    "inCoref" : false
+  } ],
+  "relations" : [ ],
+  "corefs" : [ ],
+  "typeResolved" : true,
+  "userResolved" : false
+}

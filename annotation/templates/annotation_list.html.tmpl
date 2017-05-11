@@ -5,19 +5,15 @@
 {% endblock %}
 
 
-{% block sidebar %}
-        <div class="col-md-2 sidebar">
 
-        </div>
-{% endblock %}
 
 {% block mainContent %}
 
 <script>
   function openAnnotatorTool(id){
-  alert(id);
-var win = window.open(Flask.url_for("annotator.list"), '_blank');
-    win.focus();
+    alert(id);
+
+
 
 
   };
@@ -39,15 +35,12 @@ var win = window.open(Flask.url_for("annotator.list"), '_blank');
               <table class="table table-striped">
                 <tbody>
                   {% for list_item in annotation_list %}
-
                     <tr>
-                      <a href="{{ url_for('project.typesystem') }}">
-                      <td>
-                        <h2>{{list_item.name}}</h2>
+                      <td >
+                        <h2><a href="{{ url_for('annotator.tool',documentid=list_item.id) }}">{{list_item.name}}</a></h2>
                         <div>{{list_item.text}}</div>
                         <h4>Last Modified: {{list_item.modifiedDate}}</h4>
                       </td>
-                      </a>
                     </tr>
 
 

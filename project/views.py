@@ -47,7 +47,7 @@ def annotation(projectid=None):
 
 
 @bpproject.route('/typesystem', methods=['GET', 'POST'])
-def typesystem(projectid=None):
+def typesystem(projectid='asdf'):
 
     if request.method == 'POST':
         file = request.files['file']

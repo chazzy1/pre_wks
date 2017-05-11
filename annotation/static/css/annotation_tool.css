@@ -1,0 +1,47 @@
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
+}
+
+.sidebar {
+    
+}
+
+
+
+.toolBigIcon {
+    width:72px;
+    height:72px;
+    text-align:center;
+    display:block;
+    background-color:#F4F4F4;
+    border:solid;
+}
+
+.itemIcon {
+    display:inline-block;
+    width: 30px;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+    line-height: 35px;
+}
+
+.itemLabel {
+    display:inline-block;
+    text-align: center;
+    cursor: pointer;
+    line-height: 35px;
+    text-overflow ellipsis;
+    padding: 0 5px;
+    vertical-align: middle;
+}

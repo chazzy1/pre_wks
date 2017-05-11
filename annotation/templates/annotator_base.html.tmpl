@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -13,10 +15,16 @@
 
     <link href="/resources/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="static/css/dashboard.css" rel="stylesheet">
     {{ JSGlue.include() }}
+
+    {% block page_head %}
+    {% endblock %}
   </head>
+
+
+
+
+
   {% block page_settings %}{% endblock %}
   <body>
     {% block navbar %}
@@ -38,9 +46,6 @@
 
     <div class="container-fluid">
       <div class="row">
-        {% block sidebar %}
-
-        {% endblock %}
         {% block mainContent %}
         {% endblock %}
       </div>
@@ -52,5 +57,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="/resources/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+
+
+    {% block script_foot %}
+    {% endblock %}
+
   </body>
 </html>
