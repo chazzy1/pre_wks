@@ -45,3 +45,43 @@ body {
     padding: 0 5px;
     vertical-align: middle;
 }
+
+.sentenceNumber{
+    position: absolute;
+    right: 100%;
+    font-size: .7em;
+    padding: 2px 4px;
+    border: none;
+    min-width: 30px;
+    text-align: right;
+    box-sizing: border-box;
+}
+
+.wksToken{
+    position: relative;
+    display: inline;
+    white-space: nowrap;
+    border: none;
+    background-color: transparent;
+}
+
+.wksTokenText{
+    padding: 8px 1px;
+}
+
+.wksTokenSelection{
+    position: absolute;
+    border-top: 2px solid #00B2EF;
+    border-bottom: 2px solid #00B2EF;
+    background-color: rgba(255,255,255,.1);
+    z-index: 1;
+    box-sizing: content-box;
+}
+
+.wksTokenSelectionBegin{
+    border-left: 2px solid #00B2EF;
+}
+
+.wksTokenSelectionEnd{
+    border-right: 2px solid #00B2EF;
+}

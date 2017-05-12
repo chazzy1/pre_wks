@@ -1,10 +1,11 @@
 # -*- encoding:utf-8 -*-
 from flask import render_template, request, send_file
 from annotation import bpannotator
-from models import *
+import models
 import json
 from bson.json_util import dumps
 import sys
+from util import *
 
 
 
@@ -16,7 +17,7 @@ def list(projectid=None):
 
     project_id = "asdf"
 
-    annotation_list = annotation_data_model.get_annotation_list(project_id=project_id)
+    annotation_list = models.get_annotation_list(project_id=project_id)
 
     return render_template('annotation_list.html.tmpl', projectid="asdf", active_menu="annotation", annotation_list=annotation_list)
 
@@ -47,7 +48,7 @@ def get_entity_type_list(project_id):
     try:
         #project_id = str(request.json['project_id'])
         result = {}
-        entity_type_list = annotation_data_model.get_entity_type_list(project_id)
+        entity_type_list = models.get_entity_type_list(project_id)
         result["resultOK"] = True
         result["list"] = entity_type_list
 
@@ -66,7 +67,7 @@ def get_document(project_id):
     try:
         document_id = str(request.json['document_id'])
         result = {}
-        document = annotation_data_model.get_document(project_id, document_id)
+        document = models.get_ground_truth(project_id, document_id)
         result["resultOK"] = True
         result["document"] = document
 
