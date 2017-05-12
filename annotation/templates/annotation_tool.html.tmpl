@@ -24,8 +24,13 @@
 
 {% block mainContent %}
     <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <h4>Tool bar</h4>
+        <div id="toolbar" class="col-md-10 col-md-offset-1">
+            <form class="navbar-form navbar-left">
+                <button id="btnTest1" type="button" class="btn btn-default">Test</button>
+                <input id="selectionFrom" type="text" class="form-control" aria-label="from">
+                <input id="selectionTo" type="text" class="form-control" aria-label="to">
+
+            </form>
         </div>
     </div>
     <div class="row">

@@ -3,31 +3,10 @@ var $J1 = (function (module){
 	var _p = module._p = module._p || {};
 
 
-	//다른 모듈과 공유할 private 변수들
     _p.loadedEntityTypes={};
     _p.loadedDocument={};
-
-
-	//본 모듈에서만 사용되는 변수들
-
-
-    var UIEventEnum = {
-            nothingSelected:0,
-            objectContainerSelected:1,
-            attrSelected:2,
-            attrEditMode:3,
-            relationContainerSelected:4,
-            creatingRelationMode:5,
-            creatingNIRelationMode:6,
-            objectContainerMultiSelected:7,
-            creatingSubtypeMode:8,
-            embeding:9,
-            unembeding:10,
-            creatingArrayMode:11,
-            creatingExArrayMode:12,
-            creatingNodeMode:13,
-            creatingEdgeMode:14
-    };
+    _p.loadedMentions={};
+    _p.activeSelection=null;
 
 
 
@@ -41,8 +20,6 @@ var $J1 = (function (module){
 
         getEntityTypeList(data)
         .done(function(result){
-            console.log(result)
-
             if (result.resultOK) {
                 for (var k in result.list) {
                     var entityType = result.list[k];
@@ -59,15 +36,12 @@ var $J1 = (function (module){
 
         getDocument(data)
         .done(function(result){
-            console.log(result)
             _p.loadedDocument = result.document;
+            console.log(_p.loadedDocument);
             resetDocument();
         });
 
         setupUIEvent();
-
-
-
 
     };
 
@@ -77,6 +51,18 @@ var $J1 = (function (module){
             var ele = $(this);
             processDocumentClickEvent(ele,event);
         });
+
+        $("#toolbar").off("click","**");
+        $("#toolbar").on("click","div, button",function(event){
+            var ele = $(this);
+            processToolbarClickEvent(ele,event);
+        });
+
+
+        $(document).bind("keydown",function(event){
+            processKeyDownEvent(event);
+        });
+
     };
 
 
@@ -110,18 +96,39 @@ var $J1 = (function (module){
 
 
     function processDocumentClickEvent(ele,event){
-        console.log(ele)
-
         if (ele.hasClass("wksToken")){
-            console.log(ele.find(".wksTokenText").text())
             event.stopPropagation();
 
-            selectToken(ele);
+            processTokenSelection(ele);
 
         }
 
     };
 
+
+    function processToolbarClickEvent(ele,event){
+
+        if (ele.is("#btnTest1")){
+
+
+            var from = $("#selectionFrom").val();
+            var to = $("#selectionTo").val();
+
+            drawMentionTargetSelection('s0',from,to);
+
+        }
+    };
+
+    function processKeyDownEvent(event){
+        if (event.keyCode == 27) {
+            if (_p.activeSelection) {
+                clearMentionTargetSelection();
+                _p.activeSelection = null;
+
+            }
+
+        }
+    }
 
     function resetDocument(){
         $("#document-name").empty();
@@ -136,7 +143,7 @@ var $J1 = (function (module){
 
     function drawSentence(sentence,index){
         var sentenceId = "wksSentence-" + sentence.id;
-        var sentenceEle = $('<div id="'+sentenceId+'"></div>')
+        var sentenceEle = $('<div id="'+sentenceId+'" class="wksSentence"></div>')
         var sentenceIndexEle = $('<div class="sentenceNumber">'+index+'</div>');
         sentenceEle.append(sentenceIndexEle);
         $("#document-holder").append(sentenceEle);
@@ -154,7 +161,7 @@ var $J1 = (function (module){
         var tokenEle = $('<span id="'+tokenId+'" class="wksToken" ></span>');
         var tokenTextEle = $('<span class="wksTokenText">'+token.text+'</span>')
 
-        var tokenSelectionEle = $('<span style="display:none"class="wksTokenSelection"></span>')
+        var tokenSelectionEle = $('<span style="display:none" class="wksTokenSelection"></span>')
 
         tokenEle.append(tokenTextEle);
         tokenEle.append(tokenSelectionEle);
@@ -162,7 +169,7 @@ var $J1 = (function (module){
 
         sentenceEle.append(tokenEle);
 
-        tokenSelectionEle.css("width",tokenTextEle.width()+2);
+        tokenSelectionEle.css("width",tokenTextEle.outerWidth()+2);
         tokenSelectionEle.css("height",tokenTextEle.height()+1);
         tokenSelectionEle.css("left","-1px");
         tokenSelectionEle.css("top","-2px");
@@ -174,9 +181,17 @@ var $J1 = (function (module){
             var tokenId = "wksToken-ws-b"+token.end;
             var tokenEle = $('<span id="'+tokenId+'" class="wksToken" ></span>');
             var tokenTextEle = $('<span class="wksTokenText"> </span>')
+            var tokenSelectionEle = $('<span style="display:none" class="wksTokenSelection"></span>')
+
             tokenEle.append(tokenTextEle);
+            tokenEle.append(tokenSelectionEle);
 
             sentenceEle.append(tokenEle);
+
+            tokenSelectionEle.css("width",tokenTextEle.outerWidth()+6);
+            tokenSelectionEle.css("height",tokenTextEle.height()+1);
+            tokenSelectionEle.css("left","-1px");
+            tokenSelectionEle.css("top","-2px");
         }
     };
 
@@ -193,17 +208,153 @@ var $J1 = (function (module){
 
         var item = $('<div id="'+item.id+'"><div class="itemIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>')
 
-
         $("#list-entity-type").append(item);
     };
 
-    function selectToken(tokenEle){
-        var tokenSelectionEle = tokenEle.find(".wksTokenSelection");
-        tokenSelectionEle.css("display","")
-        tokenSelectionEle.addClass("wksTokenSelectionBegin wksTokenSelectionEnd");
+    function processTokenSelection(tokenEle){
+        var tokenEleId = _p.getObjectId(tokenEle);
+        //wksToken-s0-t3
 
+        var sentenceId = tokenEleId.split("-")[1];
+        var tokenId = tokenEleId.split("-")[1]+"-"+tokenEleId.split("-")[2];
+        var sentence = $.grep(_p.loadedDocument.sentences, function(e){ return e.id == sentenceId; })[0];
+
+        if (sentence) {
+            var token = $.grep(sentence.tokens, function(e){ return e.id == tokenId; })[0];
+            var mentionId = sentenceId + "-m0";
+            if (_p.activeSelection && sentenceId == _p.activeSelection.sentenceId){
+
+                var minPoint = _p.activeSelection.begin;
+                var maxPoint = _p.activeSelection.end;
+
+                if (token.begin < minPoint ) {
+                    minPoint = token.begin;
+                };
+
+                if (token.end > maxPoint ) {
+                    maxPoint = token.end;
+                };
+                _p.activeSelection.begin = minPoint;
+                _p.activeSelection.end = maxPoint;
+                clearMentionTargetSelection();
+                drawMentionTargetSelection(sentenceId,minPoint,maxPoint);
+
+            } else {
+                clearMentionTargetSelection();
+                _p.activeSelection= {"sentenceId":sentenceId, "id":mentionId, "begin":token.begin, "end":token.end};
+
+                drawMentionTargetSelection(sentenceId,token.begin,token.end);
+
+            };
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    };
+
+    function clearMentionTargetSelection(){
+        $("#document-holder").find(".wksTokenSelection").each(function(index,ele){
+            $(ele).removeClass("wksTokenSelectionBegin");
+            $(ele).removeClass("wksTokenSelectionEnd");
+            $(ele).css("display","none");
+        });
+    }
+
+
+
+
+    function drawMentionTargetSelection(sentenceId,from,to){
+
+        var sentencesIdMap = {};
+        for (var k in _p.loadedDocument.sentences){
+            var sentence = _p.loadedDocument.sentences[k];
+            sentencesIdMap[sentence.id] = sentence;
+        };
+
+        var sentence = sentencesIdMap[sentenceId];
+
+        for (var k in sentence.tokens){
+            var token =  sentence.tokens[k];
+            var tokenEle = $("#wksToken-"+token.id);
+            if (from >= token.begin && from <= token.end){
+                var tokenTo = to;
+                var endMark = true;
+                if (tokenTo > token.end){
+                    tokenTo = token.end;
+                    endMark = false;
+                };
+                drawTokenSelection(tokenEle,from-token.begin,tokenTo-token.begin,true,endMark);
+            } else if (from < token.begin && to > token.end) {
+                //앞에 있는 공백까지 같이 막아줌.
+
+                drawPreBlankSelection(tokenEle);
+
+                drawTokenSelection(tokenEle,0,token.end-token.begin,false,false);
+            } else if (from < token.begin && to >= token.begin && to <= token.end){
+                var tokenFrom = from;
+                var beginMark = true;
+                tokenFrom = token.begin;
+                //앞에 있는 공백까지 같이 막아줌.
+                drawPreBlankSelection(tokenEle);
+                drawTokenSelection(tokenEle,tokenFrom-token.begin,to-token.begin,false,true);
+            }
+        }
 
     }
+    function drawPreBlankSelection(tokenEle){
+        tokenEle.prev().find(".wksTokenSelection").css("display","");
+    }
+
+    function drawTokenSelection(tokenEle,from, to, beginMark, endMark){
+
+        var range = document.createRange();
+        var textToken = tokenEle.find(".wksTokenText");
+        var textNode = textToken[0].firstChild;
+        range.setStart(textNode,from);
+        range.setEnd(textNode,to);
+        var rects = range.getClientRects()[0];
+
+        var tokenSelectionEle = tokenEle.find(".wksTokenSelection");
+
+        tokenSelectionEle.css("display","");
+        if (beginMark) {
+            tokenSelectionEle.addClass("wksTokenSelectionBegin");
+        };
+        if (endMark) {
+            tokenSelectionEle.addClass("wksTokenSelectionEnd");
+        };
+
+        var leftOffset = tokenEle.offset().left;
+
+        tokenSelectionEle.css("left",rects.left-leftOffset);
+        tokenSelectionEle.css("width",rects.width);
+
+
+    };
+
+    _p.getObjectId = function(obj){
+        if (!obj){
+            return null;
+        }
+        if (obj instanceof $){
+            return obj.attr("id");
+        } else {
+            return $(obj).attr("id");
+        }
+    };
 
 
 

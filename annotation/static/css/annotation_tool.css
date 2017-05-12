@@ -46,6 +46,17 @@ body {
     vertical-align: middle;
 }
 
+.wksSentence{
+    position: relative;
+    border: none;
+    border-color: #E0E0E0;
+    color: #4C4D53;
+    padding: 5px 15px;
+    transition: border .5s ease;
+    box-sizing: border-box;
+    cursor: default;
+    font-size: 14pt;
+}
 .sentenceNumber{
     position: absolute;
     right: 100%;
@@ -63,10 +74,12 @@ body {
     white-space: nowrap;
     border: none;
     background-color: transparent;
+    box-sizing: border-box;
 }
 
 .wksTokenText{
     padding: 8px 1px;
+    white-space: nowrap;
 }
 
 .wksTokenSelection{
@@ -76,6 +89,7 @@ body {
     background-color: rgba(255,255,255,.1);
     z-index: 1;
     box-sizing: content-box;
+    white-space: nowrap;
 }
 
 .wksTokenSelectionBegin{
@@ -84,4 +98,10 @@ body {
 
 .wksTokenSelectionEnd{
     border-right: 2px solid #00B2EF;
+}
+
+
+.testBox{
+    position: absolute;
+    border:solid;
 }
