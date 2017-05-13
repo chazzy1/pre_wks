@@ -2,220 +2,8 @@
 var $J1 = (function (module){
 	var _p = module._p = module._p || {};
 
-    _p.projectId = null;
 
-    _p.loadedEntityTypesLabelMap={};
-    _p.loadedGroundTruth={};
-    _p.loadedSireInfo={};
-    _p.activeSelection=null;
-    _p.sentencesIdMap = {};
-
-
-
-
-
-
-    _p.init = function(projectId,documentId){
-
-        console.log(projectId,documentId);
-        _p.projectId = projectId
-
-        data={};
-        data.project_id=projectId;
-        data.document_id=documentId;
-
-
-        getEntityTypeList(data)
-        .done(function(result){
-            if (result.resultOK) {
-                for (var k in result.list) {
-                    var entityType = result.list[k];
-                    _p.loadedEntityTypesLabelMap[entityType.label] = entityType;
-                };
-            } else {
-                alert(result.message);
-            }
-
-            resetEntityTypeList();
-        });
-
-
-        getGroundTruth(data)
-        .done(function(result){
-            _p.loadedGroundTruth = result.document;
-            for (var k in _p.loadedGroundTruth.sentences){
-                var sentence = _p.loadedGroundTruth.sentences[k];
-                _p.sentencesIdMap[sentence.id] = sentence;
-            };
-            console.log(_p.loadedGroundTruth);
-            resetDocument();
-            resetMentionDisplay();
-        });
-
-        getSireInfo(data)
-        .done(function(result){
-            _p.loadedSireInfo = result.sireInfo;
-            resetMentionTypeClass();
-        });
-
-
-
-        setupUIEvent();
-
-    };
-
-    function setupUIEvent(){
-        $("#document-holder").off("click","**");
-        $("#document-holder").on("click","span",function(event){
-            var ele = $(this);
-            processDocumentClickEvent(ele,event);
-        });
-
-        $("#toolbar").off("click","**");
-        $("#toolbar").on("click","div, button",function(event){
-            var ele = $(this);
-            processToolbarClickEvent(ele,event);
-        });
-
-        $("#rightSideBar").off("click","**");
-        $("#rightSideBar").on("click","div",function(event){
-            var ele = $(this);
-            processRightSideBarClickEvent(ele,event);
-        });
-
-
-        $(document).bind("keydown",function(event){
-            processKeyDownEvent(event);
-        });
-
-    };
-
-
-
-    function getEntityTypeList(data){
-        return $.ajax({
-            url: Flask.url_for('annotator.get_entity_type_list', {project_id: data.project_id})
-            ,type: 'POST'
-            ,contentType: "application/json;charset=utf-8"
-            ,dataType: 'json'
-            ,data: JSON.stringify(data)
-            ,beforeSend:function(){
-
-            }
-        })
-    };
-
-    function getGroundTruth(data){
-        return $.ajax({
-            url: Flask.url_for('annotator.get_ground_truth', {project_id: data.project_id})
-            ,type: 'POST'
-            ,contentType: "application/json;charset=utf-8"
-            ,dataType: 'json'
-            ,data: JSON.stringify(data)
-            ,beforeSend:function(){
-
-            }
-        })
-    };
-
-    function getSireInfo(data){
-        return $.ajax({
-            url: Flask.url_for('annotator.get_sire_info', {project_id: data.project_id})
-            ,type: 'POST'
-            ,contentType: "application/json;charset=utf-8"
-            ,dataType: 'json'
-            ,data: JSON.stringify(data)
-            ,beforeSend:function(){
-
-            }
-        })
-    };
-
-    function saveAll(data){
-        return $.ajax({
-            url: Flask.url_for('annotator.save_all', {project_id: _p.projectId})
-            ,type: 'POST'
-            ,contentType: "application/json;charset=utf-8"
-            ,dataType: 'json'
-            ,data: JSON.stringify(data)
-            ,beforeSend:function(){
-
-            }
-        })
-    };
-
-    function processDocumentClickEvent(ele,event){
-        if (ele.hasClass("gtcToken")){
-            event.stopPropagation();
-
-            processTokenSelection(ele);
-
-        }
-
-    };
-
-
-    function processToolbarClickEvent(ele,event){
-        if (ele.is("#btnTest1")){
-            var from = $("#selectionFrom").val();
-            var to = $("#selectionTo").val();
-            drawMentionTargetSelection('s0',from,to);
-            event.stopPropagation();
-
-        };
-        if (ele.is("#btnSave")){
-            event.stopPropagation();
-            data={};
-            data.project_id=_p.projectId;
-            data.ground_truth_id=_p.loadedGroundTruth.id;
-
-            data.saveData = {};
-
-            data.saveData.mentions = _p.loadedGroundTruth.mentions;
-            data.saveData.relations = _p.loadedGroundTruth.relations;
-            data.saveData.corefs = _p.loadedGroundTruth.corefs;
-
-            console.log(data)
-            saveAll(data)
-            .done(function(result){
-
-            });
-
-        };
-    };
-
-    function processRightSideBarClickEvent(ele,event){
-        if (ele.hasClass("gtcEntityType")){
-            event.stopPropagation();
-
-            processEntityTypeAssignment(ele);
-
-        }
-    }
-
-    function processKeyDownEvent(event){
-        if (event.keyCode == 27) {
-            if (_p.activeSelection) {
-                clearMentionTargetSelection();
-                _p.activeSelection = null;
-
-            }
-
-        }
-    }
-
-    function resetDocument(){
-        $("#document-name").empty();
-        $("#document-holder").empty();
-        $("#document-name").html(_p.loadedGroundTruth.name);
-
-        for (var k in _p.loadedGroundTruth.sentences) {
-            sentence = _p.loadedGroundTruth.sentences[k];
-            drawSentence(sentence, k);
-        }
-    };
-
-    function resetMentionTypeClass(){
+    _p.resetMentionTypeClass = function(){
         $("#list-mention-type").empty();
         for (var k in _p.loadedSireInfo.entityProp.mentionType) {
             mentionType = _p.loadedSireInfo.entityProp.mentionType[k];
@@ -252,7 +40,7 @@ var $J1 = (function (module){
         //item.attr("gtcLabel",item.label);
     };
 
-    function drawSentence(sentence,index){
+    _p.drawSentence = function(sentence,index){
         var sentenceId = "gtcSentence-" + sentence.id;
         var sentenceEle = $('<div id="'+sentenceId+'" class="gtcSentence"></div>')
         var sentenceIndexEle = $('<div class="sentenceNumber">'+index+'</div>');
@@ -299,21 +87,21 @@ var $J1 = (function (module){
 
             sentenceEle.append(tokenEle);
 
-            tokenSelectionEle.css("width",tokenTextEle.outerWidth()+6);
+            tokenSelectionEle.css("width",tokenTextEle.outerWidth()+7);
             tokenSelectionEle.css("height",tokenTextEle.height()+1);
             tokenSelectionEle.css("left","-1px");
             tokenSelectionEle.css("top","-2px");
         }
     };
 
-    function resetEntityTypeList(){
+    _p.resetEntityTypeList = function(){
         $("#list-entity-type").empty();
         for (var id in _p.loadedEntityTypesLabelMap){
             drawEntityTypeItem(_p.loadedEntityTypesLabelMap[id]);
         };
     };
 
-    function processEntityTypeAssignment(ele){
+    _p.processEntityTypeAssignment = function(ele){
         ele = $(ele);
         var entityType = _p.loadedEntityTypesLabelMap[ele.attr("gtcLabel")]
         if (_p.activeSelection){
@@ -334,7 +122,7 @@ var $J1 = (function (module){
             assignEntityType(newMention);
 
             mentions.push(newMention);
-            clearMentionTargetSelection();
+            _p.clearMentionTargetSelection();
             _p.activeSelection = null;
 
         }
@@ -353,21 +141,21 @@ var $J1 = (function (module){
         };
     };
 
-    function resetMentionDisplay(){
+    _p.resetMentionDisplay = function(){
         var mentions = _p.loadedGroundTruth.mentions;
         for (var k in mentions){
             var mention = mentions[k];
 
             var sentenceId = mention.id.split("-")[0]
             _p.activeSelection= {"sentenceId":sentenceId, "id":mention.id, "begin":mention.begin, "end":mention.end, "tokens":{}};
-            drawMentionTargetSelection(sentenceId,mention.begin,mention.end);
+            _p.drawMentionTargetSelection(sentenceId,mention.begin,mention.end);
             assignEntityType(mention);
 
         };
-        clearMentionTargetSelection();
+        _p.clearMentionTargetSelection();
     };
 
-    function processTokenSelection(tokenEle){
+    _p.processTokenSelection = function(tokenEle){
         var tokenEleId = _p.getObjectId(tokenEle);
         //gtcToken-s0-t3
 
@@ -380,8 +168,8 @@ var $J1 = (function (module){
             if (tokenEle.hasClass("entityTypeAssigned")){
                 var entityTypeLabel = tokenEle.attr("entityTypeLabel");
                 var mention = $.grep(_p.loadedGroundTruth.mentions, function(e){ return e.type == entityTypeLabel; })[0];
-                clearMentionTargetSelection();
-                drawMentionTargetSelection(sentenceId,mention.begin,mention.end);
+                _p.clearMentionTargetSelection();
+                _p.drawMentionTargetSelection(sentenceId,mention.begin,mention.end);
 
 
 
@@ -406,15 +194,15 @@ var $J1 = (function (module){
 
 
 
-                    clearMentionTargetSelection();
-                    drawMentionTargetSelection(sentenceId,minPoint,maxPoint);
+                    _p.clearMentionTargetSelection();
+                    _p.drawMentionTargetSelection(sentenceId,minPoint,maxPoint);
 
                 } else {
-                    clearMentionTargetSelection();
+                    _p.clearMentionTargetSelection();
                     _p.activeSelection= {"sentenceId":sentenceId, "id":mentionId, "begin":token.begin, "end":token.end, "tokens":{}};
 
 
-                    drawMentionTargetSelection(sentenceId,token.begin,token.end);
+                    _p.drawMentionTargetSelection(sentenceId,token.begin,token.end);
 
                 };
             }
@@ -425,7 +213,7 @@ var $J1 = (function (module){
 
     };
 
-    function clearMentionTargetSelection(){
+    _p.clearMentionTargetSelection = function(){
         $("#document-holder").find(".gtcTokenSelection").each(function(index,ele){
             $(ele).removeClass("gtcTokenSelectionBegin");
             $(ele).removeClass("gtcTokenSelectionEnd");
@@ -436,7 +224,7 @@ var $J1 = (function (module){
 
 
 
-    function drawMentionTargetSelection(sentenceId,from,to){
+    _p.drawMentionTargetSelection = function(sentenceId,from,to){
         var sentence = _p.sentencesIdMap[sentenceId];
 
         for (var k in sentence.tokens){

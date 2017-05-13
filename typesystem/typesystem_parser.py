@@ -79,7 +79,7 @@ class TypesystemParser:
         relationship_types_collection.update(
             {"project_id": self.global_project_id},
             {
-                "$set": {"entity_types": relationship_types}
+                "$set": {"relationship_types": relationship_types}
             },
             multi=False,
             upsert=True
