@@ -57,8 +57,8 @@ def get_entity_type_list(project_id):
     return dumps(result, ensure_ascii=False)
 
 
-@bpannotator.route('/getDocument/<project_id>', methods=['POST', 'GET'])
-def get_document(project_id):
+@bpannotator.route('/getGroundTruth/<project_id>', methods=['POST', 'GET'])
+def get_ground_truth(project_id):
     result = {}
 
     try:

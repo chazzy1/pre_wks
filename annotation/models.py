@@ -34,13 +34,6 @@ def get_ground_truth(project_id, ground_truth_id):
 
 def save_all(project_id, ground_truth_id, save_data):
 
-    # entityTypeId
-
-    for mention in save_data["mentions"]:
-        mention.pop("entityTypeId",None)
-
-
-
     result = ground_truth_collection.update(
         {"project_id": project_id,
          "ground_truth.id": ground_truth_id

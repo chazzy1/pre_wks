@@ -4,11 +4,13 @@ var $J1 = (function (module){
 
     _p.projectId = null;
 
-    _p.loadedEntityTypesIDMap={};
-    _p.loadedDocument={};
+    _p.loadedEntityTypesLabelMap={};
+    _p.loadedGroundTruth={};
     _p.loadedSireInfo={};
     _p.activeSelection=null;
     _p.sentencesIdMap = {};
+
+
 
 
 
@@ -28,7 +30,7 @@ var $J1 = (function (module){
             if (result.resultOK) {
                 for (var k in result.list) {
                     var entityType = result.list[k];
-                    _p.loadedEntityTypesIDMap[entityType.id] = entityType;
+                    _p.loadedEntityTypesLabelMap[entityType.label] = entityType;
                 };
             } else {
                 alert(result.message);
@@ -38,15 +40,16 @@ var $J1 = (function (module){
         });
 
 
-        getDocument(data)
+        getGroundTruth(data)
         .done(function(result){
-            _p.loadedDocument = result.document;
-            for (var k in _p.loadedDocument.sentences){
-                var sentence = _p.loadedDocument.sentences[k];
+            _p.loadedGroundTruth = result.document;
+            for (var k in _p.loadedGroundTruth.sentences){
+                var sentence = _p.loadedGroundTruth.sentences[k];
                 _p.sentencesIdMap[sentence.id] = sentence;
             };
-            console.log(_p.loadedDocument);
+            console.log(_p.loadedGroundTruth);
             resetDocument();
+            resetMentionDisplay();
         });
 
         getSireInfo(data)
@@ -54,6 +57,8 @@ var $J1 = (function (module){
             _p.loadedSireInfo = result.sireInfo;
             resetMentionTypeClass();
         });
+
+
 
         setupUIEvent();
 
@@ -100,9 +105,9 @@ var $J1 = (function (module){
         })
     };
 
-    function getDocument(data){
+    function getGroundTruth(data){
         return $.ajax({
-            url: Flask.url_for('annotator.get_document', {project_id: data.project_id})
+            url: Flask.url_for('annotator.get_ground_truth', {project_id: data.project_id})
             ,type: 'POST'
             ,contentType: "application/json;charset=utf-8"
             ,dataType: 'json'
@@ -162,13 +167,13 @@ var $J1 = (function (module){
             event.stopPropagation();
             data={};
             data.project_id=_p.projectId;
-            data.ground_truth_id=_p.loadedDocument.id;
+            data.ground_truth_id=_p.loadedGroundTruth.id;
 
             data.saveData = {};
 
-            data.saveData.mentions = _p.loadedDocument.mentions;
-            data.saveData.relations = _p.loadedDocument.relations;
-            data.saveData.corefs = _p.loadedDocument.corefs;
+            data.saveData.mentions = _p.loadedGroundTruth.mentions;
+            data.saveData.relations = _p.loadedGroundTruth.relations;
+            data.saveData.corefs = _p.loadedGroundTruth.corefs;
 
             console.log(data)
             saveAll(data)
@@ -202,10 +207,10 @@ var $J1 = (function (module){
     function resetDocument(){
         $("#document-name").empty();
         $("#document-holder").empty();
-        $("#document-name").html(_p.loadedDocument.name);
+        $("#document-name").html(_p.loadedGroundTruth.name);
 
-        for (var k in _p.loadedDocument.sentences) {
-            sentence = _p.loadedDocument.sentences[k];
+        for (var k in _p.loadedGroundTruth.sentences) {
+            sentence = _p.loadedGroundTruth.sentences[k];
             drawSentence(sentence, k);
         }
     };
@@ -238,8 +243,13 @@ var $J1 = (function (module){
 
     function drawEntityTypeItem(item){
         var style = "background-color:" + item.sireProp.backGroundColor + "; color:"+item.sireProp.color;
-        var item = $('<div id="'+item.id+'" class="gtcEntityType"><div class="itemIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>')
+        var item = $('<div gtcLabel="'+item.label+'" id="'+item.id+'" class="gtcEntityType"><div class="itemIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>');
+
+
         $("#list-entity-type").append(item);
+
+        //이거 왜 안되나 모르겠음.
+        //item.attr("gtcLabel",item.label);
     };
 
     function drawSentence(sentence,index){
@@ -298,56 +308,64 @@ var $J1 = (function (module){
 
     function resetEntityTypeList(){
         $("#list-entity-type").empty();
-        for (var id in _p.loadedEntityTypesIDMap){
-            drawEntityTypeItem(_p.loadedEntityTypesIDMap[id]);
+        for (var id in _p.loadedEntityTypesLabelMap){
+            drawEntityTypeItem(_p.loadedEntityTypesLabelMap[id]);
         };
     };
 
     function processEntityTypeAssignment(ele){
         ele = $(ele);
+        var entityType = _p.loadedEntityTypesLabelMap[ele.attr("gtcLabel")]
         if (_p.activeSelection){
-            var entityTypeId = _p.getObjectId(ele);
-            console.log(entityTypeId)
-            console.log(_p.activeSelection)
-            var mentionTypes = _p.loadedSireInfo.entityProp.mentionType;
-            var mentions = _p.loadedDocument.mentions;
+
+
+            var mentions = _p.loadedGroundTruth.mentions;
             var newMention = getBaseMentionObject();
             var mentionIndex = mentions.length;
 
             newMention.id = _p.activeSelection.sentenceId+"-"+"m"+mentionIndex;
 
-            var entityType = _p.loadedEntityTypesIDMap[entityTypeId]
             var entityTypeLabel =entityType.label;
 
             newMention.type = entityTypeLabel;
             newMention.begin = _p.activeSelection.begin;
             newMention.end = _p.activeSelection.end;
-            newMention.entityTypeId = entityTypeId;
+
+            assignEntityType(newMention);
+
             mentions.push(newMention);
-
-            for (var k in _p.activeSelection.tokens){
-                var tokenEle = _p.activeSelection.tokens[k];
-                tokenEle.addClass("entityTypeAssigned");
-                //tokenEle.addClass("entityTypeId-"+entityTypeId);
-                tokenEle.attr("entityTypeId",entityTypeId);
-                tokenEle.attr("mentionId",newMention.id);
-                tokenEle.css("background-color",entityType.sireProp.backGroundColor);
-                tokenEle.css("color",entityType.sireProp.color);
-            };
-
             clearMentionTargetSelection();
             _p.activeSelection = null;
-
-
-
-
-
 
         }
     };
 
+    //_p.activeSelection이 있을것을 요구한다. 최초로 로딩시 이미 있는 멘션 칠할때도 하나씩 activeSession 을 만들거 가면서 이작업을 한다.(drawMentionTargetSelection을 이용해 자동으로 됨)
+    function assignEntityType(mention){
+        var entityType = _p.loadedEntityTypesLabelMap[mention.type]
+        for (var k in _p.activeSelection.tokens){
+            var tokenEle = _p.activeSelection.tokens[k];
+            tokenEle.addClass("entityTypeAssigned");
+            tokenEle.attr("entityTypeLabel",mention.type);
+            tokenEle.attr("mentionId",mention.id);
+            tokenEle.css("background-color",entityType.sireProp.backGroundColor);
+            tokenEle.css("color",entityType.sireProp.color);
+        };
+    };
 
+    function resetMentionDisplay(){
+        var mentions = _p.loadedGroundTruth.mentions;
+        for (var k in mentions){
+            var mention = mentions[k];
 
+            var sentenceId = mention.id.split("-")[0]
+            _p.activeSelection= {"sentenceId":sentenceId, "id":mention.id, "begin":mention.begin, "end":mention.end, "tokens":{}};
+            drawMentionTargetSelection(sentenceId,mention.begin,mention.end);
+            assignEntityType(mention);
+
+        };
+        clearMentionTargetSelection();
+    };
 
     function processTokenSelection(tokenEle){
         var tokenEleId = _p.getObjectId(tokenEle);
@@ -355,13 +373,13 @@ var $J1 = (function (module){
 
         var sentenceId = tokenEleId.split("-")[1];
         var tokenId = tokenEleId.split("-")[1]+"-"+tokenEleId.split("-")[2];
-        var sentence = $.grep(_p.loadedDocument.sentences, function(e){ return e.id == sentenceId; })[0];
+        var sentence = $.grep(_p.loadedGroundTruth.sentences, function(e){ return e.id == sentenceId; })[0];
 
         if (sentence) {
 
             if (tokenEle.hasClass("entityTypeAssigned")){
-                var entityTypeId = tokenEle.attr("entityTypeId");
-                var mention = $.grep(_p.loadedDocument.mentions, function(e){ return e.entityTypeId == entityTypeId; })[0];
+                var entityTypeLabel = tokenEle.attr("entityTypeLabel");
+                var mention = $.grep(_p.loadedGroundTruth.mentions, function(e){ return e.type == entityTypeLabel; })[0];
                 clearMentionTargetSelection();
                 drawMentionTargetSelection(sentenceId,mention.begin,mention.end);
 
@@ -507,7 +525,6 @@ var $J1 = (function (module){
             "begin" : null,
             "end" : null,
             "inCoref" : false,
-            "entityTypeId" : null
         }
     }
 
