@@ -17,6 +17,9 @@ def get_entity_type_list(project_id):
     entity_types = entity_types_collection.find_one({"project_id": project_id})
     return entity_types["entity_types"]
 
+def get_relationship_type_list(project_id):
+    entity_types = relationship_types_collection.find_one({"project_id": project_id})
+    return entity_types["relationship_types"]
 
 def get_sire_info(project_id):
     sire_info = sire_info_collection.find_one({"project_id": project_id})

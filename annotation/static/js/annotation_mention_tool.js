@@ -2,6 +2,17 @@
 var $J1 = (function (module){
 	var _p = module._p = module._p || {};
 
+    _p.processMentionToolUIReset = function(){
+        $("#relationToolRightSideBar").css("display","none");
+        $("#mentionToolRightSideBar").css("display","");
+        activateMentionToolDocumentUI();
+    };
+
+    function activateMentionToolDocumentUI(){
+        $("#document-holder").find(".gtcTokenRelationMargin").remove();
+
+
+    };
 
     _p.resetMentionTypeClass = function(){
         $("#list-mention-type").empty();
@@ -17,27 +28,28 @@ var $J1 = (function (module){
 
     };
 
+
     function drawMentionClass(item){
         var style = "background-color:" + item.backGroundColor + "; color:"+item.color;
-        var item = $('<div><div class="itemIcon" style="'+style+'">'+item.hotkey+'</div><div class="itemLabel">'+item.name+'</div></div>')
+        var item = $('<div><div class="itemMentionIcon" style="'+style+'">'+item.hotkey+'</div><div class="itemLabel">'+item.name+'</div></div>')
         $("#list-mention-class").append(item);
     };
 
     function drawMentionType(item){
         var style = "background-color:" + item.backGroundColor + "; color:"+item.color;
-        var item = $('<div><div class="itemIcon" style="'+style+'">'+item.hotkey+'</div><div class="itemLabel">'+item.name+'</div></div>')
+        var item = $('<div><div class="itemMentionIcon" style="'+style+'">'+item.hotkey+'</div><div class="itemLabel">'+item.name+'</div></div>')
         $("#list-mention-type").append(item);
     };
 
     function drawEntityTypeItem(item){
         var style = "background-color:" + item.sireProp.backGroundColor + "; color:"+item.sireProp.color;
-        var item = $('<div gtcLabel="'+item.label+'" id="'+item.id+'" class="gtcEntityType"><div class="itemIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>');
+        var item = $('<div gtcMentionLabel="'+item.label+'" id="'+item.id+'" class="gtcEntityType"><div class="itemMentionIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>');
 
 
         $("#list-entity-type").append(item);
 
         //이거 왜 안되나 모르겠음.
-        //item.attr("gtcLabel",item.label);
+        //item.attr("gtcMentionLabel",item.label);
     };
 
     _p.drawSentence = function(sentence,index){
@@ -103,7 +115,7 @@ var $J1 = (function (module){
 
     _p.processEntityTypeAssignment = function(ele){
         ele = $(ele);
-        var entityType = _p.loadedEntityTypesLabelMap[ele.attr("gtcLabel")]
+        var entityType = _p.loadedEntityTypesLabelMap[ele.attr("gtcMentionLabel")]
         if (_p.activeSelection){
 
 

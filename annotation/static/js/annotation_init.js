@@ -5,6 +5,7 @@ var $J1 = (function (module){
     _p.projectId = null;
 
     _p.loadedEntityTypesLabelMap={};
+    _p.loadedRelationTypesIdMap={};
     _p.loadedGroundTruth={};
     _p.loadedSireInfo={};
     _p.activeSelection=null;
@@ -35,6 +36,14 @@ var $J1 = (function (module){
             _p.resetEntityTypeList();
         });
 
+        getRelationTypeList(data)
+        .done(function(result){
+            for (var k in result.list) {
+                var relationType = result.list[k];
+                _p.loadedRelationTypesIdMap[relationType.id] = relationType;
+            };
+            _p.resetRelationTypeList();
+        });
 
         getGroundTruth(data)
         .done(function(result){
@@ -53,6 +62,8 @@ var $J1 = (function (module){
             _p.loadedSireInfo = result.sireInfo;
             _p.resetMentionTypeClass();
         });
+
+
 
         setupUIEvent();
 
@@ -89,13 +100,21 @@ var $J1 = (function (module){
 
     };
 
-    function processMentionToolUIReset(){
-        $("#relationToolRightSideBar").css("display","none");
-        $("#mentionToolRightSideBar").css("display","");
+
+
+
+    function getRelationTypeList(data){
+        return $.ajax({
+            url: Flask.url_for('annotator.get_relationship_type_list', {project_id: data.project_id})
+            ,type: 'POST'
+            ,contentType: "application/json;charset=utf-8"
+            ,dataType: 'json'
+            ,data: JSON.stringify(data)
+            ,beforeSend:function(){
+
+            }
+        })
     };
-
-
-
 
     function getEntityTypeList(data){
         return $.ajax({
@@ -201,7 +220,7 @@ var $J1 = (function (module){
     function processLeftSideBarClickEvent(ele,event){
         if (ele.is("#btnMentionTool")){
             event.stopPropagation();
-            processMentionToolUIReset();
+            _p.processMentionToolUIReset();
         };
         if (ele.is("#btnRelationTool")){
             event.stopPropagation();

@@ -27,13 +27,23 @@ body {
     border:solid;
 }
 
-.itemIcon {
+.itemMentionIcon {
     display:inline-block;
     width: 30px;
     height: 100%;
     text-align: center;
     cursor: pointer;
     line-height: 35px;
+}
+
+.itemRelationIcon{
+    display:inline-block;
+    width: 30px;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+    line-height: 35px;
+    border: 2px solid;
 }
 
 .itemLabel {
@@ -100,6 +110,11 @@ body {
     border-right: 2px solid #00B2EF;
 }
 
+.gtcTokenRelationMargin{
+    margin-bottom: 100px;
+    margin-top: 100px;
+    display: inline-block;
+}
 
 .testBox{
     position: absolute;

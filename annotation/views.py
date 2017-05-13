@@ -56,6 +56,23 @@ def get_entity_type_list(project_id):
 
     return dumps(result, ensure_ascii=False)
 
+@bpannotator.route('/getRelationshipTypeList/<project_id>', methods=['POST', 'GET'])
+def get_relationship_type_list(project_id):
+    result = {}
+    relationship_type_list = None
+
+    try:
+        result = {}
+        relationship_type_list = models.get_relationship_type_list(project_id)
+        result["resultOK"] = True
+        result["list"] = relationship_type_list
+
+    except Exception as e:
+        result["resultOK"] = False
+        result["message"] = str(Exception)
+        log_exception(e)
+
+    return dumps(result, ensure_ascii=False)
 
 @bpannotator.route('/getGroundTruth/<project_id>', methods=['POST', 'GET'])
 def get_ground_truth(project_id):
