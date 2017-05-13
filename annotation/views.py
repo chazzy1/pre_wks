@@ -29,9 +29,6 @@ def tool(documentid, projectid=None):
     print documentid
 
 
-
-
-
     project_id = "asdf"
 
 
@@ -77,3 +74,42 @@ def get_document(project_id):
         log_exception(e)
 
     return dumps(result, ensure_ascii=False)
+
+
+@bpannotator.route('/getSireInfo/<project_id>', methods=['POST', 'GET'])
+def get_sire_info(project_id):
+    result = {}
+
+    try:
+        document_id = str(request.json['document_id'])
+        result = {}
+        document = models.get_sire_info(project_id)
+        result["resultOK"] = True
+        result["sireInfo"] = document
+
+    except Exception as e:
+        result["resultOK"] = False
+        result["message"] = str(Exception)
+        log_exception(e)
+
+    return dumps(result, ensure_ascii=False)
+
+@bpannotator.route('/saveAll/<project_id>', methods=['POST', 'GET'])
+def save_all(project_id):
+    result = {}
+
+    try:
+        ground_truth_id = str(request.json['ground_truth_id'])
+        save_data = request.json['saveData']
+        result = {}
+        save_result = models.save_all(project_id, ground_truth_id=ground_truth_id, save_data=save_data)
+        result["resultOK"] = True
+        result["result"] = save_result
+
+    except Exception as e:
+        result["resultOK"] = False
+        result["message"] = str(Exception)
+        log_exception(e)
+
+    return dumps(result, ensure_ascii=False)
+

@@ -2,30 +2,34 @@
 var $J1 = (function (module){
 	var _p = module._p = module._p || {};
 
+    _p.projectId = null;
 
-    _p.loadedEntityTypes={};
+    _p.loadedEntityTypesIDMap={};
     _p.loadedDocument={};
-    _p.loadedMentions={};
+    _p.loadedSireInfo={};
     _p.activeSelection=null;
+    _p.sentencesIdMap = {};
+
 
 
 
     _p.init = function(projectId,documentId){
 
         console.log(projectId,documentId);
+        _p.projectId = projectId
 
         data={};
         data.project_id=projectId;
         data.document_id=documentId;
+
 
         getEntityTypeList(data)
         .done(function(result){
             if (result.resultOK) {
                 for (var k in result.list) {
                     var entityType = result.list[k];
-                    _p.loadedEntityTypes[entityType.id] = entityType;
+                    _p.loadedEntityTypesIDMap[entityType.id] = entityType;
                 };
-
             } else {
                 alert(result.message);
             }
@@ -37,8 +41,18 @@ var $J1 = (function (module){
         getDocument(data)
         .done(function(result){
             _p.loadedDocument = result.document;
+            for (var k in _p.loadedDocument.sentences){
+                var sentence = _p.loadedDocument.sentences[k];
+                _p.sentencesIdMap[sentence.id] = sentence;
+            };
             console.log(_p.loadedDocument);
             resetDocument();
+        });
+
+        getSireInfo(data)
+        .done(function(result){
+            _p.loadedSireInfo = result.sireInfo;
+            resetMentionTypeClass();
         });
 
         setupUIEvent();
@@ -56,6 +70,12 @@ var $J1 = (function (module){
         $("#toolbar").on("click","div, button",function(event){
             var ele = $(this);
             processToolbarClickEvent(ele,event);
+        });
+
+        $("#rightSideBar").off("click","**");
+        $("#rightSideBar").on("click","div",function(event){
+            var ele = $(this);
+            processRightSideBarClickEvent(ele,event);
         });
 
 
@@ -93,10 +113,34 @@ var $J1 = (function (module){
         })
     };
 
+    function getSireInfo(data){
+        return $.ajax({
+            url: Flask.url_for('annotator.get_sire_info', {project_id: data.project_id})
+            ,type: 'POST'
+            ,contentType: "application/json;charset=utf-8"
+            ,dataType: 'json'
+            ,data: JSON.stringify(data)
+            ,beforeSend:function(){
 
+            }
+        })
+    };
+
+    function saveAll(data){
+        return $.ajax({
+            url: Flask.url_for('annotator.save_all', {project_id: _p.projectId})
+            ,type: 'POST'
+            ,contentType: "application/json;charset=utf-8"
+            ,dataType: 'json'
+            ,data: JSON.stringify(data)
+            ,beforeSend:function(){
+
+            }
+        })
+    };
 
     function processDocumentClickEvent(ele,event){
-        if (ele.hasClass("wksToken")){
+        if (ele.hasClass("gtcToken")){
             event.stopPropagation();
 
             processTokenSelection(ele);
@@ -107,17 +151,42 @@ var $J1 = (function (module){
 
 
     function processToolbarClickEvent(ele,event){
-
         if (ele.is("#btnTest1")){
-
-
             var from = $("#selectionFrom").val();
             var to = $("#selectionTo").val();
-
             drawMentionTargetSelection('s0',from,to);
+            event.stopPropagation();
+
+        };
+        if (ele.is("#btnSave")){
+            event.stopPropagation();
+            data={};
+            data.project_id=_p.projectId;
+            data.ground_truth_id=_p.loadedDocument.id;
+
+            data.saveData = {};
+
+            data.saveData.mentions = _p.loadedDocument.mentions;
+            data.saveData.relations = _p.loadedDocument.relations;
+            data.saveData.corefs = _p.loadedDocument.corefs;
+
+            console.log(data)
+            saveAll(data)
+            .done(function(result){
+
+            });
+
+        };
+    };
+
+    function processRightSideBarClickEvent(ele,event){
+        if (ele.hasClass("gtcEntityType")){
+            event.stopPropagation();
+
+            processEntityTypeAssignment(ele);
 
         }
-    };
+    }
 
     function processKeyDownEvent(event){
         if (event.keyCode == 27) {
@@ -141,9 +210,41 @@ var $J1 = (function (module){
         }
     };
 
+    function resetMentionTypeClass(){
+        $("#list-mention-type").empty();
+        for (var k in _p.loadedSireInfo.entityProp.mentionType) {
+            mentionType = _p.loadedSireInfo.entityProp.mentionType[k];
+            drawMentionType(mentionType);
+        };
+        $("#list-mention-class").empty();
+        for (var k in _p.loadedSireInfo.entityProp.clazz) {
+            mentionClass = _p.loadedSireInfo.entityProp.clazz[k];
+            drawMentionClass(mentionClass);
+        }
+
+    };
+
+    function drawMentionClass(item){
+        var style = "background-color:" + item.backGroundColor + "; color:"+item.color;
+        var item = $('<div><div class="itemIcon" style="'+style+'">'+item.hotkey+'</div><div class="itemLabel">'+item.name+'</div></div>')
+        $("#list-mention-class").append(item);
+    };
+
+    function drawMentionType(item){
+        var style = "background-color:" + item.backGroundColor + "; color:"+item.color;
+        var item = $('<div><div class="itemIcon" style="'+style+'">'+item.hotkey+'</div><div class="itemLabel">'+item.name+'</div></div>')
+        $("#list-mention-type").append(item);
+    };
+
+    function drawEntityTypeItem(item){
+        var style = "background-color:" + item.sireProp.backGroundColor + "; color:"+item.sireProp.color;
+        var item = $('<div id="'+item.id+'" class="gtcEntityType"><div class="itemIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>')
+        $("#list-entity-type").append(item);
+    };
+
     function drawSentence(sentence,index){
-        var sentenceId = "wksSentence-" + sentence.id;
-        var sentenceEle = $('<div id="'+sentenceId+'" class="wksSentence"></div>')
+        var sentenceId = "gtcSentence-" + sentence.id;
+        var sentenceEle = $('<div id="'+sentenceId+'" class="gtcSentence"></div>')
         var sentenceIndexEle = $('<div class="sentenceNumber">'+index+'</div>');
         sentenceEle.append(sentenceIndexEle);
         $("#document-holder").append(sentenceEle);
@@ -157,11 +258,11 @@ var $J1 = (function (module){
     };
 
     function drawToken(sentenceEle,token){
-        var tokenId = "wksToken-"+token.id;
-        var tokenEle = $('<span id="'+tokenId+'" class="wksToken" ></span>');
-        var tokenTextEle = $('<span class="wksTokenText">'+token.text+'</span>')
+        var tokenId = "gtcToken-"+token.id;
+        var tokenEle = $('<span id="'+tokenId+'" class="gtcToken" ></span>');
+        var tokenTextEle = $('<span class="gtcTokenText">'+token.text+'</span>')
 
-        var tokenSelectionEle = $('<span style="display:none" class="wksTokenSelection"></span>')
+        var tokenSelectionEle = $('<span style="display:none" class="gtcTokenSelection"></span>')
 
         tokenEle.append(tokenTextEle);
         tokenEle.append(tokenSelectionEle);
@@ -178,10 +279,10 @@ var $J1 = (function (module){
     function drawBlank(sentenceEle,token,nextToken){
 
         if (nextToken && nextToken.begin - token.end) {
-            var tokenId = "wksToken-ws-b"+token.end;
-            var tokenEle = $('<span id="'+tokenId+'" class="wksToken" ></span>');
-            var tokenTextEle = $('<span class="wksTokenText"> </span>')
-            var tokenSelectionEle = $('<span style="display:none" class="wksTokenSelection"></span>')
+            var tokenId = "gtcToken-ws-b"+token.end;
+            var tokenEle = $('<span id="'+tokenId+'" class="gtcToken" ></span>');
+            var tokenTextEle = $('<span class="gtcTokenText"> </span>')
+            var tokenSelectionEle = $('<span style="display:none" class="gtcTokenSelection"></span>')
 
             tokenEle.append(tokenTextEle);
             tokenEle.append(tokenSelectionEle);
@@ -197,78 +298,119 @@ var $J1 = (function (module){
 
     function resetEntityTypeList(){
         $("#list-entity-type").empty();
-        for (var id in _p.loadedEntityTypes){
-            drawEntityTypeItem(_p.loadedEntityTypes[id]);
+        for (var id in _p.loadedEntityTypesIDMap){
+            drawEntityTypeItem(_p.loadedEntityTypesIDMap[id]);
         };
     };
 
+    function processEntityTypeAssignment(ele){
+        ele = $(ele);
+        if (_p.activeSelection){
+            var entityTypeId = _p.getObjectId(ele);
+            console.log(entityTypeId)
+            console.log(_p.activeSelection)
+            var mentionTypes = _p.loadedSireInfo.entityProp.mentionType;
+            var mentions = _p.loadedDocument.mentions;
+            var newMention = getBaseMentionObject();
+            var mentionIndex = mentions.length;
 
-    function drawEntityTypeItem(item){
-        var style = "background-color:" + item.sireProp.backGroundColor + "; color:"+item.sireProp.color;
+            newMention.id = _p.activeSelection.sentenceId+"-"+"m"+mentionIndex;
 
-        var item = $('<div id="'+item.id+'"><div class="itemIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>')
+            var entityType = _p.loadedEntityTypesIDMap[entityTypeId]
+            var entityTypeLabel =entityType.label;
 
-        $("#list-entity-type").append(item);
+            newMention.type = entityTypeLabel;
+            newMention.begin = _p.activeSelection.begin;
+            newMention.end = _p.activeSelection.end;
+            newMention.entityTypeId = entityTypeId;
+            mentions.push(newMention);
+
+            for (var k in _p.activeSelection.tokens){
+                var tokenEle = _p.activeSelection.tokens[k];
+                tokenEle.addClass("entityTypeAssigned");
+                //tokenEle.addClass("entityTypeId-"+entityTypeId);
+                tokenEle.attr("entityTypeId",entityTypeId);
+                tokenEle.attr("mentionId",newMention.id);
+                tokenEle.css("background-color",entityType.sireProp.backGroundColor);
+                tokenEle.css("color",entityType.sireProp.color);
+            };
+
+            clearMentionTargetSelection();
+            _p.activeSelection = null;
+
+
+
+
+
+
+        }
     };
+
+
+
 
     function processTokenSelection(tokenEle){
         var tokenEleId = _p.getObjectId(tokenEle);
-        //wksToken-s0-t3
+        //gtcToken-s0-t3
 
         var sentenceId = tokenEleId.split("-")[1];
         var tokenId = tokenEleId.split("-")[1]+"-"+tokenEleId.split("-")[2];
         var sentence = $.grep(_p.loadedDocument.sentences, function(e){ return e.id == sentenceId; })[0];
 
         if (sentence) {
-            var token = $.grep(sentence.tokens, function(e){ return e.id == tokenId; })[0];
-            var mentionId = sentenceId + "-m0";
-            if (_p.activeSelection && sentenceId == _p.activeSelection.sentenceId){
 
-                var minPoint = _p.activeSelection.begin;
-                var maxPoint = _p.activeSelection.end;
-
-                if (token.begin < minPoint ) {
-                    minPoint = token.begin;
-                };
-
-                if (token.end > maxPoint ) {
-                    maxPoint = token.end;
-                };
-                _p.activeSelection.begin = minPoint;
-                _p.activeSelection.end = maxPoint;
+            if (tokenEle.hasClass("entityTypeAssigned")){
+                var entityTypeId = tokenEle.attr("entityTypeId");
+                var mention = $.grep(_p.loadedDocument.mentions, function(e){ return e.entityTypeId == entityTypeId; })[0];
                 clearMentionTargetSelection();
-                drawMentionTargetSelection(sentenceId,minPoint,maxPoint);
+                drawMentionTargetSelection(sentenceId,mention.begin,mention.end);
+
+
 
             } else {
-                clearMentionTargetSelection();
-                _p.activeSelection= {"sentenceId":sentenceId, "id":mentionId, "begin":token.begin, "end":token.end};
 
-                drawMentionTargetSelection(sentenceId,token.begin,token.end);
+                var token = $.grep(sentence.tokens, function(e){ return e.id == tokenId; })[0];
+                var mentionId = sentenceId + "-m0";
+                if (_p.activeSelection && sentenceId == _p.activeSelection.sentenceId){
 
-            };
+                    var minPoint = _p.activeSelection.begin;
+                    var maxPoint = _p.activeSelection.end;
+
+                    if (token.begin < minPoint ) {
+                        minPoint = token.begin;
+                    };
+
+                    if (token.end > maxPoint ) {
+                        maxPoint = token.end;
+                    };
+                    _p.activeSelection.begin = minPoint;
+                    _p.activeSelection.end = maxPoint;
+
+
+
+                    clearMentionTargetSelection();
+                    drawMentionTargetSelection(sentenceId,minPoint,maxPoint);
+
+                } else {
+                    clearMentionTargetSelection();
+                    _p.activeSelection= {"sentenceId":sentenceId, "id":mentionId, "begin":token.begin, "end":token.end, "tokens":{}};
+
+
+                    drawMentionTargetSelection(sentenceId,token.begin,token.end);
+
+                };
+            }
+
+
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     };
 
     function clearMentionTargetSelection(){
-        $("#document-holder").find(".wksTokenSelection").each(function(index,ele){
-            $(ele).removeClass("wksTokenSelectionBegin");
-            $(ele).removeClass("wksTokenSelectionEnd");
+        $("#document-holder").find(".gtcTokenSelection").each(function(index,ele){
+            $(ele).removeClass("gtcTokenSelectionBegin");
+            $(ele).removeClass("gtcTokenSelectionEnd");
             $(ele).css("display","none");
         });
     }
@@ -277,18 +419,12 @@ var $J1 = (function (module){
 
 
     function drawMentionTargetSelection(sentenceId,from,to){
-
-        var sentencesIdMap = {};
-        for (var k in _p.loadedDocument.sentences){
-            var sentence = _p.loadedDocument.sentences[k];
-            sentencesIdMap[sentence.id] = sentence;
-        };
-
-        var sentence = sentencesIdMap[sentenceId];
+        var sentence = _p.sentencesIdMap[sentenceId];
 
         for (var k in sentence.tokens){
             var token =  sentence.tokens[k];
-            var tokenEle = $("#wksToken-"+token.id);
+            var tokenEle = $("#gtcToken-"+token.id);
+
             if (from >= token.begin && from <= token.end){
                 var tokenTo = to;
                 var endMark = true;
@@ -315,26 +451,38 @@ var $J1 = (function (module){
 
     }
     function drawPreBlankSelection(tokenEle){
-        tokenEle.prev().find(".wksTokenSelection").css("display","");
+        var blankEle = tokenEle.prev();
+        var tokenEleId = _p.getObjectId(blankEle);
+        if (_p.activeSelection) {
+            _p.activeSelection.tokens[tokenEleId] = blankEle;
+        }
+        blankEle.find(".gtcTokenSelection").css("display","");
     }
 
     function drawTokenSelection(tokenEle,from, to, beginMark, endMark){
+        var tokenEleId = _p.getObjectId(tokenEle);
+
+        //선택된 토큰들을 한번에 칠해줄려고 이걸 하는데,
+        //본 펑션이 나중에 이미 선택된 멘션을 클릭할때도 사용되므로, 그때는 아래의 작업을 안해야함. 그래서 체크한다.
+        if (_p.activeSelection) {
+            _p.activeSelection.tokens[tokenEleId] = tokenEle;
+        };
+
 
         var range = document.createRange();
-        var textToken = tokenEle.find(".wksTokenText");
+        var textToken = tokenEle.find(".gtcTokenText");
         var textNode = textToken[0].firstChild;
         range.setStart(textNode,from);
         range.setEnd(textNode,to);
         var rects = range.getClientRects()[0];
-
-        var tokenSelectionEle = tokenEle.find(".wksTokenSelection");
+        var tokenSelectionEle = tokenEle.find(".gtcTokenSelection");
 
         tokenSelectionEle.css("display","");
         if (beginMark) {
-            tokenSelectionEle.addClass("wksTokenSelectionBegin");
+            tokenSelectionEle.addClass("gtcTokenSelectionBegin");
         };
         if (endMark) {
-            tokenSelectionEle.addClass("wksTokenSelectionEnd");
+            tokenSelectionEle.addClass("gtcTokenSelectionEnd");
         };
 
         var leftOffset = tokenEle.offset().left;
@@ -344,6 +492,24 @@ var $J1 = (function (module){
 
 
     };
+
+    function getBaseMentionObject(){
+        //entityTypeId 이거 내가 추가한 속성임.
+        return {
+            "id" : null,
+            "properties" : {
+              "SIRE_MENTION_ROLE" : "NONE",
+              "SIRE_ENTITY_SUBTYPE" : "NONE",
+              "SIRE_MENTION_TYPE" : "NONE",
+              "SIRE_MENTION_CLASS" : "NONE"
+            },
+            "type" : null,
+            "begin" : null,
+            "end" : null,
+            "inCoref" : false,
+            "entityTypeId" : null
+        }
+    }
 
     _p.getObjectId = function(obj){
         if (!obj){

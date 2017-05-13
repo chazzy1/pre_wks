@@ -46,7 +46,7 @@ body {
     vertical-align: middle;
 }
 
-.wksSentence{
+.gtcSentence{
     position: relative;
     border: none;
     border-color: #E0E0E0;
@@ -68,7 +68,7 @@ body {
     box-sizing: border-box;
 }
 
-.wksToken{
+.gtcToken{
     position: relative;
     display: inline;
     white-space: nowrap;
@@ -77,12 +77,12 @@ body {
     box-sizing: border-box;
 }
 
-.wksTokenText{
+.gtcTokenText{
     padding: 8px 1px;
     white-space: nowrap;
 }
 
-.wksTokenSelection{
+.gtcTokenSelection{
     position: absolute;
     border-top: 2px solid #00B2EF;
     border-bottom: 2px solid #00B2EF;
@@ -92,11 +92,11 @@ body {
     white-space: nowrap;
 }
 
-.wksTokenSelectionBegin{
+.gtcTokenSelectionBegin{
     border-left: 2px solid #00B2EF;
 }
 
-.wksTokenSelectionEnd{
+.gtcTokenSelectionEnd{
     border-right: 2px solid #00B2EF;
 }
 
@@ -104,4 +104,9 @@ body {
 .testBox{
     position: absolute;
     border:solid;
+}
+
+.iconList{
+overflow-y: auto;
+height: calc(100% - 50px);
 }

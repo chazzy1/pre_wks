@@ -54,12 +54,13 @@ class TypesystemParser:
 
         entity_types = json_data["entityTypes"]
         relationship_types = json_data["relationshipTypes"]
-        sireInfo = json_data["sireInfo"]
+        sire_info = json_data["sireInfo"]
         functionalEntityTypes = json_data["functionalEntityTypes"]
         kgimported = json_data["kgimported"]
 
         self.create_entity_types(entity_types)
         self.create_relationship_types(relationship_types)
+        self.create_sire_info(sire_info)
 
     def create_entity_types(self, entity_types):
         entity_types_collection.update(
@@ -79,6 +80,17 @@ class TypesystemParser:
             {"project_id": self.global_project_id},
             {
                 "$set": {"entity_types": relationship_types}
+            },
+            multi=False,
+            upsert=True
+        )
+
+
+    def create_sire_info(self, sire_info):
+        sire_info_collection.update(
+            {"project_id": self.global_project_id},
+            {
+                "$set": {"sire_info": sire_info}
             },
             multi=False,
             upsert=True
