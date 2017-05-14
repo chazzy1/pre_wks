@@ -1,37 +1,23 @@
 [ {
   "id" : "id-all",
   "name" : "All",
-  "documents" : [ "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1", "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-2" ],
+  "documents" : [ "d50741c4-37d4-11e7-915e-02429bdaaeaf-1", "d50741c4-37d4-11e7-915e-02429bdaaeaf-2" ],
   "count" : 2,
   "type" : "ALL",
   "modifiedDate" : 0
 }, {
-  "id" : "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9",
+  "id" : "d50741c4-37d4-11e7-915e-02429bdaaeaf",
   "name" : "documents-reduced.csv",
-  "documents" : [ "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1", "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-2" ],
+  "documents" : [ "d50741c4-37d4-11e7-915e-02429bdaaeaf-1", "d50741c4-37d4-11e7-915e-02429bdaaeaf-2" ],
   "count" : 2,
   "type" : "SOURCE",
-  "modifiedDate" : 1492574970774
+  "modifiedDate" : 1494709690470
 }, {
-  "id" : "c9d534c0-3548-11e7-9bde-6b66c68ff2f6",
+  "id" : "be702490-37dd-11e7-a3f1-776101951b06",
   "name" : "set1",
-  "documents" : [ "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1", "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-2" ],
+  "documents" : [ "d50741c4-37d4-11e7-915e-02429bdaaeaf-1", "d50741c4-37d4-11e7-915e-02429bdaaeaf-2" ],
   "count" : 2,
   "type" : "ASSIGNMENT",
-  "annotator" : "chazzy1spam@gmail.com",
-  "modifiedDate" : 1494397239820
-}, {
-  "id" : "0a659cd0-3604-11e7-8497-0be722f24e26",
-  "name" : "Training",
-  "documents" : [ "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1" ],
-  "count" : 1,
-  "type" : "TRAINING",
-  "modifiedDate" : 1494477664029
-}, {
-  "id" : "0a659cd1-3604-11e7-8497-0be722f24e26",
-  "name" : "Blind",
-  "documents" : [ "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-2" ],
-  "count" : 1,
-  "type" : "BLIND",
-  "modifiedDate" : 1494477664029
+  "annotator" : "chazzy1@gmail.com",
+  "modifiedDate" : 1494681118041
 } ]

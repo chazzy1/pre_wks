@@ -1,12 +1,12 @@
 {
-  "id" : "fcd75360-24b5-11e7-8573-0bfe8b3d9ea9-1",
+  "id" : "d50741c4-37d4-11e7-915e-02429bdaaeaf-1",
   "name" : "Technology - brighthand.com",
   "version" : 3,
   "text" : "Thanks to an apparent slip-up, Microsoft has given the world a look at its upcoming online synchronization service for Windows Mobile called My Phone. \r\rThe web site for this service is live now, but not fully functional. Still, there's enough to give a complete overview of what it will offer.",
   "docLength" : 0,
   "language" : "EN",
   "status" : "SUBMITTED",
-  "modifiedDate" : 1494477279924,
+  "modifiedDate" : 1494738838291,
   "documentSet" : [ ],
   "preannotation" : [ ],
   "sentences" : [ {
@@ -383,7 +383,31 @@
     } ]
   } ],
   "mentions" : [ {
+    "id" : "s0-m0",
+    "properties" : {
+      "SIRE_ENTITY_SUBTYPE" : "NONE",
+      "SIRE_MENTION_TYPE" : "NONE",
+      "SIRE_MENTION_CLASS" : "NONE",
+      "SIRE_MENTION_ROLE" : "NONE"
+    },
+    "type" : "WEB",
+    "begin" : 31,
+    "end" : 40,
+    "inCoref" : false
+  }, {
     "id" : "s0-m1",
+    "properties" : {
+      "SIRE_ENTITY_SUBTYPE" : "NONE",
+      "SIRE_MENTION_TYPE" : "NONE",
+      "SIRE_MENTION_CLASS" : "NONE",
+      "SIRE_MENTION_ROLE" : "NONE"
+    },
+    "type" : "FACILITY",
+    "begin" : 91,
+    "end" : 106,
+    "inCoref" : false
+  }, {
+    "id" : "s0-m4",
     "properties" : {
       "SIRE_MENTION_ROLE" : "ANIMAL",
       "SIRE_ENTITY_SUBTYPE" : "NONE",
@@ -391,47 +415,38 @@
       "SIRE_MENTION_CLASS" : "SPC"
     },
     "type" : "ANIMAL",
-    "begin" : 31,
-    "end" : 43,
-    "inCoref" : false
-  }, {
-    "id" : "s0-m2",
-    "properties" : {
-      "SIRE_MENTION_ROLE" : "AWARD",
-      "SIRE_ENTITY_SUBTYPE" : "NONE",
-      "SIRE_MENTION_TYPE" : "NONE",
-      "SIRE_MENTION_CLASS" : "SPC"
-    },
-    "type" : "AWARD",
     "begin" : 119,
     "end" : 126,
     "inCoref" : false
   }, {
-    "id" : "s1-m2",
+    "id" : "s0-m5",
     "properties" : {
-      "SIRE_MENTION_ROLE" : "AWARD",
+      "SIRE_MENTION_ROLE" : "EVENT",
       "SIRE_ENTITY_SUBTYPE" : "NONE",
       "SIRE_MENTION_TYPE" : "NONE",
       "SIRE_MENTION_CLASS" : "SPC"
     },
-    "type" : "AWARD",
-    "begin" : 204,
-    "end" : 209,
-    "inCoref" : false
-  }, {
-    "id" : "s1-m1",
-    "properties" : {
-      "SIRE_MENTION_ROLE" : "EVENT_CUSTODY",
-      "SIRE_ENTITY_SUBTYPE" : "NONE",
-      "SIRE_MENTION_TYPE" : "NONE",
-      "SIRE_MENTION_CLASS" : "SPC"
-    },
-    "type" : "EVENT_CUSTODY",
-    "begin" : 210,
-    "end" : 220,
+    "type" : "EVENT",
+    "begin" : 144,
+    "end" : 149,
     "inCoref" : false
   } ],
-  "relations" : [ ],
+  "relations" : [ {
+    "id" : "s0-r1",
+    "properties" : { },
+    "type" : "locatedAt",
+    "args" : [ "s0-m4", "s0-m1" ]
+  }, {
+    "id" : "s0-r2",
+    "properties" : { },
+    "type" : "locatedAt",
+    "args" : [ "s0-m5", "s0-m1" ]
+  }, {
+    "id" : "s0-r3",
+    "properties" : { },
+    "type" : "diedAt",
+    "args" : [ "s0-m4", "s0-m1" ]
+  } ],
   "corefs" : [ ],
   "typeResolved" : true,
   "userResolved" : false

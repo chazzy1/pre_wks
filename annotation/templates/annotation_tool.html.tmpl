@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block script_foot %}
+    <script type="text/javascript" src="{{ url_for('.static', filename='js/jqSimpleConnect.js')}}"></script>
+
     <script type="text/javascript" src="{{ url_for('.static', filename='js/annotation_init.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('.static', filename='js/annotation_mention_tool.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('.static', filename='js/annotation_relation_tool.js')}}"></script>
@@ -32,6 +34,9 @@
                 <input id="selectionFrom" type="text" class="form-control" aria-label="from">
                 <input id="selectionTo" type="text" class="form-control" aria-label="to">
                 <button id="btnSave" type="button" class="btn btn-default">Save</button>
+                <button id="btnTypeSystemLogical" type="button" class="btn btn-default">Logical</button>
+                <button id="btnTypeSystemPhysical" type="button" class="btn btn-default">Physical</button>
+
 
             </form>
         </div>
@@ -51,7 +56,7 @@
             <div id="document-holder"></div>
 
         </div>
-        <div class="col-md-3">
+        <div id="rightSideBar" class="col-md-3">
             <div id="mentionToolRightSideBar">
                 <div>
                     <ul class="nav nav-tabs">
@@ -63,7 +68,7 @@
                         </li>
                     </ul>
                 </div>
-                <div id="rightSideBar" class="tab-content">
+                <div class="tab-content">
                     <div id="tab-content-entity" class="tab-pane active">
                         <div>
                             <ul class="nav nav-tabs">

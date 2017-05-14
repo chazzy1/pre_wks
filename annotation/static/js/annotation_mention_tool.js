@@ -6,11 +6,14 @@ var $J1 = (function (module){
         $("#relationToolRightSideBar").css("display","none");
         $("#mentionToolRightSideBar").css("display","");
         activateMentionToolDocumentUI();
+        _p.resetMentionDisplay();
     };
 
     function activateMentionToolDocumentUI(){
-        $("#document-holder").find(".gtcTokenRelationMargin").remove();
-
+        _p.currentToolMode = _p.toolModeEnum.mentionTool;
+        $("#document-holder").find(".gtcTokenRelationMargin, .tokenEntityTypeMarker").remove();
+        _p.clearMentionTargetSelection();
+        _p.activeSelection = null;
 
     };
 
@@ -42,8 +45,12 @@ var $J1 = (function (module){
     };
 
     function drawEntityTypeItem(item){
+        var label = item.label;
+        if (_p.currentTypeSystemMode == "L" && item.logical_value) {
+            label = item.logical_value;
+        };
         var style = "background-color:" + item.sireProp.backGroundColor + "; color:"+item.sireProp.color;
-        var item = $('<div gtcMentionLabel="'+item.label+'" id="'+item.id+'" class="gtcEntityType"><div class="itemMentionIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+item.label+'</div></div>');
+        var item = $('<div gtcMentionLabel="'+item.label+'" id="'+item.id+'" class="gtcEntityType"><div class="itemMentionIcon" style="'+style+'">'+item.sireProp.hotkey+'</div><div class="itemLabel">'+label+'</div></div>');
 
 
         $("#list-entity-type").append(item);
@@ -54,9 +61,10 @@ var $J1 = (function (module){
 
     _p.drawSentence = function(sentence,index){
         var sentenceId = "gtcSentence-" + sentence.id;
-        var sentenceEle = $('<div id="'+sentenceId+'" class="gtcSentence"></div>')
+        var sentenceEle = $('<div id="'+sentenceId+'" class="gtcSentence"></div>');
         var sentenceIndexEle = $('<div class="sentenceNumber">'+index+'</div>');
         sentenceEle.append(sentenceIndexEle);
+
         $("#document-holder").append(sentenceEle);
         for (var k=0; k<sentence.tokens.length; k++){
             var token = sentence.tokens[k];
@@ -165,6 +173,7 @@ var $J1 = (function (module){
 
         };
         _p.clearMentionTargetSelection();
+        _p.activeSelection = null;
     };
 
     _p.processTokenSelection = function(tokenEle){

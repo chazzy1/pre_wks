@@ -1,0 +1,67 @@
+{
+    "_id" : ObjectId("5917c91708216f9d03711daf"),
+    "project_id" : "asdf",
+    "logical_entity_types" : [ 
+        {
+            "label" : "WEB",
+            "logical_value" : {
+                "ko" : "웹"
+            }
+        }, 
+        {
+            "label" : "FACILITY",
+            "logical_value" : {
+                "ko" : "시설"
+            }
+        }, 
+        {
+            "label" : "WEATHER",
+            "logical_value" : {
+                "ko" : "날씨"
+            }
+        }, 
+        {
+            "label" : "GEOLOGICALOBJ",
+            "logical_value" : {
+                "ko" : "지질학적물체"
+            }
+        }
+    ]
+}
+
+
+
+
+{
+    "_id" : ObjectId("5917d9dd08216f9d03711db0"),
+    "project_id" : "asdf",
+    "logical_relationship_types" : [ 
+        {
+            "label" : "populationOf",
+            "logical_value" : {
+                "ko" : "거주하는"
+            }
+        }, 
+        {
+            "label" : "affectedBy",
+            "logical_value" : {
+                "ko" : "영향받는"
+            }
+        }, 
+        {
+            "label" : "agentOf",
+            "logical_value" : {
+                "ko" : "담당자인"
+            }
+        }, 
+        {
+            "label" : "near",
+            "logical_value" : {
+                "ko" : "가까운"
+            }
+        }
+    ]
+}
+
+
+

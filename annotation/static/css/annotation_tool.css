@@ -125,3 +125,32 @@ body {
 overflow-y: auto;
 height: calc(100% - 50px);
 }
+
+.tokenEntityTypeMarker{
+    border-width: 2px;
+    border-style: solid;
+    position: absolute;
+    height: 30px;
+    line-height: 30px;
+    font-size: .8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 2px;
+    box-sizing: border-box;
+    padding-bottom: 5px;
+
+
+}
+
+
+.relationLabel{
+    color: #000000;
+    position: absolute;
+    font-size: .8em;
+    background-color: #fff;
+    border-width: 2px;
+    border-style: solid;
+    padding: 2px;
+    z-index: 5;
+}

@@ -6,10 +6,18 @@ var $J1 = (function (module){
 
     _p.loadedEntityTypesLabelMap={};
     _p.loadedRelationTypesIdMap={};
+    _p.loadedRelationPropLabelMap={};
     _p.loadedGroundTruth={};
     _p.loadedSireInfo={};
     _p.activeSelection=null;
     _p.sentencesIdMap = {};
+    _p.toolModeEnum = {
+        mentionTool:0,
+        relationTool:1,
+        coreferenceTool:2
+    };
+    _p.currentToolMode = null;
+    _p.currentTypeSystemMode = "L"; //L ogical or P hysical
 
 
     _p.init = function(projectId,documentId){
@@ -21,6 +29,7 @@ var $J1 = (function (module){
         data.project_id=projectId;
         data.document_id=documentId;
 
+        _p.currentToolMode = _p.toolModeEnum.mentionTool;
 
         getEntityTypeList(data)
         .done(function(result){
@@ -42,12 +51,26 @@ var $J1 = (function (module){
                 var relationType = result.list[k];
                 _p.loadedRelationTypesIdMap[relationType.id] = relationType;
             };
+
+            for (var id in _p.loadedRelationTypesIdMap){
+                var relation = _p.loadedRelationTypesIdMap[id];
+                //relation 은 중복되서 여러개 들어있으므로...대표되는 한개만 넣어둔다. sireprop이 나중에 사용됨.
+                if (!_p.loadedRelationPropLabelMap[relation.label]){
+                    _p.loadedRelationPropLabelMap[relation.label] = relation.sireProp;
+                    _p.loadedRelationPropLabelMap[relation.label].label = relation.label;
+                    _p.loadedRelationPropLabelMap[relation.label].logical_value = relation.logical_value;
+                }
+            };
+
             _p.resetRelationTypeList();
         });
 
         getGroundTruth(data)
         .done(function(result){
             _p.loadedGroundTruth = result.document;
+
+            console.log(result)
+
             for (var k in _p.loadedGroundTruth.sentences){
                 var sentence = _p.loadedGroundTruth.sentences[k];
                 _p.sentencesIdMap[sentence.id] = sentence;
@@ -71,7 +94,7 @@ var $J1 = (function (module){
 
     function setupUIEvent(){
         $("#document-holder").off("click","**");
-        $("#document-holder").on("click","span",function(event){
+        $("#document-holder").on("click","span, div",function(event){
             var ele = $(this);
             processDocumentClickEvent(ele,event);
         });
@@ -83,7 +106,7 @@ var $J1 = (function (module){
         });
 
         $("#rightSideBar").off("click","**");
-        $("#rightSideBar").on("click","div",function(event){
+        $("#rightSideBar").on("click","div, button",function(event){
             var ele = $(this);
             processRightSideBarClickEvent(ele,event);
         });
@@ -169,12 +192,20 @@ var $J1 = (function (module){
     };
 
     function processDocumentClickEvent(ele,event){
-        if (ele.hasClass("gtcToken")){
-            event.stopPropagation();
+        if (_p.currentToolMode == _p.toolModeEnum.mentionTool){
+            if (ele.hasClass("gtcToken")){
+                event.stopPropagation();
+                _p.processTokenSelection(ele);
+            }
+        };
 
-            _p.processTokenSelection(ele);
-
+        if (_p.currentToolMode == _p.toolModeEnum.relationTool){
+            if (ele.hasClass("tokenEntityTypeMarker")){
+                event.stopPropagation();
+                _p.processTokenEntityTypeMarkerSelection(ele);
+            }
         }
+
 
     };
 
@@ -204,6 +235,32 @@ var $J1 = (function (module){
             .done(function(result){
 
             });
+
+        };
+
+        if (ele.is("#btnTypeSystemLogical")){
+            event.stopPropagation();
+            _p.currentTypeSystemMode = "L";
+            if (_p.currentToolMode == _p.toolModeEnum.mentionTool){
+                _p.resetEntityTypeList();
+            } else if (_p.currentToolMode == _p.toolModeEnum.relationTool){
+                _p.resetRelationTypeList();
+                _p.processRelationToolUIReset();
+            };
+
+
+
+        };
+        if (ele.is("#btnTypeSystemPhysical")){
+            event.stopPropagation();
+            _p.currentTypeSystemMode = "P";
+            if (_p.currentToolMode == _p.toolModeEnum.mentionTool){
+                _p.resetEntityTypeList();
+            } else if (_p.currentToolMode == _p.toolModeEnum.relationTool){
+                _p.resetRelationTypeList();
+                _p.processRelationToolUIReset();
+            };
+
 
         };
     };
