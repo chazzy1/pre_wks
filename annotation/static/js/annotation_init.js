@@ -19,6 +19,7 @@ var $J1 = (function (module){
     _p.currentToolMode = null;
     _p.currentTypeSystemMode = "L"; //L ogical or P hysical
 
+    _p.relationTargetInfo = {}
 
     _p.init = function(projectId,documentId){
 
@@ -30,6 +31,9 @@ var $J1 = (function (module){
         data.document_id=documentId;
 
         _p.currentToolMode = _p.toolModeEnum.mentionTool;
+
+
+        $("body").append('<div id="relationLineDrawingArea" class="relationLineDrawingArea"></div>');
 
         getEntityTypeList(data)
         .done(function(result){
@@ -56,9 +60,7 @@ var $J1 = (function (module){
                 var relation = _p.loadedRelationTypesIdMap[id];
                 //relation 은 중복되서 여러개 들어있으므로...대표되는 한개만 넣어둔다. sireprop이 나중에 사용됨.
                 if (!_p.loadedRelationPropLabelMap[relation.label]){
-                    _p.loadedRelationPropLabelMap[relation.label] = relation.sireProp;
-                    _p.loadedRelationPropLabelMap[relation.label].label = relation.label;
-                    _p.loadedRelationPropLabelMap[relation.label].logical_value = relation.logical_value;
+                    _p.loadedRelationPropLabelMap[relation.label] = relation
                 }
             };
 
@@ -200,10 +202,47 @@ var $J1 = (function (module){
         };
 
         if (_p.currentToolMode == _p.toolModeEnum.relationTool){
-            if (ele.hasClass("tokenEntityTypeMarker")){
-                event.stopPropagation();
-                _p.processTokenEntityTypeMarkerSelection(ele);
-            }
+            switch (_p.currentRelationToolMode){
+                case _p.relationToolModeEnum.nothingSelected:
+                    if (ele.hasClass("tokenEntityTypeMarker")){
+                        event.stopPropagation();
+                        _p.currentRelationToolMode = _p.relationToolModeEnum.parentSelected;
+                        _p.relationTargetInfo.parent = ele;
+                        _p.processTokenEntityTypeMarkerSelection(ele);
+                        return;
+                    };
+                    break;
+                case _p.relationToolModeEnum.parentSelected:
+                    if (ele.hasClass("tokenEntityTypeMarker")){
+                        event.stopPropagation();
+                        if (ele.hasClass("relationTarget")){
+                            _p.relationTargetInfo.child = ele;
+                        };
+                        _p.currentRelationToolMode = _p.relationToolModeEnum.childSelected;
+
+                        _p.processSelectRelation(_p.relationTargetInfo);
+
+                        return;
+                    };
+                    break;
+                case _p.relationToolModeEnum.childSelected:
+
+                    break;
+                case _p.relationToolModeEnum.relationLabelSelected:
+
+                    break;
+
+
+
+            };
+            //아무것도 안잡혔는데 클릭하면 nothing으로...
+
+            _p.currentRelationToolMode = _p.relationToolModeEnum.nothingSelected;
+            _p.processRelationToolUIReset();
+            _p.resetRelationTypeList();
+            _p.relationTargetInfo = {};
+
+
         }
 
 
@@ -266,12 +305,27 @@ var $J1 = (function (module){
     };
 
     function processRightSideBarClickEvent(ele,event){
-        if (ele.hasClass("gtcEntityType")){
-            event.stopPropagation();
 
-            _p.processEntityTypeAssignment(ele);
+        if (_p.currentToolMode == _p.toolModeEnum.mentionTool){
+            if (ele.hasClass("gtcEntityType")){
+                event.stopPropagation();
+                _p.processEntityTypeAssignment(ele);
+            };
+        } else if (_p.currentToolMode == _p.toolModeEnum.relationTool){
+            if (_p.currentRelationToolMode == _p.relationToolModeEnum.childSelected){
+                if (ele.hasClass("gtcRelationType")){
+                    event.stopPropagation();
+                    _p.processRelationCreation(_p.relationTargetInfo,ele);
+                    _p.currentRelationToolMode = _p.relationToolModeEnum.nothingSelected;
+                    _p.processRelationToolUIReset();
+
+                };
+
+            }
 
         }
+
+
     };
 
     function processLeftSideBarClickEvent(ele,event){

@@ -139,6 +139,7 @@ height: calc(100% - 50px);
     padding: 0 2px;
     box-sizing: border-box;
     padding-bottom: 5px;
+    z-index: 3;
 
 
 }
@@ -153,4 +154,10 @@ height: calc(100% - 50px);
     border-style: solid;
     padding: 2px;
     z-index: 5;
+}
+
+.relationDrawingArea{
+    position: absolute;
+    top: 0px;
+    left: 0px;
 }

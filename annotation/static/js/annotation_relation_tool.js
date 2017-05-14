@@ -4,19 +4,44 @@ var $J1 = (function (module){
 
 	_p.relationAreaPaddingMap = {};
 
+    _p.relationToolModeEnum = {
+        nothingSelected:0,
+        parentSelected:1,
+        childSelected:2,
+        relationLabelSelected:3
+    };
+
+    _p.currentRelationToolMode = _p.relationToolModeEnum.nothingSelected;
+
 
     _p.processRelationToolUIReset = function(){
         $("#relationToolRightSideBar").css("display","");
         $("#mentionToolRightSideBar").css("display","none");
         activateRelationToolDocumentUI();
+        _p.currentRelationToolMode = _p.relationToolModeEnum.nothingSelected;
+
     };
 
-    _p.resetRelationTypeList = function(){
+    _p.resetRelationTypeList = function(list){
         $("#list-relation-type").empty();
-        for (var id in _p.loadedRelationPropLabelMap){
-            var relation = _p.loadedRelationPropLabelMap[id];
-            drawRelationTypeItem(relation);
+        if (!list) {
+            list = _p.loadedRelationPropLabelMap;
         };
+
+        var labelMap = {};
+
+        for (var id in list){
+            var relation = list[id];
+            if (relation.label in labelMap){
+
+            } else {
+                drawRelationTypeItem(relation);
+                labelMap[relation.label] = 1;
+            }
+
+
+        };
+
     };
 
     function activateRelationToolDocumentUI(){
@@ -43,8 +68,12 @@ var $J1 = (function (module){
 
         });
         $("#document-holder").find(".relationLabel").remove();
+        $("#document-holder").find(".relationTarget").each(function(index,ele){
+            ele = $(ele);
+            ele.removeClass("relationTarget");
 
-        jqSimpleConnect.removeAll();
+        });
+        jsPlumb.deleteEveryConnection();
     }
 
 
@@ -95,6 +124,7 @@ var $J1 = (function (module){
         tokenEntityTypeMarker.css("width",tokenEle.width());
 
         tokenEntityTypeMarker.attr("mentionId",tokenEle.attr("mentionId"));
+        tokenEntityTypeMarker.attr("entityTypeLabel",tokenEle.attr("entityTypeLabel"));
 
     }
 
@@ -105,8 +135,8 @@ var $J1 = (function (module){
 
 
     function drawRelationTypeItem(item){
-        var style = "border-color:" + item.backGroundColor + "; color:"+item.color;
-        var hotkey = item.hotkey;
+        var style = "border-color:" + item.sireProp.backGroundColor + "; color:"+item.sireProp.color;
+        var hotkey = item.sireProp.hotkey;
         if (!hotkey) {
             hotkey = "-";
         };
@@ -133,27 +163,28 @@ var $J1 = (function (module){
             var relation = relations[k];
             var parentMarkerId = relation.args[0];
             var childMarkerId = relation.args[1]
-            var parentMarkerEle = $($('div[mentionId="'+parentMarkerId+'"]')[0]);
-            var childMarkerEle = $($('div[mentionId="'+childMarkerId+'"]')[0]);
 
+            var parentMarkerEle = $($('div[mentionId="'+parentMarkerId+'"]')[0]);
+
+            var childMarkerEle = $($('div[mentionId="'+childMarkerId+'"]')[0]);
             var sentenceEle = $(parentMarkerEle.closest(".gtcSentence"));
-            var relationProp = _p.loadedRelationPropLabelMap[relation.type];
+            var relationType = _p.loadedRelationPropLabelMap[relation.type];
 
 
             var label = relation.type;
-            if (_p.currentTypeSystemMode == "L" && relationProp.logical_value) {
-                label = relationProp.logical_value;
+            if (_p.currentTypeSystemMode == "L" && relationType.logical_value) {
+                label = relationType.logical_value;
             };
 
 
             var relationLabelEle = $('<div class="relationLabel">'+label+'</div>');
 
-            relationLabelEle.css("border-color",relationProp.backGroundColor);
+            relationLabelEle.css("border-color",relationType.sireProp.backGroundColor);
 
             sentenceEle.append(relationLabelEle);
 
             //표시들이 중첩안되게 간격을 벌려준다.
-            var labelTopOffset = 30;
+            var labelTopOffset = 50;
             if (Math.abs(lastMarkerTop - parentMarkerEle.position().top) < 20){
                 //같은 줄인걸로 판정.
                 labelTopOffset = labelTopOffset + (relationLabelStackCount * 30) ;
@@ -172,19 +203,166 @@ var $J1 = (function (module){
 
             relationLabelEle.css("left",Math.abs(parentLeft - childLeft)/2 + left );
 
+            var lableInDirection = null;
+            var lableOutDirection = null;
+            if (parentLeft <childLeft) {
+                lableInDirection = "Left";
+                lableOutDirection = "Right";
+            } else {
+                lableInDirection = "Right";
+                lableOutDirection = "Left";
+            }
 
-            jqSimpleConnect.connect(parentMarkerEle, relationLabelEle, {radius: 2,roundedCorners: true,anchorA: 'vertical',anchorB: 'horizontal'});
-            jqSimpleConnect.connect(relationLabelEle, childMarkerEle, {radius: 2,roundedCorners: true,anchorA: 'horizontal',anchorB: 'vertical'});
+            jsPlumb.setContainer($("body"));
 
 
 
-        };
+            jsPlumb.connect({ source:parentMarkerEle,
+                target:relationLabelEle,
+                anchors:[ "Top",lableInDirection ],
+                paintStyle:{ strokeWidth:1, stroke:"rgb(131,8,135)" },
+                endpoint:["Dot", { radius:1 }],
+                connector:["Flowchart" , {cornerRadius:10}]
+            });
+
+
+            jsPlumb.connect({ source:relationLabelEle,
+                target:childMarkerEle,
+                anchors:[ lableOutDirection,"Top" ],
+                paintStyle:{ strokeWidth:1, stroke:"rgb(131,8,135)" },
+                endpoint:["Dot", { radius:1 }],
+                connector:["Flowchart" , {cornerRadius:10}]
+            });
+
+
+
+
+
+        }
     };
 
 
 
     _p.processTokenEntityTypeMarkerSelection = function(markerEle){
-        console.log(markerEle)
+        console.log(markerEle);
+        var entityTypeLabel = markerEle.attr("entityTypeLabel");
+        console.log(entityTypeLabel);
+        var parentEntityType = _p.loadedEntityTypesLabelMap[entityTypeLabel];
+        var parentRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
+            if (e.srcEntType == parentEntityType.id) {
+                return e;
+            }
+        });
+        console.log(parentRelations)
+        _p.resetRelationTypeList(parentRelations);
+
+        var childEntityTypeIdMap = {};
+
+        for (var k in parentRelations){
+            var relationType = parentRelations[k];
+            if (!(relationType.tgtEntType in childEntityTypeIdMap)){
+                childEntityTypeIdMap[relationType.tgtEntType] = 1;
+
+            }
+        };
+
+        console.log(childEntityTypeIdMap);
+
+
+
+        //일단 전부 불투명하게 해둔다.
+        $("#document-holder").find(".tokenEntityTypeMarker , .relationLabel").each(function(index,ele){
+            var ele = $(ele);
+            ele.css("opacity","0.2");
+        });
+
+        $("#relationLineDrawingArea").find(".jsSimpleConnect").each(function(index,ele){
+            var ele = $(ele);
+            ele.css("opacity","0.2");
+        });
+
+
+        $(".tokenEntityTypeMarker").each(function(index,childMarkerEle){
+            var childMarkerEle = $(childMarkerEle);
+            var entityTypeLabel = childMarkerEle.attr("entityTypeLabel");
+            var childEntityType = _p.loadedEntityTypesLabelMap[entityTypeLabel];
+            if (childEntityType.id in childEntityTypeIdMap){
+                if (!childMarkerEle.is(markerEle)){
+                    childMarkerEle.css("opacity","1");
+                    childMarkerEle.addClass("relationTarget");
+
+                }
+
+
+
+            } else {
+                childMarkerEle.css("opacity","0.2");
+            }
+
+        });
+
+
+    _p.processSelectRelation = function(relationInfo){
+
+        var parentEntityTypeLabel = relationInfo.parent.attr("entityTypeLabel");
+        var childEntityTypeLabel = relationInfo.child.attr("entityTypeLabel");
+
+        var parentEntityTypeId = _p.loadedEntityTypesLabelMap[parentEntityTypeLabel].id;
+        var childEntityTypeId = _p.loadedEntityTypesLabelMap[childEntityTypeLabel].id;
+
+
+        var validRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
+            if (e.srcEntType == parentEntityTypeId && e.tgtEntType == childEntityTypeId) {
+                return e;
+            }
+        });
+
+        _p.resetRelationTypeList(validRelations);
+
+    }
+
+    _p.processRelationCreation = function(relationInfo,selectedRelationTypeEle){
+        var parentMentionId = relationInfo.parent.attr("mentionId");
+        var childMentionId = relationInfo.child.attr("mentionId");
+        var relationLabel = selectedRelationTypeEle.attr("gtcRelationLabel");
+
+        var sentenceEle = $(relationInfo.parent.closest(".gtcSentence"));
+        var sentenceId = sentenceEle.attr("sentenceId");
+        var newRelationId = getNextRelationId();
+        var newRelation = {
+            "id" : sentenceId+"-r"+getNextRelationId(),
+            "properties" : { },
+            "type" : relationLabel,
+            "args" : [ parentMentionId, childMentionId ]
+        };
+
+
+        var previousRelations = $.map(_p.loadedGroundTruth.relations, function(e){
+            if (e.type == relationLabel && e.args[0] == parentMentionId && e.args[1] == childMentionId) {
+                return e;
+            }
+        });
+        if (previousRelations.length < 1){
+            _p.loadedGroundTruth.relations.push(newRelation);
+        };
+
+
+
+    }
+
+    function getNextRelationId(){
+        var relations = _p.loadedGroundTruth.relations;
+        var maxId = 0;
+        for (var k in relations){
+            var relation = relations[k];
+            var id = relation.id.split("-")[1].replace("r","");
+            id = id *1;
+            if (id > maxId) {
+                maxId = id;
+            }
+        }
+        return maxId + 1;
+    };
 
 
     };

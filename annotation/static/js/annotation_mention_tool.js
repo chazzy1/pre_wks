@@ -6,6 +6,7 @@ var $J1 = (function (module){
         $("#relationToolRightSideBar").css("display","none");
         $("#mentionToolRightSideBar").css("display","");
         activateMentionToolDocumentUI();
+        _p.clearRelationDrawingArea();
         _p.resetMentionDisplay();
     };
 
@@ -64,7 +65,7 @@ var $J1 = (function (module){
         var sentenceEle = $('<div id="'+sentenceId+'" class="gtcSentence"></div>');
         var sentenceIndexEle = $('<div class="sentenceNumber">'+index+'</div>');
         sentenceEle.append(sentenceIndexEle);
-
+        sentenceEle.attr("sentenceId",sentence.id);
         $("#document-holder").append(sentenceEle);
         for (var k=0; k<sentence.tokens.length; k++){
             var token = sentence.tokens[k];
@@ -121,6 +122,21 @@ var $J1 = (function (module){
         };
     };
 
+
+    function getNextMentionId(){
+        var mentions = _p.loadedGroundTruth.mentions;
+        var maxId = 0;
+        for (var k in mentions){
+            var mention = mentions[k];
+            var id = mention.id.split("-")[1].replace("m","");
+            id = id *1;
+            if (id > maxId) {
+                maxId = id;
+            }
+        }
+        return maxId + 1;
+    };
+
     _p.processEntityTypeAssignment = function(ele){
         ele = $(ele);
         var entityType = _p.loadedEntityTypesLabelMap[ele.attr("gtcMentionLabel")]
@@ -129,9 +145,8 @@ var $J1 = (function (module){
 
             var mentions = _p.loadedGroundTruth.mentions;
             var newMention = getBaseMentionObject();
-            var mentionIndex = mentions.length;
 
-            newMention.id = _p.activeSelection.sentenceId+"-"+"m"+mentionIndex;
+            newMention.id = _p.activeSelection.sentenceId+"-"+"m"+getNextMentionId();
 
             var entityTypeLabel =entityType.label;
 
@@ -197,7 +212,14 @@ var $J1 = (function (module){
             } else {
 
                 var token = $.grep(sentence.tokens, function(e){ return e.id == tokenId; })[0];
-                var mentionId = sentenceId + "-m0";
+
+
+
+
+
+
+
+
                 if (_p.activeSelection && sentenceId == _p.activeSelection.sentenceId){
 
                     var minPoint = _p.activeSelection.begin;
@@ -219,10 +241,10 @@ var $J1 = (function (module){
                     _p.drawMentionTargetSelection(sentenceId,minPoint,maxPoint);
 
                 } else {
+
                     _p.clearMentionTargetSelection();
+                    var mentionId = sentenceId + "-m0";
                     _p.activeSelection= {"sentenceId":sentenceId, "id":mentionId, "begin":token.begin, "end":token.end, "tokens":{}};
-
-
                     _p.drawMentionTargetSelection(sentenceId,token.begin,token.end);
 
                 };
