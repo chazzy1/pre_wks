@@ -156,89 +156,103 @@ var $J1 = (function (module){
     _p.resetRelationDisplay = function(){
 
 
-        var relations = _p.loadedGroundTruth.relations;
+        //var relations = _p.loadedGroundTruth.relations;
         var relationLabelStackCount = 1;
         var lastMarkerTop = null;
-        for (var k in relations){
-            var relation = relations[k];
-            var parentMarkerId = relation.args[0];
-            var childMarkerId = relation.args[1]
+        //console.log(relations)
 
-            var parentMarkerEle = $($('div[mentionId="'+parentMarkerId+'"]')[0]);
+        //선 그리기 문제때문에 relation 순서대로 하면 안된다.
+        //mention이 포착되는 순서대로 그에따른 relation 을 처리해 줘야한다.
+        $("#document-holder").find(".tokenEntityTypeMarker").each(function(index,ele){
+            ele = $(ele);
+            var mentionId = ele.attr("mentionId");
+            //우선 tokenEntityTypeMarker 하나를 고른다음, 그놈에게 속한 relation들을 가져와서,
+            var relations = $.grep(_p.loadedGroundTruth.relations, function(e){ return e.args[0] == mentionId; });
+            //relation 을 그린다.
 
-            var childMarkerEle = $($('div[mentionId="'+childMarkerId+'"]')[0]);
-            var sentenceEle = $(parentMarkerEle.closest(".gtcSentence"));
-            var relationType = _p.loadedRelationPropLabelMap[relation.type];
+            for (var k in relations){
+                var relation = relations[k];
+                var parentMarkerId = relation.args[0];
+                var childMarkerId = relation.args[1]
 
+                var parentMarkerEle = $($('div[mentionId="'+parentMarkerId+'"]')[0]);
 
-            var label = relation.type;
-            if (_p.currentTypeSystemMode == "L" && relationType.logical_value) {
-                label = relationType.logical_value;
+                var childMarkerEle = $($('div[mentionId="'+childMarkerId+'"]')[0]);
+                var sentenceEle = $(parentMarkerEle.closest(".gtcSentence"));
+                var relationType = _p.loadedRelationPropLabelMap[relation.type];
+
+                var label = relation.type;
+                if (_p.currentTypeSystemMode == "L" && relationType.logical_value) {
+                    label = relationType.logical_value;
+                };
+
+                var relationLabelEle = $('<div class="relationLabel">'+label+'</div>');
+
+                relationLabelEle.css("border-color",relationType.sireProp.backGroundColor);
+
+                sentenceEle.append(relationLabelEle);
+
+                //표시들이 중첩안되게 간격을 벌려준다.
+                var labelTopOffset = 50;
+
+                if (Math.abs(lastMarkerTop - parentMarkerEle.position().top) < 20){
+                    //같은 줄인걸로 판정.
+                    labelTopOffset = labelTopOffset + (relationLabelStackCount * 30) ;
+                    relationLabelStackCount ++;
+                } else {
+                    //다른줄이 시작됐다면.
+                    relationLabelStackCount = 1;
+                };
+                lastMarkerTop = parentMarkerEle.position().top;
+
+                relationLabelEle.css("top",parentMarkerEle.position().top - labelTopOffset);
+
+                var parentLeft = parentMarkerEle.position().left;
+                var childLeft = childMarkerEle.position().left;
+                var left =  (parentLeft < childLeft) ? parentLeft : childLeft;
+
+                relationLabelEle.css("left",Math.abs(parentLeft - childLeft)/2 + left );
+
+                var lableInDirection = null;
+                var lableOutDirection = null;
+                if (parentLeft <childLeft) {
+                    lableInDirection = "Left";
+                    lableOutDirection = "Right";
+                } else {
+                    lableInDirection = "Right";
+                    lableOutDirection = "Left";
+                };
+
+                jsPlumb.setContainer($("body"));
+
+                jsPlumb.connect({ source:parentMarkerEle,
+                    target:relationLabelEle,
+                    anchors:[ "Top",lableInDirection ],
+                    paintStyle:{ strokeWidth:1, stroke:"rgb(131,8,135)" },
+                    endpoint:["Dot", { radius:1 }],
+                    connector:["Bezier" , {curviness:90}],
+                    overlays:[
+                        ["Arrow" , { width:5, length:5, location:0.9 }]
+                    ]
+                });
+                //connector:["Flowchart" , {cornerRadius:10}]
+
+                jsPlumb.connect({ source:relationLabelEle,
+                    target:childMarkerEle,
+                    anchors:[ lableOutDirection,"Top" ],
+                    paintStyle:{ strokeWidth:1, stroke:"rgb(131,8,135)" },
+                    endpoint:["Dot", { radius:1 }],
+                    connector:["Bezier" , {curviness:90}],
+                    overlays:[
+                        ["Arrow" , { width:5, length:5, location:0.9 }]
+                    ]
+                });
+
             };
 
 
-            var relationLabelEle = $('<div class="relationLabel">'+label+'</div>');
+        });
 
-            relationLabelEle.css("border-color",relationType.sireProp.backGroundColor);
-
-            sentenceEle.append(relationLabelEle);
-
-            //표시들이 중첩안되게 간격을 벌려준다.
-            var labelTopOffset = 50;
-            if (Math.abs(lastMarkerTop - parentMarkerEle.position().top) < 20){
-                //같은 줄인걸로 판정.
-                labelTopOffset = labelTopOffset + (relationLabelStackCount * 30) ;
-                relationLabelStackCount ++;
-            } else {
-                //다른줄이 시작됐다면.
-                relationLabelStackCount = 1;
-            };
-            lastMarkerTop = parentMarkerEle.position().top;
-
-            relationLabelEle.css("top",parentMarkerEle.position().top - labelTopOffset);
-
-            var parentLeft = parentMarkerEle.position().left;
-            var childLeft = childMarkerEle.position().left;
-            var left =  (parentLeft < childLeft) ? parentLeft : childLeft;
-
-            relationLabelEle.css("left",Math.abs(parentLeft - childLeft)/2 + left );
-
-            var lableInDirection = null;
-            var lableOutDirection = null;
-            if (parentLeft <childLeft) {
-                lableInDirection = "Left";
-                lableOutDirection = "Right";
-            } else {
-                lableInDirection = "Right";
-                lableOutDirection = "Left";
-            }
-
-            jsPlumb.setContainer($("body"));
-
-
-
-            jsPlumb.connect({ source:parentMarkerEle,
-                target:relationLabelEle,
-                anchors:[ "Top",lableInDirection ],
-                paintStyle:{ strokeWidth:1, stroke:"rgb(131,8,135)" },
-                endpoint:["Dot", { radius:1 }],
-                connector:["Flowchart" , {cornerRadius:10}]
-            });
-
-
-            jsPlumb.connect({ source:relationLabelEle,
-                target:childMarkerEle,
-                anchors:[ lableOutDirection,"Top" ],
-                paintStyle:{ strokeWidth:1, stroke:"rgb(131,8,135)" },
-                endpoint:["Dot", { radius:1 }],
-                connector:["Flowchart" , {cornerRadius:10}]
-            });
-
-
-
-
-
-        }
     };
 
 

@@ -14,7 +14,7 @@
     <link href="/resources/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="static/css/dashboard.css" rel="stylesheet">
+    <link href="/resources/static/css/gt-c.css" rel="stylesheet">
     {{ JSGlue.include() }}
   </head>
   {% block page_settings %}{% endblock %}
@@ -34,10 +34,10 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li {% if active_menu == 'typeSystem' %} class="active" {% endif %}>
-              <a href="{{ url_for('project.typesystem') }}">Type System</a>
+              <a href="{{ url_for('typesystem.import_typesystem') }}">Type System</a>
             </li>
             <li {% if active_menu == 'dictionaries' %} class="active" {% endif %}>
-              <a href="{{ url_for('project.typesystem') }}">Dictionaries</a>
+              <a href="{{ url_for('project.dictionaries') }}">Dictionaries</a>
             </li>
             <li {% if active_menu == 'documents' %} class="active" {% endif %}>
               <a href="{{ url_for('project.documents') }}">Documents</a>
@@ -48,9 +48,7 @@
             <li>
               <a href="#">chazzy1@gmail.com</a></li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
+
         </div>
       </div>
     </nav>

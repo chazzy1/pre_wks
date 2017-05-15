@@ -24,11 +24,6 @@ from documents.document_exporter import export_document_sets
 from typesystem import typesystem_parser
 
 
-
-
-
-
-
 @bpproject.route('/annotation', methods=['GET', 'POST'])
 def annotation(projectid=None):
 
@@ -43,11 +38,8 @@ def annotation(projectid=None):
     return render_template('annotation.html.tmpl', projectid="asdf", active_menu="humanAnnotation")
 
 
-
-
-
-@bpproject.route('/typesystem', methods=['GET', 'POST'])
-def typesystem(projectid='asdf'):
+@bpproject.route('/dictionaries', methods=['GET', 'POST'])
+def dictionaries(projectid='asdf'):
 
     if request.method == 'POST':
         file = request.files['file']
@@ -57,13 +49,7 @@ def typesystem(projectid='asdf'):
         parser = typesystem_parser.TypesystemParser(filename=filename, filepath=filepath, project_id=projectid)
         parser.wks_json_parser()
 
-    return render_template('typesystem.html.tmpl', projectid="asdf", active_menu="typeSystem")
-
-
-
-
-
-
+    return render_template('dictionaries.html.tmpl', projectid="asdf", active_menu="dictionaries")
 
 
 
@@ -95,7 +81,7 @@ class DocumentSets(db.Document):
 # uploadForm = model_form(DocumentUploadForm)
 
 @bpproject.route('/<projectid>/documents/export', methods=['GET', 'POST'])
-@bpproject.route('/documents/ex[prt', methods=['GET', 'POST'])
+@bpproject.route('/documents/export', methods=['GET', 'POST'])
 def documents_export(projectid='asdf'):
     zip_file_path = export_document_sets(projectid)
     return send_file(zip_file_path, mimetype='application/octet-stream')
