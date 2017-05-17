@@ -203,6 +203,8 @@ var $J1 = (function (module){
                     //다른줄이 시작됐다면.
                     relationLabelStackCount = 1;
                 };
+
+
                 lastMarkerTop = parentMarkerEle.position().top;
 
                 relationLabelEle.css("top",parentMarkerEle.position().top - labelTopOffset);
@@ -258,18 +260,14 @@ var $J1 = (function (module){
 
 
     _p.processTokenEntityTypeMarkerSelection = function(markerEle){
-        console.log(markerEle);
         var entityTypeLabel = markerEle.attr("entityTypeLabel");
-        console.log(entityTypeLabel);
         var parentEntityType = _p.loadedEntityTypesLabelMap[entityTypeLabel];
         var parentRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
             if (e.srcEntType == parentEntityType.id) {
                 return e;
             }
         });
-        console.log(parentRelations)
         _p.resetRelationTypeList(parentRelations);
-
         var childEntityTypeIdMap = {};
 
         for (var k in parentRelations){
@@ -279,8 +277,6 @@ var $J1 = (function (module){
 
             }
         };
-
-        console.log(childEntityTypeIdMap);
 
 
 

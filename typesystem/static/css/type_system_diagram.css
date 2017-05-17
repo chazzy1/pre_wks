@@ -1,0 +1,58 @@
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+html {
+    height: 100%
+}
+body {
+  padding-top: 50px;
+  height:100%
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0px;
+  }
+}
+
+.height100 {
+    height: 100%
+}
+
+.heightMinus50{
+    height: -moz-calc(100% - 50px);
+    height: -webkit-calc(100% - 50px);
+    height: calc(100% - 50px);
+}
+
+.entityTypeContainer {
+    width: 100px;
+    height: 100px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 5px;
+    border-style:solid;
+    position:absolute;
+}
+
+div.entityTypeTextContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    overflow: hidden;
+}
+
+.diagramView{
+    width: 100%;
+    height: 100%;
+    border-style:solid;
+    overflow:hidden;
+}
+
+.innerMap{
+    width: 5000px;
+    height: 5000px;
+    background-color:Beige
+}

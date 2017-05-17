@@ -16,6 +16,10 @@
     <!-- Custom styles for this template -->
     <link href="/resources/static/css/gt-c.css" rel="stylesheet">
     {{ JSGlue.include() }}
+
+    {% block page_head %}
+    {% endblock %}
+
   </head>
   {% block page_settings %}{% endblock %}
   <body>
@@ -29,7 +33,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">GT-C</a>
+          <a class="navbar-brand" href="#">GroundTruth-Creator</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -54,8 +58,8 @@
     </nav>
     {% endblock %}
 
-    <div class="container-fluid">
-      <div class="row">
+    <div class="container-fluid heightMinus50">
+      <div class="row height100">
         {% block sidebar %}
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
@@ -241,8 +245,10 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/resources/static/js/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="/resources/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    {% block script_foot %}
+    {% endblock %}
   </body>
 </html>

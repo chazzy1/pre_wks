@@ -25,7 +25,7 @@ def hello_world():
 if __name__ == '__main__':
 
     app.register_blueprint(bpproject, url_prefix='/p')
-    app.register_blueprint(bptypesystem, url_prefix='/p')
+    app.register_blueprint(bptypesystem, url_prefix='/p/typesystem')
     app.register_blueprint(bpresources, url_prefix='/resources')
     app.register_blueprint(bpannotator, url_prefix='/p/a')
 
