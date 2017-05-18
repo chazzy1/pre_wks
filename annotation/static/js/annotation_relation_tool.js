@@ -111,7 +111,7 @@ var $J1 = (function (module){
         if (_p.currentTypeSystemMode == "L" && entityType.logical_value) {
             entityTypeLabel = entityType.logical_value;
         };
-console.log(tokenEle)
+
         var tokenEntityTypeMarker = $('<div class="tokenEntityTypeMarker">'+entityTypeLabel+'</div>');
         tokenEntityTypeMarker.css("background-color",entityType.sireProp.backGroundColor);
         tokenEntityTypeMarker.css("color",entityType.sireProp.color);
@@ -135,18 +135,23 @@ console.log(tokenEle)
         //그래야 나중에 높이 변할때 한개만 바꿔도 실제 간격이 변하게 할 수 있다.
         //일단 일정한 간격으로 무조건 늘려준다.
         var newEle = $('<span class="gtcTokenRelationMargin"></span>');
-        tokenEle.find(".gtcTokenText").append(newEle);
-        var newEleTop = newEle.offset().top;
-        sentenceEle.find(".gtcTokenRelationMargin").each(function(index,ele){
-            var isNewMarginNeeded = true;
-            var eleTop = $(ele).offset().top;
-            if ( !newEle.is(ele) && Math.abs(eleTop - newEleTop) < 100){
-                //이러면 같은줄에 이미 margin 이 있는걸로 판정.
-                newEle.remove();
-            } else {
 
-            }
-        });
+        if (tokenEle.find(".gtcTokenRelationMargin").length < 1){
+            tokenEle.append(newEle);
+            var newEleTop = newEle.offset().top;
+            sentenceEle.find(".gtcTokenRelationMargin").each(function(index,ele){
+                var isNewMarginNeeded = true;
+                var eleTop = $(ele).offset().top;
+                if ( !newEle.is(ele) && Math.abs(eleTop - newEleTop) < 100){
+                    //이러면 같은줄에 이미 margin 이 있는걸로 판정.
+                    newEle.remove();
+                } else {
+
+                }
+            });
+        }
+
+
     };
 
     function recalcRelationAreaPadding(sentenceEle){
@@ -187,7 +192,7 @@ console.log(tokenEle)
 
         for (var k in lineMarginGroupInfo){
             var marginGroup = lineMarginGroupInfo[k];
-            //console.log(marginGroup)
+
 
             var marginEle = marginGroup.paddingEle;
 
@@ -196,9 +201,13 @@ console.log(tokenEle)
 
             for (var i in marginGroup.relationLabels){
                 var relationLabel = marginGroup.relationLabels[i];
-                if (marginEle.offset().top > relationLabel.offset().top+10){
-                    var newMargin = marginEle.height() + (marginEle.offset().top - relationLabel.offset().top);
-//엉뚱한 대상을 늘리는 버그가 있는듯.
+                if (marginEle.offset().top > relationLabel.offset().top+20){
+                    var diff = marginEle.offset().top - relationLabel.offset().top;
+
+                    //갑자기 넓이가 확 넓어지는 버그때문에 땜빵. 나중에 새로 만들어야함.
+                    if (diff > 100) {contiune}
+                    var newMargin = marginEle.height() + diff;
+
                     marginEle.css("height",newMargin);
                     activateRelationToolDocumentUI();
                     break;
@@ -255,7 +264,9 @@ console.log(tokenEle)
             var marginContainer = sentenceEle.find('span[mentionId="'+mentionId+'"]');
             if (marginContainer.find(".gtcTokenRelationMargin").length > 0){
                 marginEle = $(marginContainer.find(".gtcTokenRelationMargin")[0]);
-            }
+            };
+
+
 
 
             //우선 tokenEntityTypeMarker 하나를 고른다음, 그놈에게 속한 relation들을 가져와서,
@@ -301,17 +312,7 @@ console.log(tokenEle)
                     lineIndex++;
                 };
 
-                console.log(lineMarginGroupInfo)
 
-                if (lineMarginGroupInfo[lineIndex]){
-                    lineMarginGroupInfo[lineIndex].relationLabels.push(relationLabelEle);
-                } else {
-
-                    var gtcToken = sentenceEle.find('span[mentionId="'+parentMarkerId+'"]');
-
-                    lineMarginGroupInfo[lineIndex] = {"paddingEle":marginEle , "relationLabels":[]};
-                    lineMarginGroupInfo[lineIndex].relationLabels.push(relationLabelEle);
-                };
 
 
                 lastMarkerTop = parentMarkerEle.position().top;
@@ -333,6 +334,30 @@ console.log(tokenEle)
                     lableInDirection = "Right";
                     lableOutDirection = "Left";
                 };
+
+
+
+                if (lineMarginGroupInfo[lineIndex]){
+                    //자기보다 아래쪽에 있는 relationLabel 은 신경쓰지 않아도 된다.
+                    //이문제인데....
+                    lineMarginGroupInfo[lineIndex].relationLabels.push(relationLabelEle);
+                } else {
+
+                    var gtcToken = sentenceEle.find('span[mentionId="'+parentMarkerId+'"]');
+
+                    lineMarginGroupInfo[lineIndex] = {"paddingEle":marginEle , "relationLabels":[]};
+                    lineMarginGroupInfo[lineIndex].relationLabels.push(relationLabelEle);
+                };
+
+
+
+
+
+
+
+
+
+
 
                 jsPlumb.setContainer($("body"));
 

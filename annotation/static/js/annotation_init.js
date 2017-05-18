@@ -23,7 +23,6 @@ var $J1 = (function (module){
 
     _p.init = function(projectId,documentId){
 
-        console.log(projectId,documentId);
         _p.projectId = projectId
 
         data={};
@@ -71,13 +70,12 @@ var $J1 = (function (module){
         .done(function(result){
             _p.loadedGroundTruth = result.document;
 
-            console.log(result)
 
             for (var k in _p.loadedGroundTruth.sentences){
                 var sentence = _p.loadedGroundTruth.sentences[k];
                 _p.sentencesIdMap[sentence.id] = sentence;
             };
-            console.log(_p.loadedGroundTruth);
+
             resetDocument();
             _p.resetMentionDisplay();
         });
