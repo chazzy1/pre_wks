@@ -120,7 +120,8 @@ body {
 }
 
 .gtcTokenRelationMargin{
-    margin-top: 200px;
+    //margin-top: 200px;
+    height: 200px;
     display: inline-block;
 }
 

@@ -2,7 +2,6 @@
 var $J1 = (function (module){
 	var _p = module._p = module._p || {};
 
-	_p.relationAreaPaddingMap = {};
 
     _p.relationToolModeEnum = {
         nothingSelected:0,
@@ -49,7 +48,6 @@ var $J1 = (function (module){
         _p.clearRelationDrawingArea();
         $("#document-holder").find(".gtcSentence").each(function(index,ele){
             var ele = $(ele);
-            _p.relationAreaPaddingMap[_p.getObjectId(ele)] = {};
             resetRelationDrawingArea(ele);
         });
 
@@ -79,18 +77,18 @@ var $J1 = (function (module){
 
 
     function resetRelationDrawingArea(sentenceEle){
+
+        //목적은 한 행당 하나씩 Padding을 넣어두는것.
+        //padding 에서 height 로 변경. 이게 계산하기 편함.
+
         var lastTop = null;
         var paddingCount = 0;
         var lastMentionId = null;
         sentenceEle.find(".gtcToken").each(function(index,ele){
             ele = $(ele);
             if (ele.hasClass("entityTypeAssigned")){
-                //line break가 있다면 padding 을 추가해야하는지 조사한다.
-                if (!lastTop || (Math.abs(ele.position().top - lastTop) > 20) ){
-                    lastTop = ele.position().top;
-                    addRelationAreaPadding(sentenceEle,ele,paddingCount);
-                    paddingCount++;
-                };
+
+                addRelationAreaPadding(sentenceEle,ele);
 
                 //색깔 등을 지움.
                 ele.css("background-color","");
@@ -126,12 +124,58 @@ var $J1 = (function (module){
         tokenEntityTypeMarker.attr("mentionId",tokenEle.attr("mentionId"));
         tokenEntityTypeMarker.attr("entityTypeLabel",tokenEle.attr("entityTypeLabel"));
 
-    }
-
-    function addRelationAreaPadding(sentenceEle,tokenEle,paddingAreaId){
-        tokenEle.append('<span class="gtcTokenRelationMargin"></span>');
-        _p.relationAreaPaddingMap[_p.getObjectId(sentenceEle)][paddingAreaId] = tokenEle;
     };
+
+    function addRelationAreaPadding(sentenceEle,tokenEle){
+        //약간 비효율적으로 보이지만, 만들기 쉽게 하기 위해...
+        //일단 한개 넣어놔보고, 이전것과 높이가 같으면 필요없구나...하고 다시 제거하는 로직으로 간다.
+
+        //그래야 나중에 높이 변할때 한개만 바꿔도 실제 간격이 변하게 할 수 있다.
+
+        var newEle = $('<span class="gtcTokenRelationMargin"></span>');
+        tokenEle.append(newEle);
+        var newEleTop = newEle.offset().top;
+        sentenceEle.find(".gtcTokenRelationMargin").each(function(index,ele){
+            var isNewMarginNeeded = true;
+            var eleTop = $(ele).offset().top;
+            if ( !newEle.is(ele) && Math.abs(eleTop - newEleTop) < 100){
+                //이러면 같은줄에 이미 margin 이 있는걸로 판정.
+                newEle.remove();
+            } else {
+
+            }
+        });
+    };
+
+    function recalcRelationAreaPadding(sentenceEle){
+        //같은줄에 relationLabel 이 몇개나 있는지 보고 이에따라 gtcTokenRelationMargin의 높이를 조절해 준다.
+        sentenceEle.find(".gtcTokenRelationMargin").each(function(index,marginEle){
+            var marginBotton = $(marginEle).offset().top + $(marginEle).height();
+            console.log(marginEle)
+            sentenceEle.find(".relationLabel").each(function(i,relationLabelEle){
+
+                //이거 좀 이상함. class를 지정해 주려니 jquery에서 검색이 안됨.
+
+                //var getToken = sentenceEle.find('.gtcToken span[mentionId="'+$(e).attr("parentMentionId")+'"]');
+                var gtcToken = sentenceEle.find('span[mentionId="'+$(relationLabelEle).attr("parentMentionId")+'"]');
+                var getTokenTop = gtcToken.offset().top;
+                var getTokenBottom = getTokenTop + gtcToken.height();
+                if (marginBotton <= getTokenBottom && getTokenBottom > getTokenTop){
+                    //이러면, 지금 이 relationLabelEle 이 marginEle 의 관할하인녀석이다.
+
+                    console.log(relationLabelEle)
+                }
+
+            });
+
+
+
+        });
+
+
+
+
+    }
 
 
     function drawRelationTypeItem(item){
@@ -147,8 +191,8 @@ var $J1 = (function (module){
         };
 
 
-        var item = $('<div gtcRelationLabel="'+item.label+'" id="'+item.id+'" class="gtcRelationType"><div class="itemRelationIcon" style="'+style+'">'+hotkey+'</div><div class="itemLabel">'+label+'</div></div>');
-        $("#list-relation-type").append(item);
+        var itemEle = $('<div gtcRelationLabel="'+item.label+'" id="'+item.id+'" class="gtcRelationType"><div class="itemRelationIcon" style="'+style+'">'+hotkey+'</div><div class="itemLabel">'+label+'</div></div>');
+        $("#list-relation-type").append(itemEle);
     };
 
 
@@ -191,6 +235,10 @@ var $J1 = (function (module){
                 relationLabelEle.css("border-color",relationType.sireProp.backGroundColor);
 
                 sentenceEle.append(relationLabelEle);
+                relationLabelEle.attr("parentMentionId",parentMarkerId);
+
+
+
 
                 //표시들이 중첩안되게 간격을 벌려준다.
                 var labelTopOffset = 50;
@@ -250,10 +298,16 @@ var $J1 = (function (module){
                     ]
                 });
 
+
+                recalcRelationAreaPadding(sentenceEle);
+
+
+
             };
 
 
         });
+
 
     };
 
@@ -300,6 +354,7 @@ var $J1 = (function (module){
                 if (!childMarkerEle.is(markerEle)){
                     childMarkerEle.css("opacity","1");
                     childMarkerEle.addClass("relationTarget");
+
 
                 }
 
