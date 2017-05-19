@@ -205,7 +205,7 @@ var $J1 = (function (module){
                     var diff = marginEle.offset().top - relationLabel.offset().top;
 
                     //갑자기 넓이가 확 넓어지는 버그때문에 땜빵. 나중에 새로 만들어야함.
-                    if (diff > 100) {contiune}
+                    if (diff > 100) {continue;}
                     var newMargin = marginEle.height() + diff;
 
                     marginEle.css("height",newMargin);
@@ -351,14 +351,6 @@ var $J1 = (function (module){
 
 
 
-
-
-
-
-
-
-
-
                 jsPlumb.setContainer($("body"));
 
                 jsPlumb.connect({ source:parentMarkerEle,
@@ -416,8 +408,6 @@ var $J1 = (function (module){
             }
         };
 
-
-
         //일단 전부 불투명하게 해둔다.
         $("#document-holder").find(".tokenEntityTypeMarker , .relationLabel").each(function(index,ele){
             var ele = $(ele);
@@ -429,8 +419,9 @@ var $J1 = (function (module){
             ele.css("opacity","0.2");
         });
 
+        var sentenceEle = markerEle.closest(".gtcSentence");
 
-        $(".tokenEntityTypeMarker").each(function(index,childMarkerEle){
+        sentenceEle.find(".tokenEntityTypeMarker").each(function(index,childMarkerEle){
             var childMarkerEle = $(childMarkerEle);
             var entityTypeLabel = childMarkerEle.attr("entityTypeLabel");
             var childEntityType = _p.loadedEntityTypesLabelMap[entityTypeLabel];
@@ -438,16 +429,11 @@ var $J1 = (function (module){
                 if (!childMarkerEle.is(markerEle)){
                     childMarkerEle.css("opacity","1");
                     childMarkerEle.addClass("relationTarget");
-
-
-                }
-
-
+                };
 
             } else {
                 childMarkerEle.css("opacity","0.2");
-            }
-
+            };
         });
 
 
