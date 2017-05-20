@@ -195,12 +195,50 @@ $.widget( "ui.entity", {
 
         var rolesContainer = $('<div style="border-color:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
 
-        var rolesAreaTitleEle = $('<div class="rolesAreaTitle">Roles:</div>');
+        var relationContainer = $('<div style="border-color:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
+        var outgoingRelationMap = $J1._p.loadedEntitySrcRelationIdMap[this.options.id];
+        var outgoingRelationCount = 0;
+        var incomingRelationMap = $J1._p.loadedEntityTgtRelationIdMap[this.options.id];
+        var incomingRelationCount = 0;
+        if (outgoingRelationMap) {
+            outgoingRelationCount = outgoingRelationMap.relations.length;
+        };
+        if (incomingRelationMap) {
+            incomingRelationCount = incomingRelationMap.relations.length;
+        };
+
+        var totalCount = outgoingRelationCount+incomingRelationCount;
+        var relationCountEle = $('<div class="attributeTitle">Relations: '+totalCount+'</div>');
+        relationContainer.append(relationCountEle);
+
+
+        if (outgoingRelationCount){
+            var showOutgoingEle = $('<div class="showRelations outgoing">Show Outgoing '+outgoingRelationCount+' <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></div>');
+            relationContainer.append(showOutgoingEle);
+        };
+
+
+
+
+
+
+
+        if (incomingRelationCount){
+            var showIncomingEle = $('<div class="showRelations incoming">Show Incoming '+incomingRelationCount+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></div>');
+            relationContainer.append(showIncomingEle);
+        };
+
+        this.element.append(relationContainer);
+
+
+
+
+        var rolesAreaTitleEle = $('<div class="attributeTitle">Roles:</div>');
         rolesContainer.append(rolesAreaTitleEle);
         var loopCount = 0;
         for (var k in entityType.sireProp.roles){
             var roleId = entityType.sireProp.roles[k];
-            var roleEle = $('<div class="roleItem"></div>');
+            var roleEle = $('<div class="attributeItem"></div>');
             roleEle.html($J1._p.loadedEntityTypesIdMap[roleId].label);
             rolesContainer.append(roleEle);
             loopCount ++;
@@ -208,32 +246,25 @@ $.widget( "ui.entity", {
                 rolesContainer.append($('<div>...</div>'));
                 break;
             }
-        }
+        };
+        this.element.append(rolesContainer);
 
 
         var subtypeContainer = $('<div style="border-color:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
-
-        var subtypeAreaTitleEle = $('<div class="subtypeAreaTitle">Subtypes:</div>');
+        var subtypeAreaTitleEle = $('<div class="attributeTitle">Subtypes:</div>');
         subtypeContainer.append(subtypeAreaTitleEle);
         for (var k in entityType.sireProp.subtypes){
-            var subtypeEle = $('<div class="subtypeItem"></div>');
+            var subtypeEle = $('<div class="attributeItem"></div>');
             roleEle.html(entityType.sireProp.subtypes[k]);
             subtypeContainer.append(roleEle);
-        }
-
-
-
-        //attributeContainer.append(subtypesArea);
-
-        /*
-        for (var k in this.options.attrs){
-            var attr = this.options.attrs[k];
-            var attrEle = this._getLogicalEntityAttrEle(attr);
-            attrArea.append(attrEle);
         };
-        */
-        this.element.append(rolesContainer);
         this.element.append(subtypeContainer);
+
+
+
+
+
+
         this.element.show();
         return;
 

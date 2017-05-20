@@ -5,13 +5,14 @@ var $J1 = (function (module){
 
     _p.loadedEntityTypesLabelMap = {};
     _p.loadedEntityTypesIdMap = {};
-    _p.loadedRepresentativeRelationList = [];
+    _p.loadedEntitySrcRelationIdMap = {};
+    _p.loadedEntityTgtRelationIdMap = {};
     _p.loadedEntityRelationMap = {};
     _p.loadedRelationTypesIdMap = {};
     _p.loadedRelationPropLabelMap = {};
     _p.loadedTypeSystemDiagram = {};
     _p.viewType="L";
-
+    _p.SelectedEntity=null;
     var diagramViewEle = $("#diagramView");
     var innerMapEle = $("#innerMap");
 
@@ -65,32 +66,66 @@ var $J1 = (function (module){
                 for (var i in entityRelations){
                     var relation = entityRelations[i];
 
-                    var repRelationId = _p.loadedEntityTypesIdMap[relation.srcEntType].label + "-" + _p.loadedEntityTypesIdMap[relation.tgtEntType].label
-
-                    if (_p.loadedEntityRelationMap[repRelationId]){
-                        _p.loadedEntityRelationMap[repRelationId].relations.push({
+                    if (_p.loadedEntitySrcRelationIdMap[entityType.id]){
+                        _p.loadedEntitySrcRelationIdMap[entityType.id].relations.push({
                             "id":relation.id,
                             "label":relation.label,
+                            "srcEntType":relation.srcEntType,
+                            "tgtEntType":relation.tgtEntType,
                         });
                     } else {
                         var newRepRelation = {
-                            "srcEntType":relation.srcEntType,
-                            "tgtEntType":relation.tgtEntType,
                             "relations":[]
                         };
                         newRepRelation.relations.push({
                             "id":relation.id,
                             "label":relation.label,
+                            "srcEntType":relation.srcEntType,
+                            "tgtEntType":relation.tgtEntType,
                         });
-                        _p.loadedEntityRelationMap[repRelationId] = newRepRelation;
+                        _p.loadedEntitySrcRelationIdMap[entityType.id] = newRepRelation;
                     }
-
 
                 };
 
+            };
 
+            for (var k in entityTypeList.list) {
+                var entityType = entityTypeList.list[k];
+                var entityRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
+                    if (e.tgtEntType == entityType.id) {
+                        return e;
+                    }
+                });
+
+
+                for (var i in entityRelations){
+                    var relation = entityRelations[i];
+
+                    if (_p.loadedEntityTgtRelationIdMap[entityType.id]){
+                        _p.loadedEntityTgtRelationIdMap[entityType.id].relations.push({
+                            "id":relation.id,
+                            "label":relation.label,
+                            "srcEntType":relation.srcEntType,
+                            "tgtEntType":relation.tgtEntType,
+                        });
+                    } else {
+                        var newRepRelation = {
+                            "relations":[]
+                        };
+                        newRepRelation.relations.push({
+                            "id":relation.id,
+                            "label":relation.label,
+                            "srcEntType":relation.srcEntType,
+                            "tgtEntType":relation.tgtEntType,
+                        });
+                        _p.loadedEntityTgtRelationIdMap[entityType.id] = newRepRelation;
+                    }
+
+                };
 
             };
+
 
 
             if (typeSystemDiagram.result){
@@ -171,9 +206,63 @@ var $J1 = (function (module){
             event.stopPropagation();
         };
 
+        if (ele.hasClass("showRelations")){
+            var entEle = ele.closest(".entity");
+            var entId = _p.getObjectId(entEle);
+            console.log(entId);
+
+            var entityRelations = null;
+            if (ele.hasClass("outgoing")) {
+                entityRelations = _p.loadedEntitySrcRelationIdMap[entId];
+            } else {
+                entityRelations = _p.loadedEntityTgtRelationIdMap[entId];
+            }
+            _p.drawEntityRelations(entityRelations.relations);
+
+
+        };
+
+        if (ele.hasClass("entity")){
+            selectEntity(ele);
+            event.stopPropagation();
+            return;
+        };
+
+
+
+        if (ele.is(innerMapEle)){
+            innerMapEle.find(".thickBox").removeClass("thickBox");
+            _p.SelectedEntity = null;
+            event.stopPropagation();
+        }
 
 
     };
+
+
+    function selectEntity(ele){
+        if (_p.SelectedEntity) {
+            unselectEntity(_p.SelectedEntity);
+        }
+        ele.addClass("thickBox");
+        _p.SelectedEntity = ele;
+    };
+
+    function unselectEntity(ele){
+        if (!ele) {
+            return;
+        };
+        try{
+            ele.removeClass("thickBox");
+            //ele.entity("removeResizable");
+            //_p.disableEntityAttrSort(ele);
+            _p.SelectedEntity = null;
+        } catch (err){
+
+        }
+    };
+
+
 
     function saveTSD(){
         var saveData = {};
@@ -254,8 +343,13 @@ var $J1 = (function (module){
             };
         };
 
-console.log(_p.loadedEntityRelationMap);
-console.log(Object.keys(_p.loadedEntityRelationMap).length)
+
+        return;
+
+
+
+        //전체를 그리는건 무리임.
+
         var count = 0;
         for (var k in _p.loadedEntityRelationMap){
             count++;
