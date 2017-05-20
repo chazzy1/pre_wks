@@ -77,6 +77,10 @@ $.widget( "ui.entity", {
         },this));
 		this.element.unbind('drag');
 		this.element.bind('drag',$.proxy(function( event ){
+                if (this.element.hasClass('jtk-endpoint-anchor')){
+                    jsPlumb.revalidate($J1._p.getObjectId(this.element));
+                };
+
 		/*
 			try{
 			    var entId = this.options.id;
@@ -100,6 +104,8 @@ $.widget( "ui.entity", {
 		    var label = this.options.label;
 		    $J1._p.loadedTypeSystemDiagram[label].x =this.element.position().left;
 		    $J1._p.loadedTypeSystemDiagram[label].y =this.element.position().top;
+
+
         },this));
 
     },
@@ -178,10 +184,46 @@ $.widget( "ui.entity", {
 
         this.element.addClass("entity");
         this.element.addClass("entityOuter");
-        var attributeContainer = $('<div style="background:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
-        var attrArea = $('<div class="attrArea">');
-        this.element.html(label);
-        attributeContainer.append(attrArea);
+
+        var labelArea = $('<div class="labelArea"></div>');
+        labelArea.html(label);
+        this.element.append(labelArea);
+
+        var typeColorLine = $('<div style="background-color:'+entityType.sireProp.backGroundColor+'" class="typeColorLine">');
+        this.element.append(typeColorLine);
+
+
+        var rolesContainer = $('<div style="border-color:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
+
+        var rolesAreaTitleEle = $('<div class="rolesAreaTitle">Roles:</div>');
+        rolesContainer.append(rolesAreaTitleEle);
+        var loopCount = 0;
+        for (var k in entityType.sireProp.roles){
+            var roleId = entityType.sireProp.roles[k];
+            var roleEle = $('<div class="roleItem"></div>');
+            roleEle.html($J1._p.loadedEntityTypesIdMap[roleId].label);
+            rolesContainer.append(roleEle);
+            loopCount ++;
+            if (loopCount > 6){
+                rolesContainer.append($('<div>...</div>'));
+                break;
+            }
+        }
+
+
+        var subtypeContainer = $('<div style="border-color:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
+
+        var subtypeAreaTitleEle = $('<div class="subtypeAreaTitle">Subtypes:</div>');
+        subtypeContainer.append(subtypeAreaTitleEle);
+        for (var k in entityType.sireProp.subtypes){
+            var subtypeEle = $('<div class="subtypeItem"></div>');
+            roleEle.html(entityType.sireProp.subtypes[k]);
+            subtypeContainer.append(roleEle);
+        }
+
+
+
+        //attributeContainer.append(subtypesArea);
 
         /*
         for (var k in this.options.attrs){
@@ -190,7 +232,8 @@ $.widget( "ui.entity", {
             attrArea.append(attrEle);
         };
         */
-        this.element.append(attributeContainer);
+        this.element.append(rolesContainer);
+        this.element.append(subtypeContainer);
         this.element.show();
         return;
 

@@ -5,6 +5,8 @@ var $J1 = (function (module){
 
     _p.loadedEntityTypesLabelMap = {};
     _p.loadedEntityTypesIdMap = {};
+    _p.loadedRepresentativeRelationList = [];
+    _p.loadedEntityRelationMap = {};
     _p.loadedRelationTypesIdMap = {};
     _p.loadedRelationPropLabelMap = {};
     _p.loadedTypeSystemDiagram = {};
@@ -19,6 +21,8 @@ var $J1 = (function (module){
         _p.projectId = projectId;
         var data = {"project_id":projectId};
 
+        innerMapEle.empty();
+
         $.when(getEntityTypeList(data) , getRelationTypeList(data), getTypeSystemDiagram(data))
         .done(function (entityTypeList, relationTypeList, typeSystemDiagram){
 
@@ -28,18 +32,66 @@ var $J1 = (function (module){
 
 
 
+
+
             for (var k in entityTypeList.list) {
                 var entityType = entityTypeList.list[k];
                 _p.loadedEntityTypesLabelMap[entityType.label] = entityType;
                 _p.loadedEntityTypesIdMap[entityType.id] = entityType;
             };
+
+
             for (var k in relationTypeList.list) {
                 var relationType = relationTypeList.list[k];
                 _p.loadedRelationTypesIdMap[relationType.id] = relationType;
                 if (!_p.loadedRelationPropLabelMap[relationType.label]){
                     _p.loadedRelationPropLabelMap[relationType.label] = relationType
-                }
+                };
+
+
             };
+
+
+
+            for (var k in entityTypeList.list) {
+                var entityType = entityTypeList.list[k];
+                var entityRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
+                    if (e.srcEntType == entityType.id) {
+                        return e;
+                    }
+                });
+
+
+                for (var i in entityRelations){
+                    var relation = entityRelations[i];
+
+                    var repRelationId = _p.loadedEntityTypesIdMap[relation.srcEntType].label + "-" + _p.loadedEntityTypesIdMap[relation.tgtEntType].label
+
+                    if (_p.loadedEntityRelationMap[repRelationId]){
+                        _p.loadedEntityRelationMap[repRelationId].relations.push({
+                            "id":relation.id,
+                            "label":relation.label,
+                        });
+                    } else {
+                        var newRepRelation = {
+                            "srcEntType":relation.srcEntType,
+                            "tgtEntType":relation.tgtEntType,
+                            "relations":[]
+                        };
+                        newRepRelation.relations.push({
+                            "id":relation.id,
+                            "label":relation.label,
+                        });
+                        _p.loadedEntityRelationMap[repRelationId] = newRepRelation;
+                    }
+
+
+                };
+
+
+
+            };
+
 
             if (typeSystemDiagram.result){
                 _p.loadedTypeSystemDiagram = typeSystemDiagram.result;
@@ -150,6 +202,8 @@ var $J1 = (function (module){
     function maximizeDiagramView(){
         $("#topContent").removeClass("col-md-10");
         $("#topContent").removeClass("col-md-offset-1");
+        $("#topContent").removeClass("main");
+        $("#topContent").addClass("leftRightPadding20");
         $("#topContent").find(".maximizeTarget").each(function(index,ele){
             $(ele).css("display","none");
         });
@@ -162,6 +216,8 @@ var $J1 = (function (module){
     function setNormalDiagramView(){
         $("#topContent").addClass("col-md-10");
         $("#topContent").addClass("col-md-offset-1 ")
+        $("#topContent").addClass("main");
+        $("#topContent").removeClass("leftRightPadding20");
         $("#topContent").find(".maximizeTarget").each(function(index,ele){
             $(ele).css("display","");
         });
@@ -198,18 +254,39 @@ var $J1 = (function (module){
             };
         };
 
+console.log(_p.loadedEntityRelationMap);
+console.log(Object.keys(_p.loadedEntityRelationMap).length)
+        var count = 0;
+        for (var k in _p.loadedEntityRelationMap){
+            count++;
+            if (count>400){
+                break;
+            }
+            var repRelation = _p.loadedEntityRelationMap[k];
 
-        //일단 relation 나중에...
+
+
+            var parentEntityTypeEle = $("#"+repRelation.srcEntType);
+            var childEntityTypeEle = $("#"+repRelation.tgtEntType);
+
+            jsPlumb.connect({
+                source:parentEntityTypeEle,
+                target:childEntityTypeEle,
+                anchor:"Continuous",
+                paintStyle:{ strokeWidth:2, stroke:"rgb(131,8,135)" },
+                endpoint:["Dot", { radius:1 }],
+                connector:["Bezier" , {curviness:90}],
+                overlays:[
+                    ["Arrow" , { width:5, length:5, location:0.9 }]
+                ]
+            });
+            //anchors:[ "Center","Center" ],
+
+        }
+
+
+
         return;
-
-
-
-
-
-
-
-
-
 
 
         var count = 0;

@@ -21,9 +21,9 @@ body {
 }
 
 .heightPlus120 {
-    height: -moz-calc(100% + 120px);
-    height: -webkit-calc(100% + 120px);
-    height: calc(100% + 120px);
+    height: -moz-calc(100% + 100px);
+    height: -webkit-calc(100% + 100px);
+    height: calc(100% + 100px);
 }
 
 .heightMinus50{
@@ -32,19 +32,25 @@ body {
     height: calc(100% - 50px);
 }
 
+.leftRightPadding20{
+    padding-left:20px;
+    padding-right:20px;
+}
 
 
 .diagramView{
     width: 100%;
     height: 100%;
     border-style:solid;
+    border-width: 1px;
+    border-color:#ddd;
     overflow:hidden;
 }
 
 .innerMap{
     width: 5000px;
     height: 5000px;
-    background-color:Beige
+    background-color:#fafafa
 }
 
 
@@ -73,23 +79,39 @@ div.entityOuter {
 	-webkit-box-shadow: 3px 3px 5px #696969;  /* Safari and Chrome */
 	box-shadow: 3px 3px 5px #696969;  /* CSS3 */
 }
+
+.typeColorLine {
+
+    height:5px;
+
+}
+
 div.attributeContainer {
 	font-weight: normal;
+	/*
 	border-top: 1px solid #E5E5E5;
 	border-left: 1px solid #E5E5E5;
 	border-right: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
+	*/
+	border-style: solid;
+	border-width: 1px;
+
 	border-collapse: collapse;
 	table-layout: auto;
 
 	background: WHITE;
 	margin-top: 3px;
-	padding: 5px 5px 0px 5px;
+	padding: 0px 5px 0px 5px;
 	white-space:nowrap;
 	overflow : hidden;
 	width:auto;
 	height:100%;
+
 }
+
+
+
 div.objectContainer {
 	position: absolute;
 	cursor: move;
@@ -102,7 +124,25 @@ div.objectContainer {
 
 
 
+.rolesAreaTitle{
+    font-size:10px;
+}
 
+.roleItem{
+    font-size:10px;
+}
+.labelArea{
+    font-size:12px;
+}
+
+
+
+.subtypeAreaTitle{
+    font-size:10px;
+}
+.subtgypeItem{
+    font-size:10px;
+}
 
 
 
