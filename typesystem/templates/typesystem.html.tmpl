@@ -12,9 +12,11 @@
 
 
 {% block script_foot %}
-<script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_diagram.js')}}"></script>
 <script src="/resources/static/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="/resources/static/js/jsplumb.min.js"></script>
+<script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_diagram.js')}}"></script>
+<script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/jquery.ui.entity_type.js')}}"></script>
+
 <script>
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
       var target = $(e.target).attr("href") // activated tab
@@ -32,9 +34,9 @@
 
 {% block mainContent %}
 
-        <div class="col-md-10 col-md-offset-1 main height100">
-            <h1 class="page-header">Type System</h1>
-            <div class="row placeholder">
+        <div id = "topContent" class="col-md-10 col-md-offset-1 main height100">
+            <h1 class="page-header maximizeTarget">Type System</h1>
+            <div class="row placeholder maximizeTarget">
                 <ul class="nav nav-tabs">
                     <li class="active">
                         <a data-toggle="tab" href="#tab-content-entity-types">Entity Typese</a>
@@ -82,7 +84,30 @@
                     3333333333333
                 </div>
                 <div id="tab-content-type-system-diagram" class="tab-pane heightMinus50">
-                    <div class="row height100">
+                    <div id="diagramViewHolder" class="row height100">
+                        <div class="row tsdToolBar">
+                            <div class="btn-group">
+                                <button id="btnMaximizeView" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                                </button>
+                                <button id="btnNormalView" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-resize-small" aria-hidden="true"></span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button id="btnTSDSave" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon  glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                                </button>
+                                <button id="" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                                </button>
+                                <button id="" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </button>
+                            </div>
+
+                        </div>
                         <div id="diagramView" class="diagramView">
                             <div id="innerMap" class="innerMap">
 

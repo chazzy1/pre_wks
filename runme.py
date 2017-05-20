@@ -1,5 +1,6 @@
 # -*- encoding:utf-8 -*-
-from flask import Flask
+from flask import Flask, redirect, url_for
+
 import project
 from project import bpproject
 from annotation import bpannotator
@@ -19,7 +20,7 @@ db = MongoEngine(app)
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return redirect(url_for('project.documents'))
 
 
 if __name__ == '__main__':

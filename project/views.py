@@ -86,6 +86,8 @@ def documents_export(projectid='asdf'):
     zip_file_path = export_document_sets(projectid)
     return send_file(zip_file_path, mimetype='application/octet-stream')
 
+
+@app.route('/')
 @bpproject.route('/<projectid>/documents', methods=['GET', 'POST'])
 @bpproject.route('/documents', methods=['GET', 'POST'])
 def documents(projectid='asdf'):

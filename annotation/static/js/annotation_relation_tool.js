@@ -430,7 +430,6 @@ var $J1 = (function (module){
                     childMarkerEle.css("opacity","1");
                     childMarkerEle.addClass("relationTarget");
                 };
-
             } else {
                 childMarkerEle.css("opacity","0.2");
             };

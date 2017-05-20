@@ -16,6 +16,7 @@ logical_relationship_types_collection = collections.logical_relationship_types
 relationship_types_collection = collections.relationship_types
 typesystem_collection = collections.typesystem
 sire_info_collection = collections.sire_info
+type_system_diagram_collection = collections.type_system_diagram
 
 
 def log_exception(e):

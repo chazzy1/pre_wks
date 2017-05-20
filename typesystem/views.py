@@ -65,4 +65,35 @@ def get_relationship_type_list(project_id):
     return dumps(result, ensure_ascii=False)
 
 
+@bptypesystem.route('/getTypeSystemDiagram/<project_id>', methods=['POST', 'GET'])
+def get_type_system_diagram(project_id):
+    result = {}
+    try:
+        type_system_diagram = models.get_type_system_diagram(project_id)
+        result["resultOK"] = True
+        result["result"] = type_system_diagram
+    except Exception as e:
+        result["resultOK"] = False
+        result["message"] = str(Exception)
+        log_exception(e)
+
+    return dumps(result, ensure_ascii=False)
+
+@bptypesystem.route('/saveAll/<project_id>', methods=['POST', 'GET'])
+def save_all(project_id):
+    result = {}
+
+    try:
+        type_system_diagram = request.json['typeSystemDiagram']
+
+        save_result = models.save_all(project_id=project_id, type_system_diagram=type_system_diagram)
+        result["resultOK"] = True
+        result["result"] = save_result
+
+    except Exception as e:
+        result["resultOK"] = False
+        result["message"] = str(Exception)
+        log_exception(e)
+
+    return dumps(result, ensure_ascii=False)
 
