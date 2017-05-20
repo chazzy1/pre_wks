@@ -7,7 +7,7 @@ var $J1 = (function (module){
     _p.loadedEntityTypesIdMap = {};
     _p.loadedEntitySrcRelationIdMap = {};
     _p.loadedEntityTgtRelationIdMap = {};
-    _p.loadedEntityRelationMap = {};
+    _p.loadedSrcTgtRelationMap = {};
     _p.loadedRelationTypesIdMap = {};
     _p.loadedRelationPropLabelMap = {};
     _p.loadedTypeSystemDiagram = {};
@@ -41,13 +41,15 @@ var $J1 = (function (module){
                 _p.loadedEntityTypesIdMap[entityType.id] = entityType;
             };
 
-
+            //map들을 이렇게 많이 만드는건...그냥 피곤해서 더이상 최적화를 못하겠다. 너무 피곤함...
             for (var k in relationTypeList.list) {
                 var relationType = relationTypeList.list[k];
                 _p.loadedRelationTypesIdMap[relationType.id] = relationType;
                 if (!_p.loadedRelationPropLabelMap[relationType.label]){
                     _p.loadedRelationPropLabelMap[relationType.label] = relationType
                 };
+                var srcTgtRelationId = relationType.srcEntType + "-" + relationType.tgtEntType;
+                _p.loadedSrcTgtRelationMap[srcTgtRelationId] = {"shown":false,"connection":null,"relation":relationType};
 
 
             };
@@ -126,13 +128,10 @@ var $J1 = (function (module){
 
             };
 
-
-
             if (typeSystemDiagram.result){
                 _p.loadedTypeSystemDiagram = typeSystemDiagram.result;
             };
             resetTypeSystemDiagram();
-
 
         });
 
@@ -191,6 +190,25 @@ var $J1 = (function (module){
         });
     };
 
+    _p.getOutgoingRelationCount = function(entId){
+        var outgoingRelationMap = $J1._p.loadedEntitySrcRelationIdMap[entId];
+        var outgoingRelationCount = 0;
+        if (outgoingRelationMap) {
+            outgoingRelationCount = outgoingRelationMap.relations.length;
+        };
+        return outgoingRelationCount;
+    };
+
+    _p.getIncomingRelationCount = function(entId){
+        var incomingRelationMap = $J1._p.loadedEntityTgtRelationIdMap[entId];
+        var incomingRelationCount = 0;
+        if (incomingRelationMap) {
+            incomingRelationCount = incomingRelationMap.relations.length;
+        };
+        return incomingRelationCount;
+    };
+
+
     function processDiagramClickEvent(ele,event){
         if (ele.is("#btnMaximizeView")){
             maximizeDiagramView();
@@ -209,18 +227,44 @@ var $J1 = (function (module){
         if (ele.hasClass("showRelations")){
             var entEle = ele.closest(".entity");
             var entId = _p.getObjectId(entEle);
-            console.log(entId);
 
             var entityRelations = null;
             if (ele.hasClass("outgoing")) {
                 entityRelations = _p.loadedEntitySrcRelationIdMap[entId];
+                ele.html('Hide Outgoing '+_p.getOutgoingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
             } else {
                 entityRelations = _p.loadedEntityTgtRelationIdMap[entId];
-            }
+                ele.html('Hide Incoming '+_p.getIncomingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+            };
+            ele.removeClass("showRelations");
+            ele.addClass("hideRelations");
+
             _p.drawEntityRelations(entityRelations.relations);
-
-
+            event.stopPropagation();
+            return;
         };
+
+        if (ele.hasClass("hideRelations")){
+            var entEle = ele.closest(".entity");
+            var entId = _p.getObjectId(entEle);
+
+            var entityRelations = null;
+            if (ele.hasClass("outgoing")) {
+                entityRelations = _p.loadedEntitySrcRelationIdMap[entId];
+                ele.html('Show Outgoing '+_p.getOutgoingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+            } else {
+                entityRelations = _p.loadedEntityTgtRelationIdMap[entId];
+                ele.html('Show Incoming '+_p.getIncomingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+            };
+            ele.addClass("showRelations");
+            ele.removeClass("hideRelations");
+
+            _p.removeEntityRelations(entityRelations.relations);
+            event.stopPropagation();
+            return;
+        };
+
+
 
         if (ele.hasClass("entity")){
             selectEntity(ele);
@@ -342,73 +386,6 @@ var $J1 = (function (module){
                 }
             };
         };
-
-
-        return;
-
-
-
-        //전체를 그리는건 무리임.
-
-        var count = 0;
-        for (var k in _p.loadedEntityRelationMap){
-            count++;
-            if (count>400){
-                break;
-            }
-            var repRelation = _p.loadedEntityRelationMap[k];
-
-
-
-            var parentEntityTypeEle = $("#"+repRelation.srcEntType);
-            var childEntityTypeEle = $("#"+repRelation.tgtEntType);
-
-            jsPlumb.connect({
-                source:parentEntityTypeEle,
-                target:childEntityTypeEle,
-                anchor:"Continuous",
-                paintStyle:{ strokeWidth:2, stroke:"rgb(131,8,135)" },
-                endpoint:["Dot", { radius:1 }],
-                connector:["Bezier" , {curviness:90}],
-                overlays:[
-                    ["Arrow" , { width:5, length:5, location:0.9 }]
-                ]
-            });
-            //anchors:[ "Center","Center" ],
-
-        }
-
-
-
-        return;
-
-
-        var count = 0;
-        for (var k in _p.loadedRelationTypesIdMap){
-
-            count++;
-            if (count>20) break;
-
-            var relationType = _p.loadedRelationTypesIdMap[k];
-
-            var parentEntityTypeEle = $("#"+relationType.srcEntType);
-            var childEntityTypeEle = $("#"+relationType.tgtEntType);
-
-            jsPlumb.connect({ source:parentEntityTypeEle,
-                target:childEntityTypeEle,
-                anchors:[ "Center","Center" ],
-                paintStyle:{ strokeWidth:2, stroke:"rgb(131,8,135)" },
-                endpoint:["Dot", { radius:1 }],
-                connector:["Bezier" , {curviness:90}],
-                overlays:[
-                    ["Arrow" , { width:5, length:5, location:0.9 }]
-                ]
-            });
-            //jsPlumb.draggable(_p.getObjectId(parentEntityTypeEle));
-            //jsPlumb.draggable(_p.getObjectId(childEntityTypeEle));
-
-
-        }
 
 
     };

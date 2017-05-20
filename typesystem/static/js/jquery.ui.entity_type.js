@@ -196,16 +196,9 @@ $.widget( "ui.entity", {
         var rolesContainer = $('<div style="border-color:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
 
         var relationContainer = $('<div style="border-color:'+entityType.sireProp.backGroundColor+'" class="attributeContainer">');
-        var outgoingRelationMap = $J1._p.loadedEntitySrcRelationIdMap[this.options.id];
-        var outgoingRelationCount = 0;
-        var incomingRelationMap = $J1._p.loadedEntityTgtRelationIdMap[this.options.id];
-        var incomingRelationCount = 0;
-        if (outgoingRelationMap) {
-            outgoingRelationCount = outgoingRelationMap.relations.length;
-        };
-        if (incomingRelationMap) {
-            incomingRelationCount = incomingRelationMap.relations.length;
-        };
+
+        var outgoingRelationCount = $J1._p.getOutgoingRelationCount(this.options.id);
+        var incomingRelationCount = $J1._p.getIncomingRelationCount(this.options.id);
 
         var totalCount = outgoingRelationCount+incomingRelationCount;
         var relationCountEle = $('<div class="attributeTitle">Relations: '+totalCount+'</div>');
@@ -216,10 +209,6 @@ $.widget( "ui.entity", {
             var showOutgoingEle = $('<div class="showRelations outgoing">Show Outgoing '+outgoingRelationCount+' <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></div>');
             relationContainer.append(showOutgoingEle);
         };
-
-
-
-
 
 
 
