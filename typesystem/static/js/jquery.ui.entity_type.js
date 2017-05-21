@@ -77,9 +77,13 @@ $.widget( "ui.entity", {
         },this));
 		this.element.unbind('drag');
 		this.element.bind('drag',$.proxy(function( event ){
+		        var entId = $J1._p.getObjectId(this.element);
                 if (this.element.hasClass('jtk-endpoint-anchor')){
-                    jsPlumb.revalidate($J1._p.getObjectId(this.element));
+
+
+                    jsPlumb.revalidate(entId);
                 };
+                $J1._p.resetMiniMapEnt(entId);
 
 		/*
 			try{
@@ -104,8 +108,8 @@ $.widget( "ui.entity", {
 		    var label = this.options.label;
 		    $J1._p.loadedTypeSystemDiagram[label].x =this.element.position().left;
 		    $J1._p.loadedTypeSystemDiagram[label].y =this.element.position().top;
+            $J1._p.resetMiniMapEnt($J1._p.getObjectId(this.element));
 
-            $J1._p.resetMiniMap();
         },this));
 
     },

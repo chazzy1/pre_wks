@@ -191,12 +191,14 @@ var $J1 = (function (module){
 
         })
         .bind("dragstop",function(event){
+            /*
             if ($(this).position().left > 0){
                 $(this).css("left","0px");
             };
             if ($(this).position().top > 0){
                 $(this).css("top","0px");
             };
+            */
             _p.resetMinimapViewpoint();
         })
         ;

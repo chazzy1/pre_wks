@@ -84,12 +84,31 @@
                 .css("top",ele.position().top*minimapScale)
                 .css("background",ele.children(".typeColorLine").css("background-color"))
                 .css("position","absolute")
-                .appendTo($('#miniMap'));
+                .appendTo(miniMapEle);
 
 
             }
         });
         _p.drawViewPoint();
+    };
+
+    _p.resetMiniMapEnt = function(entId){
+        var entEle = $("#"+entId);
+        if (entEle.length > 0){
+            $('#mini_'+entId).remove();
+            var miniEleId = "mini_"+entId;
+            $('<div id="'+miniEleId+'" class="minimapEntity"></div>')
+            .width(entEle.width()*minimapScale)
+            .height(entEle.height()*minimapScale)
+            .css("left",entEle.position().left*minimapScale)
+            .css("top",entEle.position().top*minimapScale)
+            .css("background",entEle.children(".typeColorLine").css("background-color"))
+            .css("position","absolute")
+            .appendTo(miniMapEle);
+        } else {
+            $('#mini_'+entId).remove();
+        }
+
     };
 
 
