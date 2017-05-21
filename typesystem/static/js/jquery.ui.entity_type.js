@@ -105,7 +105,7 @@ $.widget( "ui.entity", {
 		    $J1._p.loadedTypeSystemDiagram[label].x =this.element.position().left;
 		    $J1._p.loadedTypeSystemDiagram[label].y =this.element.position().top;
 
-
+            $J1._p.resetMiniMap();
         },this));
 
     },

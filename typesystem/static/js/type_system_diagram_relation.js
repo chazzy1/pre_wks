@@ -31,7 +31,8 @@ var $J1 = (function (module){
                      [ "Label", {label:srcTgtRelation.relation.label, id:srcTgtRelation.relation.id}]
                 ]
             });
-
+            jsPlumb.revalidate(srcTgtRelation.relation.srcEntType);
+            jsPlumb.revalidate(srcTgtRelation.relation.tgtEntType);
             srcTgtRelation.shown = true;
             srcTgtRelation.connection = connection;
         }

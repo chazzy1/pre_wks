@@ -14,7 +14,7 @@ var $J1 = (function (module){
     _p.viewType="L";
     _p.SelectedEntity=null;
     var diagramViewEle = $("#diagramView");
-    var innerMapEle = $("#innerMap");
+    _p.innerMapEle = $("#innerMap");
 
 
     _p.init = function(projectId){
@@ -22,7 +22,7 @@ var $J1 = (function (module){
         _p.projectId = projectId;
         var data = {"project_id":projectId};
 
-        innerMapEle.empty();
+        _p.innerMapEle.empty();
 
         $.when(getEntityTypeList(data) , getRelationTypeList(data), getTypeSystemDiagram(data))
         .done(function (entityTypeList, relationTypeList, typeSystemDiagram){
@@ -131,7 +131,8 @@ var $J1 = (function (module){
             if (typeSystemDiagram.result){
                 _p.loadedTypeSystemDiagram = typeSystemDiagram.result;
             };
-            resetTypeSystemDiagram();
+            _p.resetTypeSystemDiagram();
+            _p.resetMiniMap();
 
         });
 
@@ -181,48 +182,63 @@ var $J1 = (function (module){
     };
 
     function resetDiagramUI(){
-        innerMapEle.draggable();
 
-        $("#tab-content-type-system-diagram").off("click","**");
-        $("#tab-content-type-system-diagram").on("click","div,button",function(event){
+        _p.innerMapEle.draggable().unbind("drag").unbind("dragstop");
+        _p.innerMapEle.draggable().bind("drag",function (event, ui) {
+
+        //_p.resetMinimapViewpoint();
+
+
+        })
+        .bind("dragstop",function(event){
+            if ($(this).position().left > 0){
+                $(this).css("left","0px");
+            };
+            if ($(this).position().top > 0){
+                $(this).css("top","0px");
+            };
+            _p.resetMinimapViewpoint();
+        })
+        ;
+
+        $("#diagramView").off("click","**");
+        $("#diagramView").on("click","div",function(event){
             var ele = $(this);
             processDiagramClickEvent(ele,event);
         });
+
+        $("#diagramToolbar").off("click","**");
+        $("#diagramToolbar").on("click","div,button",function(event){
+            var ele = $(this);
+            processDiagramToolbarClickEvent(ele,event);
+        });
     };
 
-    _p.getOutgoingRelationCount = function(entId){
-        var outgoingRelationMap = $J1._p.loadedEntitySrcRelationIdMap[entId];
-        var outgoingRelationCount = 0;
-        if (outgoingRelationMap) {
-            outgoingRelationCount = outgoingRelationMap.relations.length;
-        };
-        return outgoingRelationCount;
-    };
-
-    _p.getIncomingRelationCount = function(entId){
-        var incomingRelationMap = $J1._p.loadedEntityTgtRelationIdMap[entId];
-        var incomingRelationCount = 0;
-        if (incomingRelationMap) {
-            incomingRelationCount = incomingRelationMap.relations.length;
-        };
-        return incomingRelationCount;
-    };
-
-
-    function processDiagramClickEvent(ele,event){
+    function processDiagramToolbarClickEvent(ele,event){
         if (ele.is("#btnMaximizeView")){
-            maximizeDiagramView();
             event.stopPropagation();
+            maximizeDiagramView();
+
         };
 
         if (ele.is("#btnNormalView")){
-            setNormalDiagramView();
             event.stopPropagation();
+            setNormalDiagramView();
+
         };
         if (ele.is("#btnTSDSave")){
-            saveTSD();
             event.stopPropagation();
+            saveTSD();
+
         };
+        if (ele.is("#btnShowRelationEntity")){
+            event.stopPropagation();
+
+        };
+
+    };
+
+    function processDiagramClickEvent(ele,event){
 
         if (ele.hasClass("showRelations")){
             var entEle = ele.closest(".entity");
@@ -267,46 +283,21 @@ var $J1 = (function (module){
 
 
         if (ele.hasClass("entity")){
-            selectEntity(ele);
+            _p.selectEntity(ele);
             event.stopPropagation();
             return;
         };
 
 
 
-        if (ele.is(innerMapEle)){
-            innerMapEle.find(".thickBox").removeClass("thickBox");
+        if (ele.is(_p.innerMapEle)){
+            _p.innerMapEle.find(".thickBox").removeClass("thickBox");
             _p.SelectedEntity = null;
             event.stopPropagation();
         }
 
 
     };
-
-
-    function selectEntity(ele){
-        if (_p.SelectedEntity) {
-            unselectEntity(_p.SelectedEntity);
-        }
-        ele.addClass("thickBox");
-        _p.SelectedEntity = ele;
-    };
-
-    function unselectEntity(ele){
-        if (!ele) {
-            return;
-        };
-        try{
-            ele.removeClass("thickBox");
-            //ele.entity("removeResizable");
-            //_p.disableEntityAttrSort(ele);
-            _p.SelectedEntity = null;
-        } catch (err){
-
-        }
-    };
-
-
 
     function saveTSD(){
         var saveData = {};
@@ -357,118 +348,6 @@ var $J1 = (function (module){
         $("#diagramViewHolder").addClass("height100");
         $("#diagramViewHolder").removeClass("heightPlus120");
     };
-
-    function getEntityTypeBaseEle(){
-        return $('<div class="entityTypeContainer"><div class="entityTypeTextContainer"></></div>');
-    };
-
-    function resetTypeSystemDiagram(){
-
-        jsPlumb.setContainer(innerMapEle);
-
-
-        var Xoffset = 0;
-        var Yoffset = 0;
-
-        for (var k in _p.loadedEntityTypesLabelMap){
-            var entityType = _p.loadedEntityTypesLabelMap[k];
-
-            var diagramItem = _p.loadedTypeSystemDiagram[k];
-
-            drawTypeSystem(entityType, diagramItem, Xoffset*120, Yoffset*120);
-
-
-            if (!diagramItem) {
-                Xoffset++;
-                if (Xoffset>10){
-                    Xoffset = 0;
-                    Yoffset++;
-                }
-            };
-        };
-
-
-    };
-
-
-    function drawTypeSystem(entityType, diagramItem, Xoffset, Yoffset){
-
-        if (!diagramItem){
-            diagramItem = {};
-            diagramItem.x = Xoffset;
-            diagramItem.y = Yoffset;
-            //없으면 만들어둔다. 나중에 저장할때 모든 typeSystem에 대한 diagram항목이 만들어질것임.
-            _p.loadedTypeSystemDiagram[entityType.label] = diagramItem;
-        };
-        var roles = [];
-        for (var k in entityType.sireProp.roles){
-            var roleId = entityType.sireProp.roles[k];
-            var roleObject = {"id":roleId, "label":_p.loadedEntityTypesIdMap[roleId].label};
-            roles.push(roleObject);
-        };
-        /*
-        var entity = {
-            "id":entityType.id,
-            "label":entityType.label,
-            "entFillColor":entityType.sireProp.backGroundColor,
-            "subtypes": entityType.subtypes,
-            "roles":roles,
-            "x":diagramItem.x,
-            "y":diagramItem.y
-        };
-        */
-
-        //계획변경.
-        var entity = {
-            "id":entityType.id,
-            "label":entityType.label
-        }
-
-        $('<div></div>').entity(entity).appendTo(innerMapEle);
-
-        //entityTypeEle.resizable();
-    };
-
-    function drawTypeSystem1(entityType, Xoffset,Yoffset){
-        var entityTypeEle = getEntityTypeBaseEle();
-        entityTypeEle.find(".entityTypeTextContainer").html(entityType.label);
-        entityTypeEle.css("background-color",entityType.sireProp.backGroundColor);
-        innerMapEle.append(entityTypeEle);
-
-        entityTypeEle.attr("gtcEntityTypeLabel",entityType.label);
-        entityTypeEle.attr("gtcEntityTypeId",entityType.id);
-
-        entityTypeEle.css("left",Xoffset);
-        entityTypeEle.css("top",Yoffset);
-
-
-
-
-
-
-
-
-
-
-        //상항이 이게 아님. 다시 id 찾아야함.
-        entityTypeEle.attr("id",entityType.id);
-
-        entityTypeEle.draggable({
-            drag:function(e){
-
-                if ($(this).hasClass('jtk-endpoint-anchor')){
-                    jsPlumb.revalidate(_p.getObjectId($(this)));
-                };
-            }
-
-
-        });
-
-
-
-        //entityTypeEle.resizable();
-    }
-
 
 
     _p.getObjectId = function(obj){

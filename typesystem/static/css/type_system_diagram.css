@@ -156,6 +156,30 @@ div.thickBox {
     cursor:pointer;
 }
 
+.miniMap{
+	border-style: solid;
+	border-width: 1px;
+	width:100px;
+	height: 100px;
+    position: fixed;
+	bottom: 10px;
+	left: 10px;
+	z-index: 500;
+}
+
+minimapEntity{
+	border: 1px solid #ccc;
+	z-index: 10;
+	position: absolute;
+}
+
+.viewPoint{
+	border: 2px solid #0071BC;
+	position: absolute;
+	cursor: move;
+	z-index: 100;
+}
+
 
 
 
