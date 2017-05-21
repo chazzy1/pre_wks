@@ -233,14 +233,32 @@ var $J1 = (function (module){
         };
         if (ele.is("#btnShowRelationEntity")){
             event.stopPropagation();
+            showRelationEntity();
 
         };
+
+        if (ele.is("#btnShowAllEntity")){
+            event.stopPropagation();
+            showAllEntity();
+
+        };
+
+        if (ele.is("#btnHideAllRelations")){
+            event.stopPropagation();
+            hideAllRelations();
+
+        };
+
+
+
+
 
     };
 
     function processDiagramClickEvent(ele,event){
 
         if (ele.hasClass("showRelations")){
+            event.stopPropagation();
             var entEle = ele.closest(".entity");
             var entId = _p.getObjectId(entEle);
 
@@ -256,11 +274,13 @@ var $J1 = (function (module){
             ele.addClass("hideRelations");
 
             _p.drawEntityRelations(entityRelations.relations);
-            event.stopPropagation();
+            _p.resetMiniMap();
+
             return;
         };
 
         if (ele.hasClass("hideRelations")){
+            event.stopPropagation();
             var entEle = ele.closest(".entity");
             var entId = _p.getObjectId(entEle);
 
@@ -276,7 +296,8 @@ var $J1 = (function (module){
             ele.removeClass("hideRelations");
 
             _p.removeEntityRelations(entityRelations.relations);
-            event.stopPropagation();
+            _p.resetMiniMap();
+
             return;
         };
 
@@ -348,6 +369,47 @@ var $J1 = (function (module){
         $("#diagramViewHolder").addClass("height100");
         $("#diagramViewHolder").removeClass("heightPlus120");
     };
+
+    function showRelationEntity(){
+        var showList = {};
+        for (var k in _p.loadedSrcTgtRelationMap){
+            var relationInfo = _p.loadedSrcTgtRelationMap[k];
+            if (relationInfo.shown) {
+                showList[relationInfo.relation.srcEntType] = 1;
+                showList[relationInfo.relation.tgtEntType] = 1;
+
+            }
+        };
+
+        if (Object.keys(showList).length > 0){
+            for (var k in _p.loadedEntityTypesIdMap){
+                var entity = _p.loadedEntityTypesIdMap[k];
+                if (showList[entity.id]){
+                    _p.showTypeSystemEntity(entity.id);
+                } else {
+                    _p.hideTypeSystemEntity(entity.id);
+                }
+            };
+            _p.resetMiniMap();
+        }
+    };
+
+    function showAllEntity(){
+        for (var k in _p.loadedEntityTypesIdMap){
+            var entity = _p.loadedEntityTypesIdMap[k];
+            _p.showTypeSystemEntity(entity.id);
+        };
+        _p.resetMiniMap();
+    };
+
+    function hideAllRelations(){
+        for (var k in _p.loadedSrcTgtRelationMap){
+            var relationInfo = _p.loadedSrcTgtRelationMap[k];
+            if (relationInfo.shown) {
+                _p.removeRelation(relationInfo);
+            }
+        };
+    }
 
 
     _p.getObjectId = function(obj){

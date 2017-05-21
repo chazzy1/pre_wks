@@ -74,16 +74,20 @@
 
         _p.innerMapEle.find(".entity").each(function(index,ele){
             ele = $(ele);
-            var entId = _p.getObjectId(ele);
-            var miniEleId = "mini_"+entId;
-            $('<div id="'+miniEleId+'" class="minimapEntity"></div>')
-            .width(ele.width()*minimapScale)
-            .height(ele.height()*minimapScale)
-            .css("left",ele.position().left*minimapScale)
-            .css("top",ele.position().top*minimapScale)
-            .css("background",ele.children(".typeColorLine").css("background-color"))
-            .css("position","absolute")
-            .appendTo($('#miniMap'));
+            if (ele.is(":visible")) {
+                var entId = _p.getObjectId(ele);
+                var miniEleId = "mini_"+entId;
+                $('<div id="'+miniEleId+'" class="minimapEntity"></div>')
+                .width(ele.width()*minimapScale)
+                .height(ele.height()*minimapScale)
+                .css("left",ele.position().left*minimapScale)
+                .css("top",ele.position().top*minimapScale)
+                .css("background",ele.children(".typeColorLine").css("background-color"))
+                .css("position","absolute")
+                .appendTo($('#miniMap'));
+
+
+            }
         });
         _p.drawViewPoint();
     };

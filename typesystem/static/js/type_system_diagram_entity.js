@@ -106,6 +106,16 @@ var $J1 = (function (module){
 
     };
 
+    _p.showTypeSystemEntity = function(entId){
+        var entEle = $("#"+entId);
+        entEle.css("display","");
+    };
+
+    _p.hideTypeSystemEntity = function(entId){
+        var entEle = $("#"+entId);
+        entEle.css("display","None");
+    };
+
 
 
 

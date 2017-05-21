@@ -19,9 +19,21 @@ var $J1 = (function (module){
 
     _p.drawRelation = function(srcTgtRelation){
         if (!srcTgtRelation.shown){
+
+            var sourceEle = $("#"+srcTgtRelation.relation.srcEntType);
+            var targetEle = $("#"+srcTgtRelation.relation.tgtEntType);
+
+
+            if (!sourceEle.is(":visible")) {
+                sourceEle.css("display","");
+            };
+            if (!targetEle.is(":visible")) {
+                targetEle.css("display","");
+            };
+
             var connection = jsPlumb.connect({
-                source:$("#"+srcTgtRelation.relation.srcEntType),
-                target:$("#"+srcTgtRelation.relation.tgtEntType),
+                source:sourceEle,
+                target:targetEle,
                 anchor:"Continuous",
                 paintStyle:{ strokeWidth:1, stroke:"rgb(131,8,135)" },
                 endpoint:["Dot", { radius:1 }],
@@ -58,6 +70,9 @@ var $J1 = (function (module){
             srcTgtRelation.connection = null;
         };
     };
+
+
+    
 
 
 	return module;
