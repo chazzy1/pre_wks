@@ -146,14 +146,22 @@ div.thickBox {
 	border: 3px solid #0071BC;
 }
 
-.showRelations{
+.relationToggleOutgoing{
     font-size:10px;
     cursor:pointer;
 }
 
-.hideRelations{
+.relationToggleIncoming{
     font-size:10px;
     cursor:pointer;
+}
+
+.toggleShow{
+
+}
+
+.toggleHide{
+    border: 1px solid #0071BC;
 }
 
 .miniMap{

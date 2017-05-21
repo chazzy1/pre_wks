@@ -109,6 +109,31 @@ $.widget( "ui.entity", {
         },this));
 
     },
+    setShowOutgoing: function(){
+        var ele = this.element.find(".relationToggleOutgoing");
+        ele.addClass("toggleShow");
+        ele.removeClass("toggleHide");
+        ele.html('Show Outgoing '+$J1._p.getOutgoingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+    },
+    setHideOutgoing: function(){
+        var ele = this.element.find(".relationToggleOutgoing");
+        ele.removeClass("toggleShow");
+        ele.addClass("toggleHide");
+        ele.html('Hide Outgoing '+$J1._p.getOutgoingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+    },
+    setShowIncoming: function(){
+        var ele = this.element.find(".relationToggleIncoming");
+        ele.addClass("toggleShow");
+        ele.removeClass("toggleHide");
+        ele.html('Show Incoming '+$J1._p.getIncomingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+    },
+    setHideIncoming: function(){
+        var ele = this.element.find(".relationToggleIncoming");
+        ele.removeClass("toggleShow");
+        ele.addClass("toggleHide");
+        ele.html('Hide Incoming '+$J1._p.getIncomingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+    },
+
 	_drawEntity: function() {
 		this.element.attr("id",this.options.id);
 		this.element.addClass("objectContainer");
@@ -206,14 +231,14 @@ $.widget( "ui.entity", {
 
 
         if (outgoingRelationCount){
-            var showOutgoingEle = $('<div class="showRelations outgoing">Show Outgoing '+outgoingRelationCount+' <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></div>');
+            var showOutgoingEle = $('<div class="relationToggleOutgoing"></div>');
             relationContainer.append(showOutgoingEle);
         };
 
 
 
         if (incomingRelationCount){
-            var showIncomingEle = $('<div class="showRelations incoming">Show Incoming '+incomingRelationCount+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></div>');
+            var showIncomingEle = $('<div class="relationToggleIncoming"></div>');
             relationContainer.append(showIncomingEle);
         };
 
@@ -255,6 +280,10 @@ $.widget( "ui.entity", {
 
 
         this.element.show();
+        //this.setShowOutgoing();
+        //this.setShowIncoming();
+
+
         return;
 
 	},	

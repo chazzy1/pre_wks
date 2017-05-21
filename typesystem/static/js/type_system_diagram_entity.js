@@ -102,7 +102,7 @@ var $J1 = (function (module){
             "label":entityType.label
         }
 
-        $('<div></div>').entity(entity).appendTo(_p.innerMapEle);
+        $('<div></div>').entity(entity).entity("setShowOutgoing").entity("setShowIncoming").appendTo(_p.innerMapEle);
 
     };
 

@@ -257,45 +257,38 @@ var $J1 = (function (module){
 
     function processDiagramClickEvent(ele,event){
 
-        if (ele.hasClass("showRelations")){
+        if (ele.hasClass("relationToggleOutgoing")){
             event.stopPropagation();
             var entEle = ele.closest(".entity");
             var entId = _p.getObjectId(entEle);
-
-            var entityRelations = null;
-            if (ele.hasClass("outgoing")) {
-                entityRelations = _p.loadedEntitySrcRelationIdMap[entId];
-                ele.html('Hide Outgoing '+_p.getOutgoingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+            var entityRelations = _p.loadedEntitySrcRelationIdMap[entId];
+            if (ele.hasClass("toggleShow")) {
+                entEle.entity("setHideOutgoing");
+                _p.drawEntityRelations(entityRelations.relations);
             } else {
-                entityRelations = _p.loadedEntityTgtRelationIdMap[entId];
-                ele.html('Hide Incoming '+_p.getIncomingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+                entEle.entity("setShowOutgoing");
+                _p.removeEntityRelations(entityRelations.relations);
             };
-            ele.removeClass("showRelations");
-            ele.addClass("hideRelations");
 
-            _p.drawEntityRelations(entityRelations.relations);
             _p.resetMiniMap();
 
             return;
         };
 
-        if (ele.hasClass("hideRelations")){
+        if (ele.hasClass("relationToggleIncoming")){
             event.stopPropagation();
             var entEle = ele.closest(".entity");
             var entId = _p.getObjectId(entEle);
-
-            var entityRelations = null;
-            if (ele.hasClass("outgoing")) {
-                entityRelations = _p.loadedEntitySrcRelationIdMap[entId];
-                ele.html('Show Outgoing '+_p.getOutgoingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+            var entityRelations = _p.loadedEntityTgtRelationIdMap[entId];
+            if (ele.hasClass("toggleShow")) {
+                entEle.entity("setHideIncoming");
+                _p.drawEntityRelations(entityRelations.relations);
             } else {
-                entityRelations = _p.loadedEntityTgtRelationIdMap[entId];
-                ele.html('Show Incoming '+_p.getIncomingRelationCount(entId)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+                entEle.entity("setShowIncoming");
+                _p.removeEntityRelations(entityRelations.relations);
             };
-            ele.addClass("showRelations");
-            ele.removeClass("hideRelations");
 
-            _p.removeEntityRelations(entityRelations.relations);
+
             _p.resetMiniMap();
 
             return;
@@ -409,6 +402,12 @@ var $J1 = (function (module){
                 _p.removeRelation(relationInfo);
             }
         };
+
+        for (var k in _p.loadedEntityTypesIdMap){
+            var entity = _p.loadedEntityTypesIdMap[k];
+            $("#"+entity.id).entity("setShowOutgoing").entity("setShowIncoming");
+        };
+
     }
 
 
