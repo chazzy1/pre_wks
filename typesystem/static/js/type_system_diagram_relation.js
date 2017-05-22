@@ -31,6 +31,13 @@ var $J1 = (function (module){
                 targetEle.css("display","");
             };
 
+
+            var relation = srcTgtRelation.relation;
+            var label = relation.label;
+            if ($J1._p.currentTypeSystemMode == "L" && relation.logical_value) {
+                label = relation.logical_value;
+            };
+
             var connection = jsPlumb.connect({
                 source:sourceEle,
                 target:targetEle,
@@ -40,7 +47,7 @@ var $J1 = (function (module){
                 connector:["Bezier" , {curviness:90}],
                 overlays:[
                     ["Arrow" , { width:5, length:5, location:0.9 }],
-                     [ "Label", {label:srcTgtRelation.relation.label, id:srcTgtRelation.relation.id}]
+                     [ "Label", {label:label, id:relation.id}]
                 ]
             });
             jsPlumb.revalidate(srcTgtRelation.relation.srcEntType);

@@ -11,7 +11,7 @@ var $J1 = (function (module){
     _p.loadedRelationTypesIdMap = {};
     _p.loadedRelationPropLabelMap = {};
     _p.loadedTypeSystemDiagram = {};
-    _p.viewType="L";
+    _p.currentTypeSystemMode="L";
     _p.SelectedEntity=null;
     var diagramViewEle = $("#diagramView");
     _p.innerMapEle = $("#innerMap");
@@ -134,6 +134,9 @@ var $J1 = (function (module){
             _p.resetTypeSystemDiagram();
             _p.resetMiniMap();
 
+            updateRelationCountLabel();
+
+
         });
 
         resetDiagramUI();
@@ -251,8 +254,20 @@ var $J1 = (function (module){
 
         };
 
+        if (ele.is("#btnTypeSystemLogical")){
+            event.stopPropagation();
+            _p.currentTypeSystemMode="L";
+            resetAllShownEntityContents();
+            resetAllShownRelations();
 
+        };
 
+        if (ele.is("#btnTypeSystemPhysical")){
+            event.stopPropagation();
+            _p.currentTypeSystemMode="P";
+            resetAllShownEntityContents();
+            resetAllShownRelations();
+        };
 
 
     };
@@ -407,11 +422,14 @@ var $J1 = (function (module){
 
         for (var k in _p.loadedEntityTypesIdMap){
             var entity = _p.loadedEntityTypesIdMap[k];
-            $("#"+entity.id).entity("setShowOutgoing").entity("setShowIncoming");
+            _p.getElementFromId(entity.id).entity("setShowOutgoing").entity("setShowIncoming");
         };
 
-    }
+    };
 
+    function updateRelationCountLabel(){
+        _p.getElementFromId("lblRelationCount").html("Show All "+Object.keys(_p.loadedRelationTypesIdMap).length+" relations ");
+    };
 
     _p.getObjectId = function(obj){
         if (!obj){
@@ -425,7 +443,40 @@ var $J1 = (function (module){
     };
 
 
+    function resetAllShownEntityContents(){
+        for (var k in _p.loadedEntityTypesIdMap){
+            var entity = _p.loadedEntityTypesIdMap[k];
+            var entEle = _p.getElementFromId(entity.id);
+            if (entEle.is(":visible")) {
+                var outgoingStatus = "setShowOutgoing";
+                var incomingStatus = "setShowIncoming";
+                if (entEle.find(".relationToggleOutgoing").hasClass("toggleHide")){
+                    outgoingStatus = "setHideOutgoing";
+                };
+                if (entEle.find(".relationToggleIncoming").hasClass("toggleHide")){
+                    incomingStatus = "setHideIncoming";
+                };
+                entEle.entity("resetContents").entity(outgoingStatus).entity(incomingStatus);;
+            }
 
+        }
+    };
+
+    function resetAllShownRelations(){
+        for (var k in _p.loadedSrcTgtRelationMap){
+            var relation = _p.loadedSrcTgtRelationMap[k];
+            if (relation.shown){
+                _p.removeRelation(relation);
+                _p.drawRelation(relation);
+            }
+
+        }
+    }
+
+
+    _p.getElementFromId = function(eleId){
+        return $("#"+eleId);
+    };
 
 	return module;
 }($J1 || {}));
