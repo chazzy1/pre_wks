@@ -112,7 +112,7 @@ var $J1 = (function (module){
             entityTypeLabel = entityType.logical_value;
         };
 
-        var tokenEntityTypeMarker = $('<div class="tokenEntityTypeMarker">'+entityTypeLabel+'</div>');
+        var tokenEntityTypeMarker = $('<div class="tokenEntityTypeMarker" data-toggle="tooltip" title="'+entityTypeLabel+'">'+entityTypeLabel+'</div>');
         tokenEntityTypeMarker.css("background-color",entityType.sireProp.backGroundColor);
         tokenEntityTypeMarker.css("color",entityType.sireProp.color);
         tokenEntityTypeMarker.css("border-color",entityType.sireProp.backGroundColor);

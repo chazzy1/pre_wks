@@ -101,13 +101,13 @@ $.widget( "ui.entity", {
         var ele = this.element.find(".relationToggleOutgoing");
         ele.addClass("toggleShow");
         ele.removeClass("toggleHide");
-        ele.html('Show Outgoing '+$J1._p.getOutgoingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+        ele.html('Show Outgoing '+$J1._p.getOutgoingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-right" aria-hidden="true">');
     },
     setHideOutgoing: function(){
         var ele = this.element.find(".relationToggleOutgoing");
         ele.removeClass("toggleShow");
         ele.addClass("toggleHide");
-        ele.html('Hide Outgoing '+$J1._p.getOutgoingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-left" aria-hidden="true">');
+        ele.html('Hide Outgoing '+$J1._p.getOutgoingRelationCount(this.options.id)+' <span class="glyphicon glyphicon-arrow-right" aria-hidden="true">');
     },
     setShowIncoming: function(){
         var ele = this.element.find(".relationToggleIncoming");

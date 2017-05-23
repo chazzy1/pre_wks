@@ -49,7 +49,18 @@ var $J1 = (function (module){
                     _p.loadedRelationPropLabelMap[relationType.label] = relationType
                 };
                 var srcTgtRelationId = relationType.srcEntType + "-" + relationType.tgtEntType;
-                _p.loadedSrcTgtRelationMap[srcTgtRelationId] = {"shown":false,"connection":null,"relation":relationType};
+
+
+                if (!_p.loadedSrcTgtRelationMap[srcTgtRelationId]){
+                    _p.loadedSrcTgtRelationMap[srcTgtRelationId] = {
+                        "shown":false,
+                        "connection":null,
+                        "srcEntType":relationType.srcEntType,
+                        "tgtEntType":relationType.tgtEntType,
+                        "relations":[]
+                    };
+                };
+                _p.loadedSrcTgtRelationMap[srcTgtRelationId].relations.push(relationType);
 
 
             };
@@ -99,11 +110,8 @@ var $J1 = (function (module){
                         return e;
                     }
                 });
-
-
                 for (var i in entityRelations){
                     var relation = entityRelations[i];
-
                     if (_p.loadedEntityTgtRelationIdMap[entityType.id]){
                         _p.loadedEntityTgtRelationIdMap[entityType.id].relations.push({
                             "id":relation.id,
@@ -123,9 +131,7 @@ var $J1 = (function (module){
                         });
                         _p.loadedEntityTgtRelationIdMap[entityType.id] = newRepRelation;
                     }
-
                 };
-
             };
 
             if (typeSystemDiagram.result){
@@ -281,6 +287,7 @@ var $J1 = (function (module){
             var entityRelations = _p.loadedEntitySrcRelationIdMap[entId];
             if (ele.hasClass("toggleShow")) {
                 entEle.entity("setHideOutgoing");
+
                 _p.drawEntityRelations(entityRelations.relations);
             } else {
                 entEle.entity("setShowOutgoing");
@@ -385,8 +392,8 @@ var $J1 = (function (module){
         for (var k in _p.loadedSrcTgtRelationMap){
             var relationInfo = _p.loadedSrcTgtRelationMap[k];
             if (relationInfo.shown) {
-                showList[relationInfo.relation.srcEntType] = 1;
-                showList[relationInfo.relation.tgtEntType] = 1;
+                showList[relationInfo.srcEntType] = 1;
+                showList[relationInfo.tgtEntType] = 1;
 
             }
         };
