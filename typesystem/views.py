@@ -97,3 +97,6 @@ def save_all(project_id):
 
     return dumps(result, ensure_ascii=False)
 
+@bptypesystem.route('/entityTypeDtl/<project_id>', methods=['POST', 'GET'])
+def entity_type_detail(project_id):
+    return render_template('entity_type_dtl.html.tmpl')

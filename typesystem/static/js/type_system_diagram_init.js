@@ -218,6 +218,12 @@ var $J1 = (function (module){
             processDiagramClickEvent(ele,event);
         });
 
+        $("#diagramView").off("dblclick","**");
+        $("#diagramView").on("dblclick","div",function(event){
+            var ele = $(this);
+            processDiagramDblClickEvent(ele,event);
+        });
+
         $("#diagramToolbar").off("click","**");
         $("#diagramToolbar").on("click","div,button",function(event){
             var ele = $(this);
@@ -277,6 +283,28 @@ var $J1 = (function (module){
 
 
     };
+
+    function processDiagramDblClickEvent(ele,event){
+        if (ele.hasClass("entity")){
+            event.stopPropagation();
+
+            var entId = _p.getObjectId(ele);
+
+
+
+            console.log(entId);
+
+
+
+            _p.resetEntityTypeDtl(entId);
+
+            return;
+        };
+
+    };
+
+
+
 
     function processDiagramClickEvent(ele,event){
 
@@ -478,7 +506,27 @@ var $J1 = (function (module){
             }
 
         }
-    }
+    };
+
+    _p.focusOnObject = function(ele){
+        //var ele = _p.getElementFromId(eleId);
+
+
+        var x = ele.position().left;
+        var y = ele.position().top;
+        var viewingBoxWidth = diagramViewEle.width();
+        var viewingBoxheight = diagramViewEle.height();
+
+        _p.innerMapEle.animate(
+            {top:(-1*y +viewingBoxheight/2 -150) ,left:(-1*x +viewingBoxWidth/2 -100) }
+            ,1000
+            , function() {
+
+                _p.resetMinimapViewpoint();
+            }
+        );
+
+    };
 
 
     _p.getElementFromId = function(eleId){
