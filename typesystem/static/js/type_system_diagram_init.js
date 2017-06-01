@@ -287,17 +287,8 @@ var $J1 = (function (module){
     function processDiagramDblClickEvent(ele,event){
         if (ele.hasClass("entity")){
             event.stopPropagation();
-
             var entId = _p.getObjectId(ele);
-
-
-
-            console.log(entId);
-
-
-
             _p.resetEntityTypeDtl(entId);
-
             return;
         };
 

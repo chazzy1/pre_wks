@@ -1,7 +1,6 @@
 var $J1 = (function (module){
 	var _p = module._p = module._p || {};
 
-
 	_p.resetEntityTypeDtl = function(entId){
 	    var dtlId = "dtl"+entId;
 	    var dtlEle = _p.getElementFromId(dtlId);
@@ -9,13 +8,11 @@ var $J1 = (function (module){
 	    if (dtlEle.length > 0){
             _p.focusOnObject(dtlDialogEle);
 	    } else {
-
 	        var title = "";
 	        if (_p.loadedEntityTypesIdMap[entId].logical_value){
 	            title+=_p.loadedEntityTypesIdMap[entId].logical_value + "-";
 	        };
 	        title+=_p.loadedEntityTypesIdMap[entId].label;
-
 
             $.get(Flask.url_for('typesystem.entity_type_detail', {project_id: _p.projectId}), null, function (template) {
                 $('<div id="'+dtlId+'"></div>').html(template)
