@@ -1,5 +1,5 @@
 # -*- encoding:utf-8 -*-
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from typesystem import bptypesystem
 #from runme import app
 import runme
@@ -9,6 +9,14 @@ from typesystem import typesystem_parser
 import models
 from util import log_exception
 from bson.json_util import dumps
+
+
+@bptypesystem.route('/<projectid>/list', methods=['GET', 'POST'])
+@bptypesystem.route('/list', methods=['GET', 'POST'])
+def list_typesystem(projectid='asdf'):
+
+    return render_template('typesystem.html.tmpl', projectid="asdf", active_menu="typeSystem")
+
 
 @bptypesystem.route('/<projectid>/import', methods=['GET', 'POST'])
 @bptypesystem.route('/import', methods=['GET', 'POST'])
@@ -20,11 +28,7 @@ def import_typesystem(projectid='asdf'):
         file.save(os.path.join(runme.app.config['UPLOAD_DIR'], filename))
         parser = typesystem_parser.TypesystemParser(filename=filename, filepath=filepath, project_id=projectid)
         parser.wks_json_parser()
-
-
-    return render_template('typesystem.html.tmpl', projectid="asdf", active_menu="typeSystem")
-
-
+    return redirect(url_for('typesystem.list_typesystem'))
 
 
 @bptypesystem.route('/getEntityTypeList/<project_id>', methods=['POST', 'GET'])
@@ -85,8 +89,9 @@ def save_all(project_id):
 
     try:
         type_system_diagram = request.json['typeSystemDiagram']
+        entity_types = request.json['entityTypes']
 
-        save_result = models.save_all(project_id=project_id, type_system_diagram=type_system_diagram)
+        save_result = models.save_all(project_id=project_id, type_system_diagram=type_system_diagram, entity_types=entity_types)
         result["resultOK"] = True
         result["result"] = save_result
 

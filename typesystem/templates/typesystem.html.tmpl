@@ -20,13 +20,19 @@
 <script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_diagram_relation.js')}}"></script>
 <script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_diagram_minimap.js')}}"></script>
 <script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_diagram_detail.js')}}"></script>
+<script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_entity_list.js')}}"></script>
 
 <script>
+    $J1._p.entity_list_init("asdf");
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-      var target = $(e.target).attr("href") // activated tab
-      if (target == "#tab-content-type-system-diagram"){
-        $J1._p.init("asdf");
-      }
+        var target = $(e.target).attr("href") // activated tab
+        if (target == "#tab-content-type-system-diagram"){
+            $J1._p.diagram_init("asdf");
+        };
+        if (target == "#tab-content-entity-types"){
+            $J1._p.entity_list_init("asdf");
+        };
+
     });
 </script>
 {% endblock %}
@@ -94,79 +100,8 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1,001</td>
-                                    <td>Lorem</td>
-                                    <td>ipsum</td>
-                                    <td>dolor</td>
-                                </tr>
-                                <tr>
-                                    <td>1,002</td>
-                                    <td>amet</td>
-                                    <td>consectetur</td>
-                                    <td>adipiscing</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>Integer</td>
-                                    <td>nec</td>
-                                    <td>odio</td>
-                                </tr>
-                                <tr>
-                                    <td>1,003</td>
-                                    <td>libero</td>
-                                    <td>Sed</td>
-                                    <td>cursus</td>
-                                </tr>
-                                <tr>
-                                    <td>1,004</td>
-                                    <td>dapibus</td>
-                                    <td>diam</td>
-                                    <td>Sed</td>
-                                </tr>
-                                <tr>
-                                    <td>1,005</td>
-                                    <td>Nulla</td>
-                                    <td>quis</td>
-                                    <td>sem</td>
-                                </tr>
-                                <tr>
-                                    <td>1,006</td>
-                                    <td>nibh</td>
-                                    <td>elementum</td>
-                                    <td>imperdiet</td>
-                                </tr>
-                                <tr>
-                                    <td>1,007</td>
-                                    <td>sagittis</td>
-                                    <td>ipsum</td>
-                                    <td>Praesent</td>
-                                </tr>
-                                <tr>
-                                    <td>1,008</td>
-                                    <td>Fusce</td>
-                                    <td>nec</td>
-                                    <td>tellus</td>
-                                </tr>
-                                <tr>
-                                    <td>1,009</td>
-                                    <td>augue</td>
-                                    <td>semper</td>
-                                    <td>porta</td>
-                                </tr>
-                                <tr>
-                                    <td>1,010</td>
-                                    <td>massa</td>
-                                    <td>Vestibulum</td>
-                                    <td>lacinia</td>
-                                </tr>
-                                <tr>
-                                    <td>1,011</td>
-                                    <td>eget</td>
-                                    <td>nulla</td>
-                                    <td>Class</td>
-                                </tr>
+                            <tbody id="entity_type_list">
+                                <!-- list -->
                             </tbody>
                         </table>
                     </div>
@@ -337,6 +272,18 @@
                                 </button>
                                 <button class="btn btn-default" type="button" aria-label="Left Align">
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button id="btnAddEntity" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                </button>
+                                <button id="btnAddRelations" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+                                </button>
+                                <button id="btnDelete" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                                 </button>
                             </div>
 

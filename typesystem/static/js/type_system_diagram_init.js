@@ -9,7 +9,7 @@ var $J1 = (function (module){
     _p.loadedEntityTgtRelationIdMap = {};
     _p.loadedSrcTgtRelationMap = {};
     _p.loadedRelationTypesIdMap = {};
-    _p.loadedRelationPropLabelMap = {};
+
     _p.loadedTypeSystemDiagram = {};
     _p.currentTypeSystemMode="L";
     _p.SelectedEntity=null;
@@ -17,8 +17,7 @@ var $J1 = (function (module){
     _p.innerMapEle = $("#innerMap");
 
 
-    _p.init = function(projectId){
-        console.log(projectId);
+    _p.diagram_init = function(projectId){
         _p.projectId = projectId;
         var data = {"project_id":projectId};
 
@@ -45,9 +44,7 @@ var $J1 = (function (module){
             for (var k in relationTypeList.list) {
                 var relationType = relationTypeList.list[k];
                 _p.loadedRelationTypesIdMap[relationType.id] = relationType;
-                if (!_p.loadedRelationPropLabelMap[relationType.label]){
-                    _p.loadedRelationPropLabelMap[relationType.label] = relationType
-                };
+
                 var srcTgtRelationId = relationType.srcEntType + "-" + relationType.tgtEntType;
 
 
@@ -213,7 +210,7 @@ var $J1 = (function (module){
         ;
 
         $("#diagramView").off("click","**");
-        $("#diagramView").on("click","div",function(event){
+        $("#diagramView").on("click","div,button",function(event){
             var ele = $(this);
             processDiagramClickEvent(ele,event);
         });
@@ -229,6 +226,11 @@ var $J1 = (function (module){
             var ele = $(this);
             processDiagramToolbarClickEvent(ele,event);
         });
+
+
+
+
+
     };
 
     function processDiagramToolbarClickEvent(ele,event){
@@ -243,11 +245,36 @@ var $J1 = (function (module){
             setNormalDiagramView();
 
         };
+
         if (ele.is("#btnTSDSave")){
             event.stopPropagation();
             saveTSD();
 
         };
+
+        if (ele.is("#btnAddEntity")){
+            event.stopPropagation();
+            addEntity();
+
+        };
+
+        if (ele.is("#btnAddRelations")){
+            event.stopPropagation();
+
+        };
+
+        if (ele.is("#btnDelete")){
+            event.stopPropagation();
+
+        };
+
+
+
+
+
+
+
+
         if (ele.is("#btnShowRelationEntity")){
             event.stopPropagation();
             showRelationEntity();
@@ -283,6 +310,15 @@ var $J1 = (function (module){
 
 
     };
+
+
+    function addEntity(){
+        _p.resetEntityTypeDtl();
+    };
+
+
+
+
 
     function processDiagramDblClickEvent(ele,event){
         if (ele.hasClass("entity")){
@@ -351,7 +387,27 @@ var $J1 = (function (module){
             _p.innerMapEle.find(".thickBox").removeClass("thickBox");
             _p.SelectedEntity = null;
             event.stopPropagation();
-        }
+        };
+
+
+
+
+
+
+        //Dtl이벤트들.
+
+
+
+        if (ele.hasClass("entityPropertyBtnApply")){
+            event.stopPropagation();
+            var contentEle = ele.closest(".ui-dialog-content");
+            _p.processEntityPropertyApply(contentEle);
+
+        };
+
+
+
+
 
 
     };
@@ -360,6 +416,7 @@ var $J1 = (function (module){
         var saveData = {};
 
         saveData.typeSystemDiagram = _p.loadedTypeSystemDiagram;
+        saveData.entityTypes = _p.loadedEntityTypesIdMap;
 
         saveAll(saveData)
         .done(function(result){
@@ -523,6 +580,25 @@ var $J1 = (function (module){
     _p.getElementFromId = function(eleId){
         return $("#"+eleId);
     };
+
+
+    _p.getUUID = function(){
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+            });
+    };
+
+    _p.getMaxEntZ = function(){
+        var maxZ = Math.max.apply(null,$.map($('#innerMap > *'), function(e,n){
+               if($(e).css('position')=='absolute')
+                    return parseInt($(e).css('z-index'))||1 ;
+               })
+        );
+        return maxZ;
+    };
+
+
 
 	return module;
 }($J1 || {}));

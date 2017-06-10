@@ -38,7 +38,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li {% if active_menu == 'typeSystem' %} class="active" {% endif %}>
-              <a href="{{ url_for('typesystem.import_typesystem') }}">Type System</a>
+              <a href="{{ url_for('typesystem.list_typesystem') }}">Type System</a>
             </li>
             <li {% if active_menu == 'dictionaries' %} class="active" {% endif %}>
               <a href="{{ url_for('project.dictionaries') }}">Dictionaries</a>

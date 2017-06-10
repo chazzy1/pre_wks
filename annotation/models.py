@@ -20,10 +20,15 @@ def get_entity_type_list(project_id):
         logical_entity_type_map = {}
 
         for logical_entity_type in logical_entity_types["logical_entity_types"]:
-            logical_entity_type_map[logical_entity_type["label"]] = logical_entity_type["logical_value"]["ko"]
+            logical_entity_type_map[logical_entity_type["label"]] = logical_entity_type
         for entity_type in entity_types["entity_types"]:
             if entity_type["label"] in logical_entity_type_map:
-                entity_type["logical_value"] = logical_entity_type_map[entity_type["label"]]
+                logical_entity_type = logical_entity_type_map[entity_type["label"]]
+
+                if "definition" in logical_entity_type:
+                    entity_type["definition"] = logical_entity_type["definition"]
+                if "logical_value" in logical_entity_type:
+                    entity_type["logical_value"] = logical_entity_type["logical_value"]["ko"]
     return entity_types["entity_types"]
 
 def get_relationship_type_list(project_id):
