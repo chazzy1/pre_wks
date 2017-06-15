@@ -175,5 +175,153 @@ var $J1 = (function (module){
 
 
 
+
+	_p.createRelationTypeDtl = function(sourceId, targetId){
+
+
+        $.get(Flask.url_for('typesystem.relation_type_detail', {project_id: _p.projectId}), null, function (template) {
+            $('<div sourceEntityTypeId="'+sourceId+'" targetEntityTypeId="'+targetId+'"></div>').html(template)
+            .dialog({
+                autoOpen: true,
+                show: "fade",
+                modal: false,
+                width: 700,
+                height: 350,
+                title: "New Relation Type",
+                appendTo: _p.innerMapEle,
+                close: function( event, ui ) {
+                    $(this).dialog('destroy').remove();
+                },
+                focus: function( event, ui ) {
+                    var maxZ = _p.getMaxEntZ();
+                    $(this).closest(".ui-dialog").css("z-index",maxZ+1);
+                },
+                open: function( event, ui ) {
+                    var maxZ = _p.getMaxEntZ();
+                    $(this).closest(".ui-dialog").css("z-index",maxZ+1);
+                    fillRelationTypeDtlContents($(this), sourceId, targetId);
+                }
+            });
+        },'html');
+
+
+
+	};
+
+    function getBaseRelationTypeDtl(){
+        var baseRelationType = {
+            creationDate:null,
+            id:null,
+            label:null,
+            modifiedDate:0,
+            source:0,
+            srcEntType:null,
+            tgtEntType:null,
+            typeClass:null,
+            typeCreateDate:null,
+            typeDesc:null,
+            typeProvenance:null,
+            typeSuperType:null,
+            typeType:null,
+            typeUpdateDate:null,
+            typeVersion:null
+        };
+        baseRelationType.sireProp = {
+            active : true,
+            backGroundColor : "#EFC100",
+            clazz : null,
+            color : "#000000",
+            hotkey : null,
+            modality : null,
+            tense : null
+        };
+        return baseRelationType;
+    };
+
+
+	function fillRelationTypeDtlContents(dtlEle, sourceId, targetId){
+
+        var sourceEntDtl = _p.loadedEntityTypesIdMap[sourceId];
+        var targetEntDtl = _p.loadedEntityTypesIdMap[targetId];
+
+        var relationPropertyLogicalNameEle = dtlEle.find(".relationPropertyLogicalName");
+        var relationPropertyNameEle = dtlEle.find(".relationPropertyName");
+        var relationPropertyDefEle = dtlEle.find(".relationPropertyDef");
+        var relationPropertySourceEle = dtlEle.find(".relationPropertySource");
+        var relationPropertyTargetEle = dtlEle.find(".relationPropertyTarget");
+
+        relationPropertySourceEle.val(sourceEntDtl.label);
+        relationPropertyTargetEle.val(targetEntDtl.label);
+
+	};
+
+
+
+    _p.processRelationPropertyApply = function(dtlEle){
+        var sourceEntId = dtlEle.attr("sourceEntityTypeId");
+        var targetEntId = dtlEle.attr("targetEntityTypeId");
+
+
+        var relationPropertyNameEle = dtlEle.find(".relationPropertyName");
+        var relDtl = _p.loadedRelationTypesLabelMap[relationPropertyNameEle.val()];
+        var isNewRelation = false;
+
+        if (relDtl){
+
+        } else {
+            //new Entity
+            relDtl = getBaseRelationTypeDtl();
+
+
+            relDtl.id = _p.getUUID();
+            relDtl.srcEntType = sourceEntId;
+            relDtl.tgtEntType = targetEntId;
+            isNewRelation = true;
+        };
+
+
+        var relationPropertyLogicalNameEle = dtlEle.find(".relationPropertyLogicalName");
+        var relationPropertyNameEle = dtlEle.find(".relationPropertyName");
+        var relationPropertyDefEle = dtlEle.find(".relationPropertyDef");
+
+        var oldLabel = relDtl.label;
+        var newLabel = relationPropertyNameEle.val();
+
+        if (relationPropertyLogicalNameEle.val()) {
+            relDtl.logical_value = relationPropertyLogicalNameEle.val();
+        };
+
+        relDtl.label = newLabel;
+        relDtl.definition = relationPropertyDefEle.val();
+
+
+        if (isNewRelation){
+            //_p.loadedTypeSystemDiagram[entDtl.label] = {x:100, y:100};
+            _p.loadedRelationTypesIdMap[relDtl.id] = relDtl;
+            _p.loadedRelationTypesLabelMap[relDtl.label] = relDtl;
+        };
+
+        if (!isNewRelation && oldLabel != newLabel){
+            _p.loadedRelationTypesLabelMap[newLabel] = _p.loadedRelationTypesLabelMap[oldLabel];
+            delete _p.loadedRelationTypesLabelMap[oldLabel];
+
+        };
+
+        _p.resetRelationMaps();
+
+        _p.resetTypeSystemDiagram();
+
+        var srcTgtRelationId = sourceEntId + "-" + targetEntId
+        var srcTgtRelation = _p.loadedSrcTgtRelationMap[srcTgtRelationId];
+
+        _p.drawRelation(srcTgtRelation);
+
+    };
+
+
+
+
+
+
 	return module;
 }($J1 || {}));

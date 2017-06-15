@@ -21,10 +21,10 @@ var $J1 = (function (module){
 
     _p.drawRelation = function(srcTgtRelation){
         if (!srcTgtRelation.shown){
+            jsPlumb.setContainer("innerMap");
 
             var sourceEle = $("#"+srcTgtRelation.srcEntType);
             var targetEle = $("#"+srcTgtRelation.tgtEntType);
-
 
             if (!sourceEle.is(":visible")) {
                 sourceEle.css("display","");

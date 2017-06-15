@@ -49,9 +49,11 @@ def get_type_system_diagram(project_id):
     return diagram["type_system_diagram"] if diagram is not None else None
 
 
-def save_all(project_id, type_system_diagram, entity_types):
+def save_all(project_id, type_system_diagram, entity_types, relation_types):
     new_entity_types = []
     new_logical_entity_types = []
+    new_relation_types = []
+    new_logical_relation_types = []
 
     for key, entity_type in entity_types.iteritems():
         #logical_entity_type.setdefault(key, []).append(value)
@@ -71,6 +73,22 @@ def save_all(project_id, type_system_diagram, entity_types):
         entity_type.pop('definition', None)
         new_entity_types.append(entity_type)
 
+    for key, relation_type in relation_types.iteritems():
+        new_logical_relation_type = {}
+        logical_value = relation_type["logical_value"] if "logical_value" in relation_type else None
+        definition = relation_type["definition"] if "definition" in relation_type else None
+        if logical_value is not None or definition is not None:
+            new_logical_relation_type["label"] = relation_type["label"]
+            if definition is not None:
+                new_logical_relation_type["definition"] = definition
+            if logical_value is not None:
+                new_logical_relation_type["logical_value"] = {"ko": logical_value}
+                new_logical_relation_types.append(new_logical_relation_type)
+
+        relation_type.pop('logical_value', None)
+        relation_type.pop('definition', None)
+        new_relation_types.append(relation_type)
+
     logical_entity_types_collection.update(
         {
             "project_id": project_id,
@@ -87,6 +105,27 @@ def save_all(project_id, type_system_diagram, entity_types):
         },
         {
             "$set": {"entity_types": new_entity_types}
+        },
+        multi=False,
+        upsert=True
+    )
+
+    logical_relation_types_collection.update(
+        {
+            "project_id": project_id,
+        },
+        {
+            "$set": {"logical_relation_types": new_logical_relation_types}
+        },
+        multi=False,
+        upsert=True
+    )
+
+    relationship_types_collection.update(
+        {"project_id": project_id,
+        },
+        {
+            "$set": {"relationship_types": new_relation_types}
         },
         multi=False,
         upsert=True

@@ -42,6 +42,17 @@ $.widget( "ui.entity", {
     	this.element.empty();
     	this.element.resizable();
     },
+    disableDraggable: function(){
+        this.element.unbind('dragstart');
+        this.element.unbind('drag');
+        this.element.unbind('dragstop');
+        try{
+            this.element.draggable( "destroy" );
+        } catch (ex){
+
+        };
+
+    },
     resetDraggable: function(){
     	this.element.draggable({
 			stack: ".objectContainer",
@@ -125,7 +136,7 @@ $.widget( "ui.entity", {
 	_drawEntity: function() {
 		this.element.attr("id",this.options.id);
 		this.element.addClass("objectContainer");
-        this.resetDraggable();
+        //this.resetDraggable();
         this.resetContents();
 
 	},

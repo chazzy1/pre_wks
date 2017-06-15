@@ -5,12 +5,16 @@ var $J1 = (function (module){
 
     _p.loadedEntityTypesLabelMap = {};
     _p.loadedEntityTypesIdMap = {};
+    _p.loadedRelationTypesIdMap = {};
+    _p.loadedRelationTypesLabelMap = {};
+
     _p.loadedEntitySrcRelationIdMap = {};
     _p.loadedEntityTgtRelationIdMap = {};
     _p.loadedSrcTgtRelationMap = {};
-    _p.loadedRelationTypesIdMap = {};
 
     _p.loadedTypeSystemDiagram = {};
+
+
     _p.currentTypeSystemMode="L";
     _p.SelectedEntity=null;
     var diagramViewEle = $("#diagramView");
@@ -40,96 +44,15 @@ var $J1 = (function (module){
                 _p.loadedEntityTypesIdMap[entityType.id] = entityType;
             };
 
-            //map들을 이렇게 많이 만드는건...그냥 피곤해서 더이상 최적화를 못하겠다. 너무 피곤함...
+
             for (var k in relationTypeList.list) {
                 var relationType = relationTypeList.list[k];
                 _p.loadedRelationTypesIdMap[relationType.id] = relationType;
-
-                var srcTgtRelationId = relationType.srcEntType + "-" + relationType.tgtEntType;
-
-
-                if (!_p.loadedSrcTgtRelationMap[srcTgtRelationId]){
-                    _p.loadedSrcTgtRelationMap[srcTgtRelationId] = {
-                        "shown":false,
-                        "connection":null,
-                        "srcEntType":relationType.srcEntType,
-                        "tgtEntType":relationType.tgtEntType,
-                        "relations":[]
-                    };
-                };
-                _p.loadedSrcTgtRelationMap[srcTgtRelationId].relations.push(relationType);
-
-
+                _p.loadedRelationTypesLabelMap[relationType.label] = relationType;
             };
 
+            _p.resetRelationMaps();
 
-
-            for (var k in entityTypeList.list) {
-                var entityType = entityTypeList.list[k];
-                var entityRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
-                    if (e.srcEntType == entityType.id) {
-                        return e;
-                    }
-                });
-
-
-                for (var i in entityRelations){
-                    var relation = entityRelations[i];
-
-                    if (_p.loadedEntitySrcRelationIdMap[entityType.id]){
-                        _p.loadedEntitySrcRelationIdMap[entityType.id].relations.push({
-                            "id":relation.id,
-                            "label":relation.label,
-                            "srcEntType":relation.srcEntType,
-                            "tgtEntType":relation.tgtEntType,
-                        });
-                    } else {
-                        var newRepRelation = {
-                            "relations":[]
-                        };
-                        newRepRelation.relations.push({
-                            "id":relation.id,
-                            "label":relation.label,
-                            "srcEntType":relation.srcEntType,
-                            "tgtEntType":relation.tgtEntType,
-                        });
-                        _p.loadedEntitySrcRelationIdMap[entityType.id] = newRepRelation;
-                    }
-
-                };
-
-            };
-
-            for (var k in entityTypeList.list) {
-                var entityType = entityTypeList.list[k];
-                var entityRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
-                    if (e.tgtEntType == entityType.id) {
-                        return e;
-                    }
-                });
-                for (var i in entityRelations){
-                    var relation = entityRelations[i];
-                    if (_p.loadedEntityTgtRelationIdMap[entityType.id]){
-                        _p.loadedEntityTgtRelationIdMap[entityType.id].relations.push({
-                            "id":relation.id,
-                            "label":relation.label,
-                            "srcEntType":relation.srcEntType,
-                            "tgtEntType":relation.tgtEntType,
-                        });
-                    } else {
-                        var newRepRelation = {
-                            "relations":[]
-                        };
-                        newRepRelation.relations.push({
-                            "id":relation.id,
-                            "label":relation.label,
-                            "srcEntType":relation.srcEntType,
-                            "tgtEntType":relation.tgtEntType,
-                        });
-                        _p.loadedEntityTgtRelationIdMap[entityType.id] = newRepRelation;
-                    }
-                };
-            };
 
             if (typeSystemDiagram.result){
                 _p.loadedTypeSystemDiagram = typeSystemDiagram.result;
@@ -146,7 +69,97 @@ var $J1 = (function (module){
 
     };
 
+    _p.resetRelationMaps = function(){
 
+        //map들을 이렇게 많이 만드는건...그냥 피곤해서 더이상 최적화를 못하겠다. 너무 피곤함...
+
+        _p.loadedSrcTgtRelationMap = {};
+
+        for (var k in _p.loadedRelationTypesIdMap) {
+            var relationType = _p.loadedRelationTypesIdMap[k];
+            var srcTgtRelationId = relationType.srcEntType + "-" + relationType.tgtEntType;
+
+            if (!_p.loadedSrcTgtRelationMap[srcTgtRelationId]){
+                _p.loadedSrcTgtRelationMap[srcTgtRelationId] = {
+                    "shown":false,
+                    "connection":null,
+                    "srcEntType":relationType.srcEntType,
+                    "tgtEntType":relationType.tgtEntType,
+                    "relations":[]
+                };
+            };
+            _p.loadedSrcTgtRelationMap[srcTgtRelationId].relations.push(relationType);
+        };
+
+        _p.loadedEntitySrcRelationIdMap = {};
+        for (var k in _p.loadedEntityTypesIdMap) {
+            var entityType = _p.loadedEntityTypesIdMap[k];
+            var entityRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
+                if (e.srcEntType == entityType.id) {
+                    return e;
+                }
+            });
+
+
+            for (var i in entityRelations){
+                var relation = entityRelations[i];
+
+                if (_p.loadedEntitySrcRelationIdMap[entityType.id]){
+                    _p.loadedEntitySrcRelationIdMap[entityType.id].relations.push({
+                        "id":relation.id,
+                        "label":relation.label,
+                        "srcEntType":relation.srcEntType,
+                        "tgtEntType":relation.tgtEntType,
+                    });
+                } else {
+                    var newRepRelation = {
+                        "relations":[]
+                    };
+                    newRepRelation.relations.push({
+                        "id":relation.id,
+                        "label":relation.label,
+                        "srcEntType":relation.srcEntType,
+                        "tgtEntType":relation.tgtEntType,
+                    });
+                    _p.loadedEntitySrcRelationIdMap[entityType.id] = newRepRelation;
+                }
+
+            };
+
+        };
+
+        _p.loadedEntityTgtRelationIdMap = {};
+        for (var k in _p.loadedEntityTypesIdMap) {
+            var entityType = _p.loadedEntityTypesIdMap[k];
+            var entityRelations = $.map(_p.loadedRelationTypesIdMap, function(e){
+                if (e.tgtEntType == entityType.id) {
+                    return e;
+                }
+            });
+            for (var i in entityRelations){
+                var relation = entityRelations[i];
+                if (_p.loadedEntityTgtRelationIdMap[entityType.id]){
+                    _p.loadedEntityTgtRelationIdMap[entityType.id].relations.push({
+                        "id":relation.id,
+                        "label":relation.label,
+                        "srcEntType":relation.srcEntType,
+                        "tgtEntType":relation.tgtEntType,
+                    });
+                } else {
+                    var newRepRelation = {
+                        "relations":[]
+                    };
+                    newRepRelation.relations.push({
+                        "id":relation.id,
+                        "label":relation.label,
+                        "srcEntType":relation.srcEntType,
+                        "tgtEntType":relation.tgtEntType,
+                    });
+                    _p.loadedEntityTgtRelationIdMap[entityType.id] = newRepRelation;
+                }
+            };
+        };
+    };
 
     function getRelationTypeList(data){
         return $.ajax({
@@ -229,8 +242,6 @@ var $J1 = (function (module){
 
 
 
-
-
     };
 
     function processDiagramToolbarClickEvent(ele,event){
@@ -255,23 +266,17 @@ var $J1 = (function (module){
         if (ele.is("#btnAddEntity")){
             event.stopPropagation();
             addEntity();
-
         };
 
         if (ele.is("#btnAddRelations")){
             event.stopPropagation();
-
+            processAddRelation();
         };
 
         if (ele.is("#btnDelete")){
             event.stopPropagation();
 
         };
-
-
-
-
-
 
 
 
@@ -316,7 +321,59 @@ var $J1 = (function (module){
         _p.resetEntityTypeDtl();
     };
 
+    function processAddRelation(){
 
+
+        _p.innerMapEle.find(".entity").each(function(index,ele){
+            $(ele).entity("disableDraggable");
+        });
+
+
+
+        var instance = jsPlumb.getInstance({
+            // drag options
+            DragOptions: { cursor: "pointer", zIndex: 2000 },
+            // default to a gradient stroke from blue to green.
+            PaintStyle: {
+                gradient: { stops: [
+                    [ 0, "#0d78bc" ],
+                    [ 1, "#558822" ]
+                ] },
+                stroke: "#558822",
+                strokeWidth: 5
+            }
+        });
+
+
+        var entities = jsPlumb.getSelector(".entity");
+
+        instance.makeSource(entities, {
+            maxConnections: -1,
+            endpoint:[ "Dot", { radius: 7, cssClass:"small-blue" } ],
+            anchor:"Continuous",
+        });
+
+        instance.makeTarget(entities, {
+            dropOptions: { hoverClass: "hover" },
+            anchor:"Continuous",
+            endpoint:[ "Dot", { radius: 11, cssClass:"large-green" } ]
+        });
+
+        instance.bind('connection',function(info,ev){
+            var con=info.connection;   //this is the new connection
+            var sourceId = con.sourceId;
+            var targetId = con.targetId;
+
+            instance.deleteConnection(con);
+
+
+            _p.createRelationTypeDtl(sourceId, targetId);
+
+
+        });
+
+
+    };
 
 
 
@@ -405,7 +462,19 @@ var $J1 = (function (module){
 
         };
 
+        if (ele.hasClass("relationPropertyBtnCancel")){
+            event.stopPropagation();
+            var contentEle = ele.closest(".ui-dialog-content");
+            contentEle.dialog("destroy");
 
+        };
+
+        if (ele.hasClass("relationPropertyBtnApply")){
+            event.stopPropagation();
+            var contentEle = ele.closest(".ui-dialog-content");
+            _p.processRelationPropertyApply(contentEle);
+
+        };
 
 
 
@@ -417,6 +486,7 @@ var $J1 = (function (module){
 
         saveData.typeSystemDiagram = _p.loadedTypeSystemDiagram;
         saveData.entityTypes = _p.loadedEntityTypesIdMap;
+        saveData.relationTypes = _p.loadedRelationTypesIdMap;
 
         saveAll(saveData)
         .done(function(result){

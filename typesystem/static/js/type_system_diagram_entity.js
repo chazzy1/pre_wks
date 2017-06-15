@@ -53,9 +53,10 @@ var $J1 = (function (module){
 
 
     _p.resetTypeSystemDiagram = function(){
-
-        jsPlumb.setContainer(_p.innerMapEle);
-
+        jsPlumb.deleteEveryConnection();
+        jsPlumb.deleteEveryEndpoint();
+        _p.innerMapEle.empty();
+        jsPlumb.setContainer("innerMap");
 
         var Xoffset = 0;
         var Yoffset = 0;
@@ -102,7 +103,7 @@ var $J1 = (function (module){
             "label":entityType.label
         }
 
-        $('<div></div>').entity(entity).entity("setShowOutgoing").entity("setShowIncoming").appendTo(_p.innerMapEle);
+        $('<div></div>').entity(entity).entity("resetDraggable").entity("setShowOutgoing").entity("setShowIncoming").appendTo(_p.innerMapEle);
 
     };
 

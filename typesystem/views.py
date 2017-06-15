@@ -50,6 +50,7 @@ def get_entity_type_list(project_id):
 
     return dumps(result, ensure_ascii=False)
 
+
 @bptypesystem.route('/getRelationshipTypeList/<project_id>', methods=['POST', 'GET'])
 def get_relationship_type_list(project_id):
     result = {}
@@ -83,6 +84,7 @@ def get_type_system_diagram(project_id):
 
     return dumps(result, ensure_ascii=False)
 
+
 @bptypesystem.route('/saveAll/<project_id>', methods=['POST', 'GET'])
 def save_all(project_id):
     result = {}
@@ -90,8 +92,9 @@ def save_all(project_id):
     try:
         type_system_diagram = request.json['typeSystemDiagram']
         entity_types = request.json['entityTypes']
+        relation_types = request.json['relationTypes']
 
-        save_result = models.save_all(project_id=project_id, type_system_diagram=type_system_diagram, entity_types=entity_types)
+        save_result = models.save_all(project_id=project_id, type_system_diagram=type_system_diagram, entity_types=entity_types, relation_types=relation_types)
         result["resultOK"] = True
         result["result"] = save_result
 
@@ -102,6 +105,12 @@ def save_all(project_id):
 
     return dumps(result, ensure_ascii=False)
 
+
 @bptypesystem.route('/entityTypeDtl/<project_id>', methods=['POST', 'GET'])
 def entity_type_detail(project_id):
     return render_template('entity_type_dtl.html.tmpl')
+
+
+@bptypesystem.route('/relationTypeDtl/<project_id>', methods=['POST', 'GET'])
+def relation_type_detail(project_id):
+    return render_template('relation_type_dtl.html.tmpl')
