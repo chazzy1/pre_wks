@@ -307,6 +307,10 @@ var $J1 = (function (module){
 
         };
 
+
+console.log(relDtl)
+
+
         _p.resetRelationMaps();
 
         _p.resetTypeSystemDiagram();

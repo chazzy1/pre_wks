@@ -110,12 +110,12 @@ def save_all(project_id, type_system_diagram, entity_types, relation_types):
         upsert=True
     )
 
-    logical_relation_types_collection.update(
+    logical_relationship_types_collection.update(
         {
             "project_id": project_id,
         },
         {
-            "$set": {"logical_relation_types": new_logical_relation_types}
+            "$set": {"logical_relationship_types": new_logical_relation_types}
         },
         multi=False,
         upsert=True
