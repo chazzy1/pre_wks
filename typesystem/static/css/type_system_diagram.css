@@ -190,4 +190,14 @@ minimapEntity{
 
 
 
+.entityPropertyAddRole{
+    cursor:pointer;
+}
 
+.entityPropertyDeleteRole{
+    cursor:pointer;
+}
+
+.entityPropertyShowAllRoles{
+    cursor:pointer;
+}

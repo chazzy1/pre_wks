@@ -221,7 +221,7 @@ $.widget( "ui.entity", {
         var subtypeAreaTitleEle = $('<div class="attributeTitle">Subtypes:</div>');
         subtypeContainer.append(subtypeAreaTitleEle);
         for (var k in entityType.sireProp.subtypes){
-            var subtypeEle = $('<div class="attributeItem"></div>');
+            var roleEle = $('<div class="attributeItem"></div>');
             roleEle.html(entityType.sireProp.subtypes[k]);
             subtypeContainer.append(roleEle);
         };

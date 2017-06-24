@@ -223,7 +223,7 @@ var $J1 = (function (module){
         ;
 
         $("#diagramView").off("click","**");
-        $("#diagramView").on("click","div,button",function(event){
+        $("#diagramView").on("click","div,button,span",function(event){
             var ele = $(this);
             processDiagramClickEvent(ele,event);
         });
@@ -476,8 +476,35 @@ var $J1 = (function (module){
 
         };
 
+        if (ele.hasClass("entityPropertyShowAllRoles")){
+            event.stopPropagation();
+            _p.toggleEntityPropertyRoleList(ele);
 
+        };
 
+        if (ele.hasClass("entityPropertyAddRole")){
+            event.stopPropagation();
+            _p.addEntityPropertyRoleEle(ele);
+
+        };
+
+        if (ele.hasClass("entityPropertyDeleteRole")){
+            event.stopPropagation();
+            _p.deleteEntityPropertyRole(ele);
+
+        };
+
+        if (ele.hasClass("entityPropertyAddSubtype")){
+            event.stopPropagation();
+            _p.addEntityPropertySubtype(ele);
+
+        };
+
+        if (ele.hasClass("entityPropertyDeleteSubtype")){
+            event.stopPropagation();
+            _p.deleteEntityPropertySubtype(ele);
+
+        };
 
     };
 

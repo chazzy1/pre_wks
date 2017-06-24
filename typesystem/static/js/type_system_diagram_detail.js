@@ -48,13 +48,29 @@ var $J1 = (function (module){
                             $(this).addClass("newEntity");
                         };
                         fillEntityTypeDtlContents($(this), $(this).attr("entityTypeId"));
+                        setupUIEvent($(this));
                     }
                 });
             },'html');
 
 	    };
 
+
+
+
+
+
 	};
+
+
+    function setupUIEvent(dtlEle){
+        dtlEle.find(".entityPropertyRoleInput").off("keyup","**");
+        dtlEle.find(".entityPropertyRoleInput").on("keyup",function(event){
+            var ele = $(this);
+            showEntityPropertyRoleList(ele,$(this).val());
+        });
+
+    };
 
 
 
@@ -88,6 +104,14 @@ var $J1 = (function (module){
 
         entDtl.label = newLabel;
         entDtl.definition = entityPropertyDefEle.val();
+        entDtl.sireProp.roles = getEntDtlListEleRoles(dtlEle);
+
+        if (getEntDtlListEleSubtypes(dtlEle).length > 0){
+            entDtl.sireProp.subtypes = getEntDtlListEleSubtypes(dtlEle);
+        } else {
+            entDtl.sireProp.subtypes = null;
+        }
+
 
 
         if (isNewEntity){
@@ -162,6 +186,9 @@ var $J1 = (function (module){
 	        var entityPropertyDefEle = dtlEle.find(".entityPropertyDef");
 
 
+	        var entityPropertySubtypesListEle = dtlEle.find(".entityPropertySubtypesList");
+
+
 	        if (entityPropertyLogicalName) {
 	            entityPropertyLogicalNameEle.val(entityPropertyLogicalName);
 	        };
@@ -169,11 +196,166 @@ var $J1 = (function (module){
             if (entityPropertyDef) {
 	            entityPropertyDefEle.val(entityPropertyDef);
 	        };
+
+            resetEntityPropertyRolesListEle(dtlEle,entDtl);
+	        for (var k in entDtl.sireProp.subtypes){
+	            var subtype = entDtl.sireProp.subtypes[k];
+	            var subtypeEle = createNewSubtypeEle(subtype);
+	            entityPropertySubtypesListEle.append(subtypeEle)
+	        }
+
 	    };
 
 	};
 
+	function resetEntityPropertyRolesListEle(dtlEle,entDtl){
+	    var entityPropertyRolesListEle = dtlEle.find(".entityPropertyRolesList");
+	    entityPropertyRolesListEle.empty();
+        for (var k in entDtl.sireProp.roles){
+            var roleEntId = entDtl.sireProp.roles[k];
+            var roleEntDtl = _p.loadedEntityTypesIdMap[roleEntId];
+            var roleEle = createNewRoleEle(roleEntDtl);
+            entityPropertyRolesListEle.append(roleEle)
+        };
+	};
 
+    function createNewRoleEle(roleEntDtl){
+        var roleEle = $('<li class="list-group-item"><span>'+roleEntDtl.label+'</span><span class="glyphicon glyphicon-trash pull-right entityPropertyDeleteRole" aria-hidden="true"></span></li>');
+        return roleEle;
+    };
+
+    function createNewSubtypeEle(text){
+        var subtypeEle = $('<li class="list-group-item"><span>'+text+'</span><span class="glyphicon glyphicon-trash pull-right entityPropertyDeleteSubtype" aria-hidden="true"></span></li>');
+        return subtypeEle;
+    };
+
+
+    function getEntDtlListEleRoles(entDltEle){
+        var entDtlListRolesEle = entDltEle.find(".entityPropertyRolesList").find("li");
+        var entDtlListRoles = [];
+        for (var k = 0;k<entDtlListRolesEle.length;k++){
+            var roleEle = $(entDtlListRolesEle[k]);
+            var roleDtl = _p.loadedEntityTypesLabelMap[roleEle.text()];
+            if (roleDtl) {
+                entDtlListRoles.push(roleDtl.id);
+            }
+
+        };
+        return entDtlListRoles;
+    };
+
+    function getEntDtlListEleSubtypes(entDltEle){
+        var entDtlListSubtypesEle = entDltEle.find(".entityPropertySubtypesList").find("li");
+        var entDtlListSubtypes = [];
+        for (var k = 0;k<entDtlListSubtypesEle.length;k++){
+            var subtypeEle = $(entDtlListSubtypesEle[k]);
+
+            entDtlListSubtypes.push(subtypeEle.text());
+
+        };
+        return entDtlListSubtypes;
+    };
+
+    _p.toggleEntityPropertyRoleList = function(ele){
+        var entDltEle = ele.closest(".ui-dialog-content");
+        if (entDltEle.find(".entityPropertyRolesAddList").children("li").length < 1){
+            showEntityPropertyRoleList(ele);
+        } else {
+            entDltEle.find(".entityPropertyRolesAddList").empty();
+        }
+    };
+
+
+    _p.deleteEntityPropertyRole = function(ele){
+        var liEle = $(ele).closest("li");
+        liEle.remove();
+    };
+
+    _p.deleteEntityPropertySubtype = function(ele){
+        var liEle = $(ele).closest("li");
+        liEle.remove();
+    };
+
+
+	function showEntityPropertyRoleList(ele,keyword){
+	    var entDltEle = ele.closest(".ui-dialog-content");
+	    var entId = entDltEle.attr("entityTypeId");
+        var entDtl = _p.loadedEntityTypesIdMap[entId];
+        var entRoles = entDtl.sireProp.roles;
+        var rolesToShow = [];
+        var entDtlListRoles = getEntDtlListEleRoles(entDltEle);
+
+        for (var k in _p.loadedEntityTypesIdMap){
+            if ($.inArray(k, entRoles) < 0){
+
+                if ($.inArray(k, entDtlListRoles)>-1){
+
+                    //already in list
+                } else {
+                    if (keyword) {
+                        if (_p.loadedEntityTypesIdMap[k].label.toUpperCase().indexOf(keyword.toUpperCase()) > -1){
+                            rolesToShow.push(k);
+                        }
+                    } else {
+                        rolesToShow.push(k);
+                    };
+                }
+
+            };
+        };
+
+
+        entDltEle.find(".entityPropertyRolesAddList").empty();
+
+        for (var k in rolesToShow){
+            var roleId = rolesToShow[k];
+            var roleLiEle = $('<li class="list-group-item">'+_p.loadedEntityTypesIdMap[roleId].label+'</li>');
+
+            entDltEle.find(".entityPropertyRolesAddList").append(roleLiEle);
+            roleLiEle.on("click",function(event){
+                entDltEle.find(".entityPropertyRoleInput").val($(this).html());
+                entDltEle.find(".entityPropertyRolesAddList").empty();
+            });
+
+        }
+
+	};
+
+    _p.addEntityPropertyRoleEle = function(ele){
+        var entDtlEle = ele.closest(".ui-dialog-content");
+        var entId = entDtlEle.attr("entityTypeId");
+        var entDtl = _p.loadedEntityTypesIdMap[entId];
+        var entRoles = entDtl.sireProp.roles;
+        var roleInputEle = entDtlEle.find(".entityPropertyRoleInput");
+        var roleToAdd = _p.loadedEntityTypesLabelMap[roleInputEle.val()];
+        if (roleToAdd){
+            if ($.inArray(roleToAdd.id, entRoles) < 0){
+
+
+                var roleEle = createNewRoleEle(roleToAdd);
+                entDtlEle.find(".entityPropertyRolesList").append(roleEle)
+                //entRoles.push(roleToAdd.id)
+
+            }
+
+        };
+        //resetEntityPropertyRolesListEle(entDltEle,entDtl);
+
+    };
+
+    _p.addEntityPropertySubtype = function(ele){
+        var entDtlEle = ele.closest(".ui-dialog-content");
+        var entId = entDtlEle.attr("entityTypeId");
+        var entDtl = _p.loadedEntityTypesIdMap[entId];
+        var subtypeInputEle = entDtlEle.find(".entityPropertySubtypeInput");
+        var entDtlListSubtypes = getEntDtlListEleSubtypes(entDtlEle);
+        var inputText = subtypeInputEle.val();
+        if (inputText){
+            if ($.inArray(inputText, entDtlListSubtypes) < 0){
+                entDtlEle.find(".entityPropertySubtypesList").append(createNewSubtypeEle(inputText));
+            }
+        }
+    };
 
 
 	_p.createRelationTypeDtl = function(sourceId, targetId){
@@ -306,9 +488,6 @@ var $J1 = (function (module){
             delete _p.loadedRelationTypesLabelMap[oldLabel];
 
         };
-
-
-console.log(relDtl)
 
 
         _p.resetRelationMaps();
