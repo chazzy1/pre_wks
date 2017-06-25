@@ -55,11 +55,6 @@ var $J1 = (function (module){
 
 	    };
 
-
-
-
-
-
 	};
 
 
@@ -417,17 +412,47 @@ var $J1 = (function (module){
 
         //var relDtl = _p.loadedRelationTypesIdMap[relId];
 
-        var relationListEle = dtlEle.find(".relationsDtlrelationList");
-        relationListEle.empty();
-        var relations = null;
+        var relationPropertyEntityRelationsListEle = dtlEle.find(".relationPropertyEntityRelationsList");
+        relationPropertyEntityRelationsListEle.empty();
+        var srcTgtrelations = null;
         if (_p.loadedSrcTgtRelationMap[sourceId+"-"+targetId]){
-            relations = _p.loadedSrcTgtRelationMap[sourceId+"-"+targetId].relations;
-        }
-        for (var k in relations){
-            var relDtl = relations[k];
-            var relationItem = $('<div>'+relDtl.label+'</div>');
-            relationListEle.append(relationItem);
-        }
+            srcTgtrelations = _p.loadedSrcTgtRelationMap[sourceId+"-"+targetId].relations;
+        };
+        var srcTgtRelationsLabels = [];
+        for (var k in srcTgtrelations){
+            var relDtl = srcTgtrelations[k];
+            var relationItem = $('<li class="list-group-item small-list-group-item"><span class="relationPropertyEntityRelation" relId="'+relDtl.id+'">'+relDtl.label+'</span><span class="glyphicon glyphicon-trash pull-right relationPropertyDeleteRelation" aria-hidden="true" relId="'+relDtl.id+'"></span></li>');
+
+
+
+            srcTgtRelationsLabels.push(relDtl.label);
+            relationPropertyEntityRelationsListEle.append(relationItem);
+        };
+
+
+        var relationPropertyAllRelationsListEle = dtlEle.find(".relationPropertyAllRelationsList");
+        relationPropertyAllRelationsListEle.empty();
+
+        var allRelationsToShow=[];
+
+        for (var k in _p.loadedRelationTypesLabelMap){
+
+
+            if (srcTgtRelationsLabels.indexOf(k) > -1){
+
+            } else {
+                var relDtl = _p.loadedRelationTypesLabelMap[k];
+                var relationItem = $('<div class="list-group-item small-list-group-item relationPropertyAllRelation" relId="'+relDtl.id+'">'+relDtl.label+'</div>');
+                relationPropertyAllRelationsListEle.append(relationItem);
+
+            }
+
+        };
+
+
+
+
+
 
 /*
         if (relDtl) {
@@ -439,6 +464,72 @@ var $J1 = (function (module){
         relationPropertyTargetEle.val(targetEntDtl.label);
 
 	};
+
+    _p.deleteEntityRelation = function(ele){
+        var relId = ele.attr("relId");
+        console.log(relId);
+
+
+        delete _p.loadedRelationTypesIdMap[relId];
+
+        _p.resetRelationMaps();
+
+        _p.resetTypeSystemDiagram();
+    };
+
+    _p.selectAllRelation= function(relationItemEle){
+        var relId = relationItemEle.attr("relId");
+        var dtlEle = relationItemEle.closest(".ui-dialog-content");
+        dtlEle.find(".active").each(function(index,ele){
+            $(ele).removeClass("active");
+        });
+        relationItemEle.addClass("active");
+
+        var relDtl = _p.loadedRelationTypesIdMap[relId];
+        var relationPropertyLogicalNameEle = dtlEle.find(".relationPropertyLogicalName");
+        var relationPropertyNameEle = dtlEle.find(".relationPropertyName");
+        var relationPropertyDefEle = dtlEle.find(".relationPropertyDef");
+        relationPropertyLogicalNameEle.val()
+
+
+        if (relDtl.logical_value) {
+            relationPropertyLogicalNameEle.val(relDtl.logical_value);
+        };
+
+        relationPropertyNameEle.val(relDtl.label);
+        relationPropertyDefEle.val(relDtl.definition);
+
+
+
+
+    };
+
+
+    _p.selectEntityRelation= function(relationItemEle){
+        var relId = relationItemEle.attr("relId");
+        var dtlEle = relationItemEle.closest(".ui-dialog-content");
+        dtlEle.find(".active").each(function(index,ele){
+            $(ele).removeClass("active");
+        });
+        relationItemEle.parent().addClass("active");
+
+
+        var relDtl = _p.loadedRelationTypesIdMap[relId];
+        var relationPropertyLogicalNameEle = dtlEle.find(".relationPropertyLogicalName");
+        var relationPropertyNameEle = dtlEle.find(".relationPropertyName");
+        var relationPropertyDefEle = dtlEle.find(".relationPropertyDef");
+        relationPropertyLogicalNameEle.val()
+
+
+        if (relDtl.logical_value) {
+            relationPropertyLogicalNameEle.val(relDtl.logical_value);
+        };
+
+        relationPropertyNameEle.val(relDtl.label);
+        relationPropertyDefEle.val(relDtl.definition);
+
+
+    };
 
 
     function getBaseRelationTypeDtl(){
@@ -504,7 +595,6 @@ var $J1 = (function (module){
 
         var oldLabel = relDtl.label;
         var newLabel = relationPropertyNameEle.val();
-
         if (relationPropertyLogicalNameEle.val()) {
             relDtl.logical_value = relationPropertyLogicalNameEle.val();
         };
@@ -518,6 +608,8 @@ var $J1 = (function (module){
             _p.loadedRelationTypesIdMap[relDtl.id] = relDtl;
             _p.loadedRelationTypesLabelMap[relDtl.label] = relDtl;
         };
+
+
 
         if (!isNewRelation && oldLabel != newLabel){
             _p.loadedRelationTypesLabelMap[newLabel] = _p.loadedRelationTypesLabelMap[oldLabel];

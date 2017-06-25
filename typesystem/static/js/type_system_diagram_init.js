@@ -281,7 +281,7 @@ var $J1 = (function (module){
 
         if (ele.is("#btnAddRelations")){
             event.stopPropagation();
-            processAddRelation();
+            toggleAddRelation();
         };
 
         if (ele.is("#btnDelete")){
@@ -339,6 +339,25 @@ var $J1 = (function (module){
 
     function addEntity(){
         _p.resetEntityTypeDtl();
+    };
+
+    function toggleAddRelation(){
+        if ($("#btnAddRelations").hasClass("active")){
+            $("#btnAddRelations").removeClass("active");
+            disableAddRelation();
+        } else {
+            $("#btnAddRelations").addClass("active");
+            processAddRelation();
+        }
+
+    }
+
+    function disableAddRelation(){
+        _p.innerMapEle.find(".entity").each(function(index,ele){
+            $(ele).entity("resetDraggable");
+        });
+        hideAllRelations();
+        _p.resetTypeSystemDiagram();
     };
 
     function processAddRelation(){
@@ -494,6 +513,7 @@ var $J1 = (function (module){
             var contentEle = ele.closest(".ui-dialog-content");
             _p.processRelationPropertyApply(contentEle);
 
+
         };
 
         if (ele.hasClass("entityPropertyShowAllRoles")){
@@ -525,6 +545,24 @@ var $J1 = (function (module){
             _p.deleteEntityPropertySubtype(ele);
 
         };
+
+        if (ele.hasClass("relationPropertyEntityRelation")){
+            event.stopPropagation();
+            _p.selectEntityRelation(ele);
+
+        };
+
+        if (ele.hasClass("relationPropertyAllRelation")){
+            event.stopPropagation();
+            _p.selectAllRelation(ele);
+
+        };
+
+        if (ele.hasClass("relationPropertyDeleteRelation")){
+            event.stopPropagation();
+            _p.deleteEntityRelation(ele);
+        };
+
 
     };
 

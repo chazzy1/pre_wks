@@ -60,6 +60,8 @@ var $J1 = (function (module){
                 ]
             });
 
+//            connection.unbind("dblclick","**");
+
             connection.bind("dblclick",function(conn){
                 var sourceId = _p.loadedRelationTypesIdMap[conn.id].srcEntType;
 	            var targetId = _p.loadedRelationTypesIdMap[conn.id].tgtEntType;
