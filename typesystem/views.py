@@ -1,5 +1,5 @@
 # -*- encoding:utf-8 -*-
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, Response
 from typesystem import bptypesystem
 #from runme import app
 import runme
@@ -114,3 +114,14 @@ def entity_type_detail(project_id):
 @bptypesystem.route('/relationTypeDtl/<project_id>', methods=['POST', 'GET'])
 def relation_type_detail(project_id):
     return render_template('relation_type_dtl.html.tmpl')
+
+
+@bptypesystem.route('/<projectid>/export', methods=['GET', 'POST'])
+@bptypesystem.route('/export', methods=['GET', 'POST'])
+def export_typesystem(projectid='asdf'):
+    results = dumps(models.get_typesystem(projectid), ensure_ascii=False)
+    generator = (cell for row in results for cell in row)
+    return Response(generator,
+                       mimetype="text/plain",
+                       headers={"Content-Disposition":
+                                    "attachment;filename=typesystem.json"})

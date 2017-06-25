@@ -5,7 +5,7 @@ from util import *
 from werkzeug.utils import secure_filename
 import os
 import json
-
+import models
 
 
 class TypesystemParser:
@@ -54,9 +54,22 @@ class TypesystemParser:
 
         entity_types = json_data["entityTypes"]
         relationship_types = json_data["relationshipTypes"]
-        sire_info = json_data["sireInfo"]
-        functionalEntityTypes = json_data["functionalEntityTypes"]
-        kgimported = json_data["kgimported"]
+        sire_info = None
+        functional_entity_types = None
+        kgimported = None
+        if "sireInfo" in json_data :
+            sire_info = json_data["sireInfo"]
+        else:
+            sire_info = models.get_default_sire_info()
+        if "functionalEntityTypes" in json_data:
+            functional_entity_types = json_data["functionalEntityTypes"]
+        else:
+            functional_entity_types = None
+
+        if "kgimported" in json_data:
+            kgimported = json_data["kgimported"]
+        else:
+            kgimported = None
 
         self.create_entity_types(entity_types)
         self.create_relationship_types(relationship_types)

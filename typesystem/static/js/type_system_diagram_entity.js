@@ -117,6 +117,56 @@ var $J1 = (function (module){
         entEle.css("display","None");
     };
 
+    _p.processEntityDelete = function(entId){
+
+        var entDtl = _p.loadedEntityTypesIdMap[entId];
+        var entLabel = entDtl.label;
+
+        if (_p.loadedEntitySrcRelationIdMap[entId]){
+            for (var k in _p.loadedEntitySrcRelationIdMap[entId].relations){
+                try{
+                    var relId = _p.loadedEntitySrcRelationIdMap[entId].relations[k].id;
+                    var relLabel = _p.loadedEntitySrcRelationIdMap[entId].relations[k].label;
+                    delete _p.loadedRelationTypesIdMap[relId];
+                    delete _p.loadedRelationTypesLabelMap[relLabel];
+                } catch (ex){
+                }
+            };
+        }
+
+        if (_p.loadedEntityTgtRelationIdMap[entId]){
+            for (var k in _p.loadedEntityTgtRelationIdMap[entId].relations){
+                try{
+                    var relId = _p.loadedEntityTgtRelationIdMap[entId].relations[k].id;
+                    var relLabel = _p.loadedEntityTgtRelationIdMap[entId].relations[k].label;
+                    delete _p.loadedRelationTypesIdMap[relId];
+                    delete _p.loadedRelationTypesLabelMap[relLabel];
+                } catch (ex){
+                }
+            };
+        }
+
+        for (var k in _p.loadedEntityTypesIdMap){
+            var rolesList = _p.loadedEntityTypesIdMap[k].sireProp.roles;
+            newRolesList = $.grep(rolesList, function(value) {
+              return value != entId;
+            });
+            _p.loadedEntityTypesIdMap[k].sireProp.roles = newRolesList;
+
+
+        }
+
+
+        delete _p.loadedEntityTypesLabelMap[entLabel];
+        delete _p.loadedEntityTypesIdMap[entId];
+        delete _p.loadedTypeSystemDiagram[entLabel];
+
+        _p.resetRelationMaps();
+        _p.innerMapEle.empty();
+        _p.resetTypeSystemDiagram();
+        _p.resetMiniMap();
+
+    }
 
 
 

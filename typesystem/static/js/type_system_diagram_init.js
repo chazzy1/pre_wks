@@ -263,6 +263,17 @@ var $J1 = (function (module){
 
         };
 
+        if (ele.is("#btnTSDDownload")){
+            event.stopPropagation();
+            downloadTSD();
+
+        };
+
+        if (ele.is("#btnClearTSD")){
+            event.stopPropagation();
+            clearTSD();
+        };
+
         if (ele.is("#btnAddEntity")){
             event.stopPropagation();
             addEntity();
@@ -275,6 +286,7 @@ var $J1 = (function (module){
 
         if (ele.is("#btnDelete")){
             event.stopPropagation();
+            processObjectDelete();
 
         };
 
@@ -314,6 +326,14 @@ var $J1 = (function (module){
         };
 
 
+    };
+
+    function processObjectDelete(){
+        if (_p.SelectedEntity){
+
+            var entId = _p.getObjectId(_p.SelectedEntity);
+            _p.processEntityDelete(entId);
+        }
     };
 
 
@@ -367,7 +387,7 @@ var $J1 = (function (module){
             instance.deleteConnection(con);
 
 
-            _p.createRelationTypeDtl(sourceId, targetId);
+            _p.resetRelationTypeDtl(sourceId, targetId);
 
 
         });
@@ -520,6 +540,47 @@ var $J1 = (function (module){
 
         });
     };
+
+    function downloadTSD(){
+
+        $.fileDownload(Flask.url_for('typesystem.export_typesystem', {project_id: _p.projectId}))
+            .done(function () {
+                alert('File download a success!');
+            })
+            .fail(function () { alert('File download failed!'); });
+
+    };
+
+    function clearTSD(){
+        _p.loadedEntityTypesLabelMap = {};
+        _p.loadedEntityTypesIdMap = {};
+        _p.loadedRelationTypesIdMap = {};
+        _p.loadedRelationTypesLabelMap = {};
+
+        _p.loadedEntitySrcRelationIdMap = {};
+        _p.loadedEntityTgtRelationIdMap = {};
+        _p.loadedSrcTgtRelationMap = {};
+
+        _p.loadedTypeSystemDiagram = {};
+
+        _p.innerMapEle.empty();
+        _p.resetMiniMap();
+
+    }
+
+    function downloadTSDJson(data){
+        return $.ajax({
+            url: Flask.url_for('typesystem.save_all', {project_id: _p.projectId})
+            ,type: 'POST'
+            ,contentType: "application/json;charset=utf-8"
+            ,dataType: 'json'
+            ,data: JSON.stringify(data)
+            ,beforeSend:function(){
+
+            }
+        })
+    };
+
 
     function saveAll(data){
         return $.ajax({

@@ -14,6 +14,7 @@
 {% block script_foot %}
 <script src="/resources/static/jquery-ui-1.12.1/jquery-ui.min.js"></script>
 <script src="/resources/static/js/jsplumb.min.js"></script>
+<script src="/resources/static/js/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/jquery.ui.entity_type.js')}}"></script>
 <script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_diagram_init.js')}}"></script>
 <script type="text/javascript" src="{{ url_for('typesystem.static', filename='js/type_system_diagram_entity.js')}}"></script>
@@ -267,10 +268,14 @@
                                 <button id="btnTSDSave" class="btn btn-default" type="button" aria-label="Left Align">
                                     <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
                                 </button>
+
+                                <button id="btnTSDDownload" class="btn btn-default" type="button" aria-label="Left Align">
+                                    <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
+                                </button>
                                 <button class="btn btn-default" type="button" aria-label="Left Align">
                                     <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
                                 </button>
-                                <button class="btn btn-default" type="button" aria-label="Left Align">
+                                <button id="btnClearTSD" class="btn btn-default" type="button" aria-label="Left Align">
                                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                 </button>
                             </div>

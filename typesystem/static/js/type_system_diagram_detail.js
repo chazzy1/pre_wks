@@ -358,37 +358,88 @@ var $J1 = (function (module){
     };
 
 
-	_p.createRelationTypeDtl = function(sourceId, targetId){
 
 
-        $.get(Flask.url_for('typesystem.relation_type_detail', {project_id: _p.projectId}), null, function (template) {
-            $('<div sourceEntityTypeId="'+sourceId+'" targetEntityTypeId="'+targetId+'"></div>').html(template)
-            .dialog({
-                autoOpen: true,
-                show: "fade",
-                modal: false,
-                width: 700,
-                height: 350,
-                title: "New Relation Type",
-                appendTo: _p.innerMapEle,
-                close: function( event, ui ) {
-                    $(this).dialog('destroy').remove();
-                },
-                focus: function( event, ui ) {
-                    var maxZ = _p.getMaxEntZ();
-                    $(this).closest(".ui-dialog").css("z-index",maxZ+1);
-                },
-                open: function( event, ui ) {
-                    var maxZ = _p.getMaxEntZ();
-                    $(this).closest(".ui-dialog").css("z-index",maxZ+1);
-                    fillRelationTypeDtlContents($(this), sourceId, targetId);
-                }
-            });
-        },'html');
+	_p.resetRelationTypeDtl = function(sourceId, targetId){
+	    var isNewRelation = false;
 
+        var dtlId = "dtl"+sourceId+"-"+targetId;
+	    var dtlEle = _p.getElementFromId(dtlId);
+	    if (dtlEle.length > 0){
+	        var dtlDialogEle = dtlEle.closest(".ui-dialog");
+            _p.focusOnObject(dtlDialogEle);
+	    } else {
+	        var title = "Relation Property";
+
+
+            $.get(Flask.url_for('typesystem.relation_type_detail', {project_id: _p.projectId}), null, function (template) {
+                $('<div id="'+dtlId+'" sourceEntityTypeId="'+sourceId+'" targetEntityTypeId="'+targetId+'"></div>').html(template)
+                .dialog({
+                    autoOpen: true,
+                    show: "fade",
+                    modal: false,
+                    width: 700,
+                    height: 350,
+                    title: "New Relation Type",
+                    appendTo: _p.innerMapEle,
+                    close: function( event, ui ) {
+                        $(this).dialog('destroy').remove();
+                    },
+                    focus: function( event, ui ) {
+                        var maxZ = _p.getMaxEntZ();
+                        $(this).closest(".ui-dialog").css("z-index",maxZ+1);
+                    },
+                    open: function( event, ui ) {
+                        var maxZ = _p.getMaxEntZ();
+                        $(this).closest(".ui-dialog").css("z-index",maxZ+1);
+                        fillRelationTypeDtlContents($(this), sourceId, targetId);
+                    }
+                });
+            },'html');
+
+	    };
 
 
 	};
+
+
+
+	function fillRelationTypeDtlContents(dtlEle, sourceId, targetId){
+
+        var sourceEntDtl = _p.loadedEntityTypesIdMap[sourceId];
+        var targetEntDtl = _p.loadedEntityTypesIdMap[targetId];
+
+        var relationPropertyLogicalNameEle = dtlEle.find(".relationPropertyLogicalName");
+        var relationPropertyNameEle = dtlEle.find(".relationPropertyName");
+        var relationPropertyDefEle = dtlEle.find(".relationPropertyDef");
+        var relationPropertySourceEle = dtlEle.find(".relationPropertySource");
+        var relationPropertyTargetEle = dtlEle.find(".relationPropertyTarget");
+
+        //var relDtl = _p.loadedRelationTypesIdMap[relId];
+
+        var relationListEle = dtlEle.find(".relationsDtlrelationList");
+        relationListEle.empty();
+        var relations = null;
+        if (_p.loadedSrcTgtRelationMap[sourceId+"-"+targetId]){
+            relations = _p.loadedSrcTgtRelationMap[sourceId+"-"+targetId].relations;
+        }
+        for (var k in relations){
+            var relDtl = relations[k];
+            var relationItem = $('<div>'+relDtl.label+'</div>');
+            relationListEle.append(relationItem);
+        }
+
+/*
+        if (relDtl) {
+            relationPropertyNameEle.val(relDtl.label);
+        }
+*/
+
+        relationPropertySourceEle.val(sourceEntDtl.label);
+        relationPropertyTargetEle.val(targetEntDtl.label);
+
+	};
+
 
     function getBaseRelationTypeDtl(){
         var baseRelationType = {
@@ -421,21 +472,6 @@ var $J1 = (function (module){
     };
 
 
-	function fillRelationTypeDtlContents(dtlEle, sourceId, targetId){
-
-        var sourceEntDtl = _p.loadedEntityTypesIdMap[sourceId];
-        var targetEntDtl = _p.loadedEntityTypesIdMap[targetId];
-
-        var relationPropertyLogicalNameEle = dtlEle.find(".relationPropertyLogicalName");
-        var relationPropertyNameEle = dtlEle.find(".relationPropertyName");
-        var relationPropertyDefEle = dtlEle.find(".relationPropertyDef");
-        var relationPropertySourceEle = dtlEle.find(".relationPropertySource");
-        var relationPropertyTargetEle = dtlEle.find(".relationPropertyTarget");
-
-        relationPropertySourceEle.val(sourceEntDtl.label);
-        relationPropertyTargetEle.val(targetEntDtl.label);
-
-	};
 
 
 
