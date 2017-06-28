@@ -50,7 +50,7 @@ def get_sire_info(project_id):
 
 
 def get_ground_truth(project_id, ground_truth_id):
-    print ground_truth_id
+    print(ground_truth_id)
     document = ground_truth_collection.find_one(
         {"project_id": project_id,
          "ground_truth.id": ground_truth_id

@@ -1,7 +1,7 @@
 from flask_mongoengine import MongoEngine
 import os
 
-print"local config!"
+print("local config!")
 
 _base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 

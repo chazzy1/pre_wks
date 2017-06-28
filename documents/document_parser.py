@@ -91,7 +91,7 @@ class DocumentParser:
         return int((datetime.datetime.today() - epoch).total_seconds() * 1000.0)
 
     def csv_parser(self):
-        print self.uploaded_file
+        print(self.uploaded_file)
         f = open(self.uploaded_file, 'r')
         data = f.read()
         f.close()
@@ -226,7 +226,7 @@ class DocumentParser:
             except Exception as e:
                 log_exception(e)
 
-            print ground_truth
+            print(ground_truth)
 
             ground_truth_collection.insert_one({"project_id": self.global_project_id,
                                                 "global_document_id": self.global_document_id,
@@ -333,7 +333,7 @@ class DocumentParser:
         document_set["type"] = "SOURCE"
         document_set["modifiedDate"] = self.global_modified_date
         sets.append(document_set)
-        print sets
+        print(sets)
 
         sets_collection.insert_one({"project_id": self.global_project_id,
                                     "sets": sets})

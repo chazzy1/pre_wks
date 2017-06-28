@@ -5,7 +5,7 @@ from util import *
 from werkzeug.utils import secure_filename
 import os
 import json
-import models
+from typesystem import models
 
 
 class TypesystemParser:
@@ -45,7 +45,7 @@ class TypesystemParser:
         return int((datetime.datetime.today() - epoch).total_seconds() * 1000.0)
 
     def wks_json_parser(self):
-        print self.uploaded_file
+        print(self.uploaded_file)
         f = open(self.uploaded_file, 'r')
         data = f.read()
         f.close()

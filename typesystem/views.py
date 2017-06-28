@@ -6,7 +6,7 @@ import runme
 from werkzeug.utils import secure_filename
 import os
 from typesystem import typesystem_parser
-import models
+from typesystem import models
 from util import log_exception
 from bson.json_util import dumps
 

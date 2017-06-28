@@ -27,7 +27,7 @@ def export_document_sets(project_id):
 
     project_ground_truths = ground_truth_collection.find({"project_id": project_id})
     for ground_truth in project_ground_truths:
-        print ground_truth["global_document_id"]
+        print(ground_truth["global_document_id"])
         with open(os.path.join(new_gt_dir_path, ground_truth["ground_truth"]["id"]+".json"), 'w') as ground_truth_file:
             json.dump(ground_truth["ground_truth"], ground_truth_file)
     zip_file_path = os.path.join(app.config['DOWNLOAD_DIR'], "pre_annotation_"+tmp_dir_id+".zip")

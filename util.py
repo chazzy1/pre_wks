@@ -20,7 +20,7 @@ type_system_diagram_collection = collections.type_system_diagram
 
 
 def log_exception(e):
-    print e
+    print(e)
     traceback.print_tb(sys.exc_traceback)
 
 

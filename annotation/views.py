@@ -1,7 +1,7 @@
 # -*- encoding:utf-8 -*-
 from flask import render_template, request, send_file
 from annotation import bpannotator
-import models
+from annotation import models
 import json
 from bson.json_util import dumps
 import sys
