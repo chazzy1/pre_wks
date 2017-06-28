@@ -8,15 +8,11 @@ import sys
 from util import *
 
 
-
-
 @bpannotator.route('/list', methods=['GET', 'POST'])
 def list(projectid=None):
-    print "@@@@@@@@@@@@@@@@@@"
-
+    print("@@@@@@@@@@@@@@@@@@")
 
     project_id = "asdf"
-
     annotation_list = models.get_annotation_list(project_id=project_id)
 
     return render_template('annotation_list.html.tmpl', projectid="asdf", active_menu="annotation", annotation_list=annotation_list)
@@ -25,8 +21,8 @@ def list(projectid=None):
 
 @bpannotator.route('/tool/<documentid>', methods=['GET', 'POST'])
 def tool(documentid, projectid=None):
-    print "!!!!!!!!!!!!!!!!!"
-    print documentid
+    print("!!!!!!!!!!!!!!!!!")
+    print(documentid)
 
 
     project_id = "asdf"
