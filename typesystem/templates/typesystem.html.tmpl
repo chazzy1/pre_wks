@@ -66,7 +66,7 @@
             <div class="tab-content heightMinus50">
                 <div id="tab-content-entity-types" class="tab-pane active">
                     <div class="row placeholder">
-                        <form class="form-inline" action="{{ url_for('typesystem.import_typesystem',projectid='asdf')}}" enctype="multipart/form-data" data-ajax="true" method="POST" >
+                        <form class="form-inline" action="{{ url_for('typesystem.import_typesystem',project_id=project.id)}}" enctype="multipart/form-data" data-ajax="true" method="POST" >
                             <div class="form-group">
                                 <button id="btnAddEntityType" type="button" class="btn btn-default">Add Entity Type</button>
                                 <input type="file" name="file" class="form-control input-sm">

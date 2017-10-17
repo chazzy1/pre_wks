@@ -1,5 +1,5 @@
 import sys
-import traceback
+# import traceback
 from pymongo import MongoClient
 
 client = MongoClient('localhost', 27017)
@@ -21,6 +21,4 @@ type_system_diagram_collection = collections.type_system_diagram
 
 def log_exception(e):
     print(e)
-    traceback.print_tb(sys.exc_traceback)
-
-
+    # traceback.print_tb(sys.exc_traceback)

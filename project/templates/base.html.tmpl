@@ -37,22 +37,31 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
+            <li {% if active_menu == 'createProject' %} class="active" {% endif %}>
+              <a href="{{ url_for('project.create') }}">Create Project</a>
+            </li>
+            {% if project %}
             <li {% if active_menu == 'typeSystem' %} class="active" {% endif %}>
-              <a href="{{ url_for('typesystem.list_typesystem') }}">Type System</a>
+              <a href="{{ url_for('typesystem.list_typesystem', project_id=project.id) }}">Type System</a>
             </li>
             <li {% if active_menu == 'dictionaries' %} class="active" {% endif %}>
-              <a href="{{ url_for('project.dictionaries') }}">Dictionaries</a>
+              <a href="{{ url_for('project.dictionaries', project_id=project.id) }}">Dictionaries</a>
             </li>
             <li {% if active_menu == 'documents' %} class="active" {% endif %}>
-              <a href="{{ url_for('project.documents') }}">Documents</a>
+              <a href="{{ url_for('project.documents', project_id=project.id) }}">Documents</a>
             </li>
             <li {% if active_menu == 'humanAnnotation' %} class="active" {% endif %}>
-              <a href="{{ url_for('project.annotation') }}">Human Annotation</a>
+              <a href="{{ url_for('project.annotation', project_id=project.id) }}">Human Annotation</a>
             </li>
+            {% endif %}
             <li>
-              <a href="#">chazzy1@gmail.com</a></li>
+              {% if current_user.is_active %}
+              <a href="#">{{ current_user.email }}</a>
+              {% else %}
+              <a href="#">login</a>
+              {% endif %}
+            </li>
           </ul>
-
         </div>
       </div>
     </nav>

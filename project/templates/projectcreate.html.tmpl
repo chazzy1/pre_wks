@@ -1,0 +1,41 @@
+{% from '_form_helpers.html' import render_39field, render_39submit, render_39imgfield %}
+{% extends "base.html.tmpl" %}
+
+{% block page_settings %}
+{% set active_menu = 'createproject'%}
+{% endblock %}
+
+{% block mainContent %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        {% set category = (category == 'message') and 'info' or category %}
+        <script>
+        $(document).ready(function() {
+            alert('{{ message }}');
+        });
+        </script>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header">CREATE THE PROJECT</h1>
+    <form
+        action="{{ url_for('project.create') }}"
+        id="prj_create_form"
+        class="form-horizontal form-bordered"
+        method="POST"
+        data-parsley-validate=''>
+        {{ form.hidden_tag() if form.hidden_tag }}
+        {{ render_39field(form.title) }}
+        {{ render_39field(form.description, class_='last') }}
+        {% call render_39submit('프로젝트를 생성합니다.') %}
+            <div class="pull-right">
+                <a class="btn btn-default" href=''><i class="fa fa-mail-forward"></i> {{_('프로젝트 목록으로 돌아가기')}}</a>
+            </div>
+        {% endcall %}
+    </form>
+</div>
+{% endblock %}

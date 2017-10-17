@@ -19,7 +19,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Dictionaries</h1>
           <div class="row placeholders">
-            <form action="{{ url_for('typesystem.import_typesystem',projectid='asdf')}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
+            <form action="{{ url_for('typesystem.import_typesystem',project_id=project.id)}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
               <div class="form-group">
                 <input type="text" class="form-control" placeholder="Search">
               </div>
@@ -32,7 +32,7 @@
 
 
             </form>
-            <form action="{{ url_for('project.documents_export',projectid='asdf')}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
+            <form action="{{ url_for('project.documents_export',project_id=project.id)}}" enctype="multipart/form-data" data-ajax="true" method="POST" class="navbar-form navbar-left" role="search">
               <button type="submit" class="btn btn-default">Export</button>
             </form>
           </div>

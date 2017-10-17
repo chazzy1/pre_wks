@@ -9,29 +9,28 @@ from typesystem import typesystem_parser
 from typesystem import models
 from util import log_exception
 from bson.json_util import dumps
+from project.models import Project
 
 
-@bptypesystem.route('/<projectid>/list', methods=['GET', 'POST'])
-@bptypesystem.route('/list', methods=['GET', 'POST'])
-def list_typesystem(projectid='asdf'):
+@bptypesystem.route('/<mbj:project_id>/list', methods=['GET', 'POST'])
+def list_typesystem(project_id):
+    project = Project.objects.get_or_404(id=project_id)
+    return render_template('typesystem.html.tmpl', project=project, active_menu="typeSystem")
 
-    return render_template('typesystem.html.tmpl', projectid="asdf", active_menu="typeSystem")
 
-
-@bptypesystem.route('/<projectid>/import', methods=['GET', 'POST'])
-@bptypesystem.route('/import', methods=['GET', 'POST'])
-def import_typesystem(projectid='asdf'):
+@bptypesystem.route('/<mbj:project_id>/import', methods=['GET', 'POST'])
+def import_typesystem(project_id):
     if request.method == 'POST':
         file = request.files['file']
         filename = secure_filename(file.filename)
         filepath = runme.app.config['UPLOAD_DIR']
         file.save(os.path.join(runme.app.config['UPLOAD_DIR'], filename))
-        parser = typesystem_parser.TypesystemParser(filename=filename, filepath=filepath, project_id=projectid)
+        parser = typesystem_parser.TypesystemParser(filename=filename, filepath=filepath, project_id=project_id)
         parser.wks_json_parser()
     return redirect(url_for('typesystem.list_typesystem'))
 
 
-@bptypesystem.route('/getEntityTypeList/<project_id>', methods=['POST', 'GET'])
+@bptypesystem.route('/getEntityTypeList/<mbj:project_id>', methods=['POST', 'GET'])
 def get_entity_type_list(project_id):
     result = {}
     entity_type_list = None
@@ -51,7 +50,7 @@ def get_entity_type_list(project_id):
     return dumps(result, ensure_ascii=False)
 
 
-@bptypesystem.route('/getRelationshipTypeList/<project_id>', methods=['POST', 'GET'])
+@bptypesystem.route('/getRelationshipTypeList/<mbj:project_id>', methods=['POST', 'GET'])
 def get_relationship_type_list(project_id):
     result = {}
     relationship_type_list = None
@@ -70,7 +69,7 @@ def get_relationship_type_list(project_id):
     return dumps(result, ensure_ascii=False)
 
 
-@bptypesystem.route('/getTypeSystemDiagram/<project_id>', methods=['POST', 'GET'])
+@bptypesystem.route('/getTypeSystemDiagram/<mbj:project_id>', methods=['POST', 'GET'])
 def get_type_system_diagram(project_id):
     result = {}
     try:
@@ -85,7 +84,7 @@ def get_type_system_diagram(project_id):
     return dumps(result, ensure_ascii=False)
 
 
-@bptypesystem.route('/saveAll/<project_id>', methods=['POST', 'GET'])
+@bptypesystem.route('/saveAll/<mbj:project_id>', methods=['POST', 'GET'])
 def save_all(project_id):
     result = {}
 
@@ -106,20 +105,19 @@ def save_all(project_id):
     return dumps(result, ensure_ascii=False)
 
 
-@bptypesystem.route('/entityTypeDtl/<project_id>', methods=['POST', 'GET'])
+@bptypesystem.route('/entityTypeDtl/<mbj:project_id>', methods=['POST', 'GET'])
 def entity_type_detail(project_id):
     return render_template('entity_type_dtl.html.tmpl')
 
 
-@bptypesystem.route('/relationTypeDtl/<project_id>', methods=['POST', 'GET'])
+@bptypesystem.route('/relationTypeDtl/<mbj:project_id>', methods=['POST', 'GET'])
 def relation_type_detail(project_id):
     return render_template('relation_type_dtl.html.tmpl')
 
 
-@bptypesystem.route('/<projectid>/export', methods=['GET', 'POST'])
-@bptypesystem.route('/export', methods=['GET', 'POST'])
-def export_typesystem(projectid='asdf'):
-    results = dumps(models.get_typesystem(projectid), ensure_ascii=False)
+@bptypesystem.route('/<mbj:project_id>/export', methods=['GET', 'POST'])
+def export_typesystem(project_id):
+    results = dumps(models.get_typesystem(project_id), ensure_ascii=False)
     generator = (cell for row in results for cell in row)
     return Response(generator,
                        mimetype="text/plain",

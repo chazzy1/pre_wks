@@ -1,9 +1,10 @@
 # -*- encoding:utf-8 -*-
+import os
 import uuid
 import datetime
-from util import *
-from werkzeug.utils import secure_filename
-import os
+from util import (
+    ground_truth_collection,
+)
 
 
 class MyException(Exception):
@@ -11,10 +12,6 @@ class MyException(Exception):
 
 
 class DocumentParser:
-    def __init__(self, filename, filepath, project_id):
-        self.uploaded_file = os.path.join(filepath, filename)
-        self.global_file_name = filename
-        self.global_project_id = project_id
 
     token_breaker = '-', ',', '.'
     token_breaker_2 = "'s", "\'s"
@@ -26,35 +23,44 @@ class DocumentParser:
     global_file_name = None
     global_project_id = None
 
+    def __init__(self, filename, filepath, project_id):
+        self.uploaded_file = os.path.join(filepath, filename)
+        self.global_file_name = filename
+        self.global_project_id = project_id
+
     def get_base_document(self, document_index=0, modified_date=0):
         if self.global_document_id is None:
             self.global_document_id = str(uuid.uuid1())
 
-        document_id = str(self.global_document_id) + "-{0}".format(document_index)
-        document = {"id": document_id,
-                    "name": None,
-                    "text": None,
-                    "status": "READY",
-                    "modifiedDate": modified_date}
+        document_id = f'{self.global_document_id}-{document_index}'
+        document = {
+            "id": document_id,
+            "name": None,
+            "text": None,
+            "status": "READY",
+            "modifiedDate": modified_date
+        }
         return document
 
     @classmethod
     def get_base_ground_truth(cls, document):
-        ground_truth = {"id": document["id"],
-                        "name": document["name"],
-                        "version": 3,
-                        "text": document["text"],
-                        "docLength": 0,
-                        "language": "EN",
-                        "modifiedDate": document["modifiedDate"],
-                        "documentSet": [],
-                        "preannotation": [],
-                        "sentences": [],
-                        "mentions": [],
-                        "relations": [],
-                        "corefs": [],
-                        "typeResolved": True,
-                        "userResolved": False}
+        ground_truth = {
+            "id": document["id"],
+            "name": document["name"],
+            "version": 3,
+            "text": document["text"],
+            "docLength": 0,
+            "language": "EN",
+            "modifiedDate": document["modifiedDate"],
+            "documentSet": [],
+            "preannotation": [],
+            "sentences": [],
+            "mentions": [],
+            "relations": [],
+            "corefs": [],
+            "typeResolved": True,
+            "userResolved": False,
+        }
         return ground_truth
 
     @classmethod
@@ -123,12 +129,14 @@ class DocumentParser:
         if self.global_modified_date is None:
             self.global_modified_date = self.get_epoch_time()
 
-        tmp_document = self.get_base_document(document_index=document_index, modified_date=self.global_modified_date)
+        tmp_document = self.get_base_document(
+            document_index=document_index,
+            modified_date=self.global_modified_date
+        )
 
         """에라 모르겠다...정규식은 실패임"""
         try:
             length = len(data)
-
             iter_data = iter(data)
 
             for char in iter_data:
@@ -149,7 +157,6 @@ class DocumentParser:
                                 str_buffer.append(char)
                                 # str_buffer.append(data[offset + 1])
                                 iter_data.next()
-
                             else:
                                 tmp_document["text"] = ''.join(str_buffer).strip()
                                 str_buffer = []
@@ -226,11 +233,11 @@ class DocumentParser:
             except Exception as e:
                 log_exception(e)
 
-            print(ground_truth)
-
-            ground_truth_collection.insert_one({"project_id": self.global_project_id,
-                                                "global_document_id": self.global_document_id,
-                                                "ground_truth": ground_truth})
+            ground_truth_collection.insert_one({
+                "project_id": self.global_project_id,
+                "global_document_id": self.global_document_id,
+                "ground_truth": ground_truth
+            })
 
     def sentence_parser(self, ground_truth, begin, sentence_buffer):
         text = ''.join(sentence_buffer).rstrip()
@@ -337,10 +344,3 @@ class DocumentParser:
 
         sets_collection.insert_one({"project_id": self.global_project_id,
                                     "sets": sets})
-
-
-
-
-
-
-
