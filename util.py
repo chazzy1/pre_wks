@@ -1,8 +1,12 @@
 import sys
+import os
 # import traceback
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017)
+HOST = os.environ.get('WKS_MONGODB_HOST', 'localhost')
+PORT = os.environ.get('WKS_MONGODB_PORT', 27017)
+
+client = MongoClient(HOST, PORT)
 collections = client['prewks']
 
 documents_sets_collection = collections.documents_sets
