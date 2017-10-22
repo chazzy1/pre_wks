@@ -1,0 +1,49 @@
+{% extends "project.html.tmpl" %}
+{% set active_menu = 'info'%}
+{% block projectMainContent %}
+                <div class="contentsDiv">
+                    <h3 class="title">프로젝트 상세</h3>
+                    <div class="communityWriteDiv">
+                        <form class="form-horizontal">
+
+                            <div class="contentsArea project">
+                                <div class="form-group">
+                                    <label for="name" class="control-label essential">프로젝트 명</label>
+                                    <div class="floatL">
+                                        <input type="text" id="name" class="form-control inputTxt" value="TEST 프로젝트 1" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name2" class="control-label">프로젝트 설명</label>
+                                    <div class="floatL">
+                                        <textarea class="form-control">TEST 프로젝트 1</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name" class="control-label">컴포넌트 유형</label>
+                                    <div class="floatL">
+                                        <input type="text" id="name" class="form-control inputTxt w317" value="TEST 프로젝트 1" placeholder="">
+                                    </div>
+                                    <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="options" id="options1" value="option1">커뮤니티 공개 설정
+                                        <span></span>
+                                    </label>
+                                </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name" class="control-label">PM 설정</label>
+                                    <div class="floatL">
+                                        <input type="text" id="name" class="form-control inputTxt w317" value="PM 계정 명" disabled placeholder="">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="btnArea alignR">
+                        <a href="{{ url_for('project.delete', project_id=project.id) }}" class="btn medium navy  w140">프로젝트 삭제</a>
+                        <a href="#" class="btn medium  blue w140">저장</a>
+                    </div>
+                </div>
+{% endblock %}

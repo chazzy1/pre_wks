@@ -6,7 +6,7 @@ from flask_jsglue import JSGlue
 from flask_mongoengine import MongoEngine
 from werkzeug.routing import BaseConverter
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/_static')
 app.config.from_object('config')
 
 jsglue = JSGlue(app)
@@ -24,6 +24,12 @@ class User(db.Document, UserMixin):
     active = db.BooleanField(default=True)
     confirmed_at = db.DateTimeField()
     roles = db.ListField(db.ReferenceField(Role), default=[])
+
+    @property
+    def queryset_project(self):
+        from project.models import Project
+        return Project.objects(created_by=self)
+
 
 
 # Setup Flask-Security
@@ -44,10 +50,10 @@ def create_user():
 #     return render_template('index.html')
 
 
-@app.route('/')
-@login_required
-def hello_world():
-    return redirect(url_for('project.documents'))
+# @app.route('/')
+# @login_required
+# def hello_world():
+#     return redirect(url_for('project.documents'))
 
 
 if __name__ == '__main__':
@@ -56,6 +62,7 @@ if __name__ == '__main__':
     from annotation import bpannotator
     from resources import bpresources
     from typesystem import bptypesystem
+    from portal import bpportal
     # from login import bpapp as bplogin
 
     class RegexConverter(BaseConverter):
@@ -75,7 +82,7 @@ if __name__ == '__main__':
     app.url_map.converters['regex'] = RegexConverter
     app.url_map.converters['mbj'] = MongoObjRegexConverter
 
-    # app.register_blueprint(bplogin, url_prefix='/')
+    app.register_blueprint(bpportal, url_prefix='/')
     app.register_blueprint(bpproject, url_prefix='/p')
     app.register_blueprint(bptypesystem, url_prefix='/p/typesystem')
     app.register_blueprint(bpresources, url_prefix='/resources')

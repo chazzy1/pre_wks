@@ -26,6 +26,46 @@ from project.models import Project
 from flask_login import current_user
 
 
+
+@bpproject.route('/<mbj:project_id>/invite', methods=['POST'])
+def invite(project_id):
+    project = Project.objects.get_or_404(id=project_id)
+    email = request.form['email']
+    project.invite(email)
+    return redirect(url_for('project.members', project_id=project_id))
+
+
+@bpproject.route('/<mbj:project_id>/post_write')
+def post_write(project_id):
+    project = Project.objects.get_or_404(id=project_id)
+    return render_template('project_community_write.html.tmpl', project=project)
+
+
+@bpproject.route('/<mbj:project_id>/members')
+def members(project_id):
+    project = Project.objects.get_or_404(id=project_id)
+    return render_template('project_members.html.tmpl', project=project)
+
+
+@bpproject.route('/<mbj:project_id>')
+def index(project_id):
+    project = Project.objects.get_or_404(id=project_id)
+    return render_template('project_community.html.tmpl', project=project)
+
+
+@bpproject.route('/<mbj:project_id>/info')
+def info(project_id):
+    project = Project.objects.get_or_404(id=project_id)
+    return render_template('project_info.html.tmpl', project=project)
+
+
+@bpproject.route('/<mbj:project_id>/delete')
+def delete(project_id):
+    project = Project.objects.get_or_404(id=project_id)
+    project.delete()
+    return redirect(url_for('portal.index'))
+
+
 @bpproject.route('/createproject', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
@@ -42,10 +82,10 @@ def create():
         form = ProjectCreateForm()
     return render_template('projectcreate.html.tmpl', form=form)
 
-@bpproject.route('/projects')
-def projects():
-    projects = Project.objects(created_by=current_user._get_current_object())
-    return render_template('projects.html.tmpl', projects=projects)
+# @bpproject.route('/projects')
+# def projects():
+#     projects = Project.objects(created_by=current_user._get_current_object())
+#     return render_template('projects.html.tmpl', projects=projects)
 
 @bpproject.route('/<mbj:project_id>/annotation', methods=['GET', 'POST'])
 def annotation(project_id):
@@ -92,7 +132,6 @@ def documents_export(project_id):
     return send_file(zip_file_path, mimetype='application/octet-stream')
 
 
-@bpproject.route('/<mbj:project_id>')
 @bpproject.route('/<mbj:project_id>/documents', methods=['GET', 'POST'])
 def documents(project_id):
     # form = RegistrationForm.objects.get_or_404(id='test')

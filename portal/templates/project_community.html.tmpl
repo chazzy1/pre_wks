@@ -1,0 +1,53 @@
+{% extends "project.html.tmpl" %}
+{% set active_menu = 'community'%}
+{% block projectMainContent %}
+                    <h3 class="title">프로젝트 커뮤니티</h3>
+                    <form class="form-horizontal searchArea">
+                        <div class="form-group">
+                            <div class="floatL">
+                                <input type="text" class="form-control inputTxt" placeholder="본문/제목을 입력해 주세요.">
+                            </div>
+                            <div class="btnArea inlineBlock">
+                                <button type="button" class="btn h35 navy">검색</button>
+                            </div>
+                        </div>
+                    </form>
+                    <table class="table">
+                        <colgroup>
+                            <col style="width:*;">
+                            <col style="width:80px">
+                            <col style="width:102px;">
+                            <col style="width:132px;">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th class="tit">제목</th>
+                            <th>첨부</th>
+                            <th>작성자</th>
+                            <th>작성일자</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for post in project.queryset_post.order_by('-created_at') %}
+                        <tr>
+                            <td class="tit"><a href="#" class="tit">{{ post.title }}</a><a href="#" class="attachCnt">(3)</a></td>
+                            <td><a href="#" class="attach">attach</a></td>
+                            <td>{{ post.created_by.email }}</td>
+                            <td>{{ post.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <ul class="paging">
+                        <li><a href="#" class="prev">prev</a></li>
+                        <li class="on"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li><a href="#" class="next">next</a></li>
+                    </ul>
+                    <div class="btnArea floatR mt-29">
+                        <a href="{{ url_for('project.post_write', project_id=project.id) }}" class="btn medium w140 blue">작성</a>
+                    </div>
+{% endblock %}
