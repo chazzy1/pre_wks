@@ -51,9 +51,9 @@
                     {% endif %}
                     <li><a href="#">ER-KS 소개</a></li>
                     {% if current_user.is_active %}
-                    <li><a href="#" class="btn">LOGOUT</a></li>
+                    <li><a href="/logout" class="btn">LOGOUT</a></li>
                     {% else %}
-                    <li><a href="#" class="btn">LOGIN</a></li>
+                    <li><a href="/login" class="btn">LOGIN</a></li>
                     {% endif %}
                     <!-- 로그인 후 끝 //-->
                 </ul>
