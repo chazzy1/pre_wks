@@ -1,7 +1,6 @@
 # -*- encoding:utf-8 -*-
 from flask import render_template, request, send_file, redirect, flash, url_for
 import os
-from portal import bpportal
 from wtforms import (
     Form,
     TextField,
@@ -14,16 +13,11 @@ from wtforms import (
     FieldList,
 )
 from werkzeug.utils import secure_filename
-from runme import db
-from runme import app
-from flask_mongoengine.wtf import model_form
-from documents import document_parser
-from util import *
-from documents.document_exporter import export_document_sets
 from typesystem import typesystem_parser
 from project.forms import ProjectCreateForm
 from project.models import Project
 from flask_login import current_user
+from portal import bpportal
 
 
 @bpportal.route('/')
@@ -34,3 +28,16 @@ def index():
         return render_template('index.html.tmpl')
 
 
+@bpportal.route('/dialog_privacy_policy')
+def dialog_privacy_policy():
+    return render_template('dialog_privacy_policy.html')
+
+
+@bpportal.route('/_dialog_toc')
+def dialog_toc():
+    return render_template('dialog_toc.html')
+
+
+@bpportal.route('/_dialog_dont_collect_emails')
+def dialog_dont_collect_emails():
+    return render_template('dialog_dont_collect_emails.html')
