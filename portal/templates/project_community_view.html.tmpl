@@ -5,11 +5,11 @@
 {% block projectMainContent %}
     <h3 class="title">글보기</h3>
     <div class="communityViewDiv">
-        <p class="tit">{{ post.title }}
+        <p class="tit">{{ post.title | e }}
             <span class="date">{{ post.created_by.email }}, {{ post.created_at.strftime('%Y-%m-%d') }}</span>
         </p>
         <div class="content">
-            {{ post.contents }}
+            {{ post.contents | e}}
         </div>
         <ul class="attach">
             <li><a href="#">첨부파일명.txt첨부파일명.txt첨부파일명.txt</a></li>

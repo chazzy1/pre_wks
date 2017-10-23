@@ -27,7 +27,7 @@
         <tbody>
         {% for post in project.queryset_post.only('title', 'created_by', 'created_at').order_by('-created_at') %}
         <tr>
-            <td data-field="tile"><a href="{{ url_for('project.post_view', post_id=post.id) }}" class="tit">{{ post.title }}</a><a href="#" class="attachCnt">(3)</a></td>
+            <td data-field="tile"><a href="{{ url_for('project.post_view', post_id=post.id) }}" class="tit">{{ post.title | e }}</a><a href="#" class="attachCnt">(1)</a></td>
             <td data-field="attach_cnt"><a href="#" class="attach">attach</a></td>
             <td data-field="created_by">{{ post.created_by.email }}</td>
             <td data-field="created_at">{{ post.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
