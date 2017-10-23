@@ -599,7 +599,7 @@
             this.options.paginationVAlign === 'top' || this.options.paginationVAlign === 'both' ?
                 '<div class="fixed-table-pagination" style="clear: both;"></div>' :
                 '',
-            '<div class="fixed-table-container">',
+            '<div class="fixed-table-container mb50">',
             '<div class="fixed-table-header"><table></table></div>',
             '<div class="fixed-table-body">',
             '<div class="fixed-table-loading">',
@@ -1347,12 +1347,12 @@
             this.pageTo = this.options.totalRows;
         }
 
-        html.push(
-            '<div class="pull-' + this.options.paginationDetailHAlign + ' pagination-detail">',
-            '<span class="pagination-info">',
-            this.options.onlyInfoPagination ? this.options.formatDetailPagination(this.options.totalRows) :
-            this.options.formatShowingRows(this.pageFrom, this.pageTo, this.options.totalRows),
-            '</span>');
+        // html.push(
+        //     '<div class="pull-' + this.options.paginationDetailHAlign + ' pagination-detail">',
+        //     '<span class="pagination-info">',
+        //     this.options.onlyInfoPagination ? this.options.formatDetailPagination(this.options.totalRows) :
+        //     this.options.formatShowingRows(this.pageFrom, this.pageTo, this.options.totalRows),
+        //     '</span>');
 
         if (!this.options.onlyInfoPagination) {
             html.push('<span class="page-list">');
@@ -1400,8 +1400,10 @@
             html.push(this.options.formatRecordsPerPage(pageNumber.join('')));
             html.push('</span>');
 
-            html.push('</div>',
-                '<div class="pull-' + this.options.paginationHAlign + ' pagination">',
+            html.push(
+                // '</div>',
+                // '<div class="pull-' + this.options.paginationHAlign + ' pagination">',
+                '<div class="paging">',
                 '<ul class="pagination' + sprintf(' pagination-%s', this.options.iconSize) + '">',
                 '<li class="page-pre"><a href="#">' + this.options.paginationPreText + '</a></li>');
 
