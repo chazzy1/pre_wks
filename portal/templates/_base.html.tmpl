@@ -7,6 +7,7 @@
     <title></title>
     <!-- 부트스트랩 -->
     <link href="{{ url_for('resources.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('resources.static', filename='bootstrap-table/css/bootstrap-table.min.css') }}" rel="stylesheet" type="text/css"  />
     <link href="{{ url_for('resources.static', filename='css/common.css') }}" rel="stylesheet" type="text/css" media="all" />
     <!-- IE8 에서 HTML5 요소와 미디어 쿼리를 위한 HTML5 shim 와 Respond.js -->
     <!-- WARNING: Respond.js 는 당신이 file:// 을 통해 페이지를 볼 때는 동작하지 않습니다. -->
@@ -21,6 +22,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- 모든 컴파일된 플러그인을 포함합니다 (아래), 원하지 않는다면 필요한 각각의 파일을 포함하세요 -->
     <script src="{{ url_for('resources.static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('resources.static', filename='bootstrap-table/js/bootstrap-table.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('resources.static', filename='bootstrap-table/js/bootstrap-table-formatter.js') }}" type="text/javascript"></script>
+    {# <script src="{{ url_for('resources.static', filename='bootstrap-table/js/extensions/flat-json/bootstrap-table-flat-json.js"></script> #}
     <script src="{{ url_for('resources.static', filename='js/common.js') }}"></script>
 </head>
 <body>

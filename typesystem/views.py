@@ -9,7 +9,7 @@ from typesystem import typesystem_parser
 from typesystem import models
 from util import log_exception
 from bson.json_util import dumps
-from project.models import Project
+from models import Project
 
 
 @bptypesystem.route('/<mbj:project_id>/list', methods=['GET', 'POST'])

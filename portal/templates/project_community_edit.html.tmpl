@@ -1,0 +1,34 @@
+{% from '_form_helpers.html' import render_field %}
+
+{% extends "project.html.tmpl" %}
+{% set active_menu = 'community'%}
+{% block projectMainContent %}
+    <h3 class="title">글수정
+        <span class="desc">/ 커뮤니티에 함께 공유할 내용을 작성해 주세요.</span>
+    </h3>
+    <form class="form-horizontal">
+    <div class="communityWriteDiv">
+        <div class="form-group">
+            <input type="text" value="{{ post.title }}" class="form-control inputTxt" placeholder="제목을 입력하세요.">
+        </div>
+        <div class="contentsArea">
+            <div class="editerArea">
+            </div>
+            <div class="attachArea">
+                <div class="fileDiv">
+                    <input type="file" name="fileName" class="file" onchange="fileAppend(this.value);">
+                </div>
+                <ul class="attachList">
+                    <li><a href="#">첨부파일명.txt첨부파일명.txt첨부파일명.txt첨부파일명.txt</a></li>
+                    <li><a href="#">첨부파일명.txt</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="btnArea alignR">
+        <a href="{{ url_for('project.index', project_id=project.id) }}" class="btn medium white2  w140">취소</a>
+        <a href="{{ url_for('project.post_delete', post_id=post.id) }}" class="btn medium navy  w140">삭제</a>
+        <button type="submit" class="btn medium  blue w140">저장</button>
+    </div>
+    </form>
+{% endblock %}

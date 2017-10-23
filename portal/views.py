@@ -15,7 +15,7 @@ from wtforms import (
 from werkzeug.utils import secure_filename
 from typesystem import typesystem_parser
 from project.forms import ProjectCreateForm
-from project.models import Project
+from models import Project
 from flask_login import current_user
 from portal import bpportal
 

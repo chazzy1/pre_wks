@@ -6,60 +6,44 @@ from flask_jsglue import JSGlue
 from flask_mongoengine import MongoEngine
 from werkzeug.routing import BaseConverter
 
-app = Flask(__name__, static_url_path='/_static')
-app.config.from_object('config')
+db = MongoEngine()
+jsglue = JSGlue()
 
-jsglue = JSGlue(app)
-db = MongoEngine(app)
+def create_app():
+    app = Flask(__name__, static_url_path='/_static')
+    app.config.from_object('config')
 
-
-class Role(db.Document, RoleMixin):
-    name = db.StringField(max_length=80, unique=True)
-    description = db.StringField(max_length=255)
-
-
-class User(db.Document, UserMixin):
-    email = db.StringField(max_length=255)
-    password = db.StringField(max_length=255)
-    active = db.BooleanField(default=True)
-    confirmed_at = db.DateTimeField()
-    roles = db.ListField(db.ReferenceField(Role), default=[])
-
-    @property
-    def queryset_project(self):
-        from project.models import Project
-        return Project.objects(created_by=self)
+    jsglue.init_app(app)
+    db.init_app(app)
 
 
+    from models import User, Role
 
-# Setup Flask-Security
-user_datastore = MongoEngineUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
-
-
-# Create a user to test with
-@app.before_first_request
-def create_user():
-    user_datastore.create_user(email='matt@nobien.net', password='password')
-
-@app.route('/')
-def index():
-    return redirect(url_for('portal.index'))
-
-# Views
-# @app.route('/')
-# @login_required
-# def home():
-#     return render_template('index.html')
+    # Setup Flask-Security
+    user_datastore = MongoEngineUserDatastore(db, User, Role)
+    security = Security(app, user_datastore)
 
 
-# @app.route('/')
-# @login_required
-# def hello_world():
-#     return redirect(url_for('project.documents'))
+    # Create a user to test with
+    @app.before_first_request
+    def create_user():
+        user_datastore.create_user(email='matt@nobien.net', password='password')
+
+    @app.route('/')
+    def index():
+        return redirect(url_for('portal.index'))
+
+    # Views
+    # @app.route('/')
+    # @login_required
+    # def home():
+    #     return render_template('index.html')
 
 
-if __name__ == '__main__':
+    # @app.route('/')
+    # @login_required
+    # def hello_world():
+    #     return redirect(url_for('project.documents'))
 
     from project import bpproject
     from annotation import bpannotator
@@ -91,4 +75,8 @@ if __name__ == '__main__':
     app.register_blueprint(bpresources, url_prefix='/resources')
     app.register_blueprint(bpannotator, url_prefix='/p/a')
 
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
     app.run(host='0.0.0.0', port=app.config['PORT'], debug=True)

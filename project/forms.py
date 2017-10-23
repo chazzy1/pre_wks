@@ -26,9 +26,29 @@ class ProjectBasicMixin(object):
         render_kw=dict(placeholder='프로젝트에 대한 설명'))
 
 
+class PostBasicMixin(object):
+    title = TextField(
+        label='제목',
+        validators=[
+            validators.Required("제목은 필수입력항목입니다."),
+            validators.Length(
+                min=2, max=40, message='2-40자 길이로 가능합니다.'),
+        ],
+        render_kw=dict(placeholder="제목(2~40자)"))
+    contents = TextField(label='내용')
+
+
 class ProjectCreateForm(Form, ProjectBasicMixin):
     pass
 
 
 class ProjectEditForm(Form, ProjectBasicMixin):
+    pass
+
+
+class PostCreateForm(Form, PostBasicMixin):
+    pass
+
+
+class PostEditForm(Form, PostBasicMixin):
     pass
