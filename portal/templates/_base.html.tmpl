@@ -25,9 +25,14 @@
 </head>
 <body>
     <div class="wrapDiv">
-        <header>
+        {% if current_user.is_active %}
+        {% set _header_cls = 'sub' %}
+        {% else %}
+        {% set _header_cls = '' %}
+        {% endif %}
+        <header class="{{ _header_cls }}">
             <div class="headerSub">
-                <a href="{{ url_for('portal.index') }}" class="topLogo"><img src="{{ url_for('resources.static', filename='images/img_topLogo.png') }}" alt="ER-KS" /></a>
+                <a href="{{ url_for('portal.index') }}" class="topLogo"><img src="{{ url_for('resources.static', filename='images/img_topLogo' + _header_cls + '.png') }}" alt="ER-KS" /></a>
                 <ul class="rightMenu">
                     <!-- 로그인 전
                     <li><a href="#">ER-KS 소개</a></li>
