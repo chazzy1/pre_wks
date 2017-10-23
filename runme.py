@@ -86,9 +86,9 @@ if __name__ == '__main__':
     app.url_map.converters['mbj'] = MongoObjRegexConverter
 
     app.register_blueprint(bpportal, url_prefix='/portal')
-    # app.register_blueprint(bpproject, url_prefix='/p')
-    # app.register_blueprint(bptypesystem, url_prefix='/p/typesystem')
+    app.register_blueprint(bpproject, url_prefix='/p')
+    app.register_blueprint(bptypesystem, url_prefix='/p/typesystem')
     app.register_blueprint(bpresources, url_prefix='/resources')
-    # app.register_blueprint(bpannotator, url_prefix='/p/a')
+    app.register_blueprint(bpannotator, url_prefix='/p/a')
 
     app.run(host='0.0.0.0', port=app.config['PORT'], debug=True)
