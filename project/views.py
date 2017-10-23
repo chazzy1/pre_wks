@@ -21,7 +21,7 @@ from documents import document_parser
 from util import *
 from documents.document_exporter import export_document_sets
 from typesystem import typesystem_parser
-from project.forms import ProjectCreateForm
+from project.forms import ProjectCreateForm, ProjectEditForm
 from project.models import Project
 from flask_login import current_user
 
@@ -53,10 +53,20 @@ def index(project_id):
     return render_template('project_community.html.tmpl', project=project)
 
 
-@bpproject.route('/<mbj:project_id>/info')
+@bpproject.route('/<mbj:project_id>/info', methods=['GET', 'POST'])
 def info(project_id):
     project = Project.objects.get_or_404(id=project_id)
-    return render_template('project_info.html.tmpl', project=project)
+    if request.method == 'POST':
+        form = ProjectEditForm(request.form)
+        if form.validate():
+            form.populate_obj(project)
+            project.save()
+            flash('Saved the project successfully.')
+        else:
+            flash('Sorry, There are invalid form data.')
+    else:
+        form = ProjectEditForm(obj=project)
+    return render_template('project_info.html.tmpl', project=project, form=form)
 
 
 @bpproject.route('/<mbj:project_id>/delete')

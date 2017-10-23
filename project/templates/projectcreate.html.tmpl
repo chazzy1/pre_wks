@@ -1,17 +1,5 @@
 {% from '_form_helpers.html' import render_39field, render_39submit, render_39imgfield %}
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-        {% set category = (category == 'message') and 'info' or category %}
-        <script>
-        $(document).ready(function() {
-            alert('{{ message }}');
-        });
-        </script>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
 
     <h1 class="page-header">CREATE THE PROJECT</h1>
     <form

@@ -28,3 +28,7 @@ class ProjectBasicMixin(object):
 
 class ProjectCreateForm(Form, ProjectBasicMixin):
     pass
+
+
+class ProjectEditForm(Form, ProjectBasicMixin):
+    pass

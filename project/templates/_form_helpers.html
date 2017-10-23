@@ -78,20 +78,21 @@ $(document).ready(function() {
 {% endmacro %}
 
 
-
 {% macro render_field(field, label_visible=true) -%}
     <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
         {% if (field.type != 'HiddenField' and field.type !='CSRFTokenField') and label_visible %}
-            <label for="{{ field.id }}" class="control-label">{{ field.label }}</label>
+            <label for="{{ field.id }}" class="control-label {% if kwargs.pop('required', False) or field.flags.required %}essential{% endif %}">{{ field.label }}</label>
         {% endif %}
+        <div class="floatL">
         {% if field.errors %}
             {{ field(class_='form-control validate invalid', **kwargs) }}
             {% for e in field.errors %}
-            <p class="help-block">{{ e }}</p>
+            <span>{{ e }}</span>
             {% endfor %}
         {% else %}
-            {{ field(class_='form-control', **kwargs) }}
+            {{ field(class_='form-control inputTxt', **kwargs) }}
         {% endif %}
+        </div>
     </div>
 {%- endmacro %}
 
