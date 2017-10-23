@@ -599,7 +599,7 @@
             this.options.paginationVAlign === 'top' || this.options.paginationVAlign === 'both' ?
                 '<div class="fixed-table-pagination" style="clear: both;"></div>' :
                 '',
-            '<div class="fixed-table-container mb50">',
+            '<div class="fixed-table-container mb50" style="border: 0px;">',
             '<div class="fixed-table-header"><table></table></div>',
             '<div class="fixed-table-body">',
             '<div class="fixed-table-loading">',
