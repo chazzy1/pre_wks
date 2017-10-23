@@ -5,6 +5,7 @@ from flask_security import Security, MongoEngineUserDatastore, \
 from flask_jsglue import JSGlue
 from flask_mongoengine import MongoEngine
 from werkzeug.routing import BaseConverter
+import time
 
 db = MongoEngine()
 jsglue = JSGlue()
@@ -63,6 +64,19 @@ def create_app():
         def __init__(self, url_map):
             super(MongoObjRegexConverter, self).__init__(url_map)
             self.regex = "[a-z0-9]{24}"
+
+    gen_timestamp = time.time()
+
+    @app.template_filter('autoversion')
+    def autoversion_filter(filename):
+        # determining fullpath might be project specific
+        # fullpath = os.path.join('some_app/', filename[1:])
+        # try:
+        #     timestamp = str(os.path.getmtime(fullpath))
+        # except OSError:
+        #     return filename
+        newfilename = "{0}?v={1}".format(filename, gen_timestamp)
+        return newfilename
 
     # Use the RegexConverter function as a converter
     # method for mapped urls
