@@ -75,7 +75,7 @@ def create():
             form.populate_obj(project)
             project.save()
             flash('Created the project successfully.')
-            return redirect(url_for('project.documents', project_id=project.id))
+            return redirect(url_for('project.index', project_id=project.id))
         else:
             flash('invalid form data.')
     else:

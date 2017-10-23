@@ -1,11 +1,4 @@
 {% from '_form_helpers.html' import render_39field, render_39submit, render_39imgfield %}
-{% extends "base.html.tmpl" %}
-
-{% block page_settings %}
-{% set active_menu = 'createproject'%}
-{% endblock %}
-
-{% block mainContent %}
 
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -20,7 +13,6 @@
     {% endif %}
 {% endwith %}
 
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <h1 class="page-header">CREATE THE PROJECT</h1>
     <form
         action="{{ url_for('project.create') }}"
@@ -37,5 +29,3 @@
             </div>
         {% endcall %}
     </form>
-</div>
-{% endblock %}

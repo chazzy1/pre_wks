@@ -11,7 +11,7 @@
                 <div class="leftDiv">
                     <h3 class="title">나의 프로젝트
                         <div class="btnArea inlineBlock floatR">
-                            <button type="button" class="btn navy h35 w120">프로젝트 생성</button>
+                            <a href="{{ url_for('project.create') }}" data-target="#modal-ajax" data-toggle="modal" class="btn navy h35 w120">프로젝트 생성</a>
                         </div>
                     </h3>
                     <div class="projectList {% if current_user.queryset_project.count() == 0 %}none{% endif %}">

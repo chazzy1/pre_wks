@@ -53,7 +53,7 @@
                     {% if current_user.is_active %}
                     <li><a href="/logout" class="btn">LOGOUT</a></li>
                     {% else %}
-                    <li><a href="/login" class="btn">LOGIN</a></li>
+                    <li><a href="/login" data-target="#modal-ajax" data-toggle="modal" class="btn">LOGIN</a></li>
                     {% endif %}
                     <!-- 로그인 후 끝 //-->
                 </ul>
@@ -105,6 +105,17 @@
             <!-- /.modal -->
             <!--DOC: Aplly "modal-cached" class after "modal" class to enable ajax content caching-->
             <div class="modal fade" id="footer-privacy_policy-agree-ajax" role="basic" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div style="text-align: center"> Loading... </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal -->
+            <!--DOC: Aplly "modal-cached" class after "modal" class to enable ajax content caching-->
+            <div class="modal fade" id="modal-ajax" role="basic" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body">
